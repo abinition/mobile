@@ -1,2 +1,2 @@
-# mobile_scenerio_infoarchive
+# mobile
 Mobile Scenario for InfoArchive
