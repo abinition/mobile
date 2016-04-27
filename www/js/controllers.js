@@ -1,43 +1,49 @@
-angular.module('starter.controllers', [])
+mobileApp
 
-.controller('DashCtrl', function($scope, $state) {
-    
-  $scope.authorization = {
-    username: '',
-    password : '',
-    language: 'English' 
-  };  
-   
-  $scope.signIn = function(form) {
-    if(form.$valid) {
-      $state.go('tabs.chat');
-    }
-  }; 
-    
-    
-})
+  .controller('AuthCtrl', function ($scope, $state, AuthService) {
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+    $scope.authorization = {
+      username: '',
+      password: '',
+      language: 'en',
+      statusText: '',
+      error: false,
+      token: ''
+    };
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
-})
+    $scope.signIn = function (form) {
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
+      if (form.$valid) {
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
-});
+        console.log("Authenticating");
+        console.log($scope.authorization);
+        AuthService.login($scope.authorization.username, $scope.authorization.password, function (tokens) {
+          console.log('done');
+          if (tokens.auth) {
+            console.log("Returned token is " + tokens.auth);
+            $scope.authorization.error = false;
+            $scope.authorization.token = tokens.auth;
+            $state.go('home');
+          }
+          else {
+            console.log(tokens.status + ' : ' + tokens.statusText);
+            $scope.authorization.error = true;
+            $scope.authorization.statusText = tokens.statusText;
+          }
+        });
+      }
+    };
+  })
+
+  .controller('HomeCtrl', function ($scope, $state, AuthService, LoadService) {
+    console.log("HOME");
+    LoadService.load(AuthService.getToken(), function (appId) {
+      console.log('AppId is '+appId);
+
+      LoadService.apps(AuthService.getToken(), appId, function (tokens) {
+        console.log('Applications');
+        console.log(tokens);
+
+      });
+    });
+  });

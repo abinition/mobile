@@ -9737,44 +9737,21 @@ a.button {
   background-size: cover !important; }
 
 .image-logo {
-  height: 100%;
   top: 0 !important;
-  left: 0 !important; }
+  left: 0 !important;
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
 
 .form-signin {
   background-color: rgba(55, 147, 208, 0.3);
   max-width: 390px;
   max-height: 324px;
-  padding: 10px 40px;
+  padding-top: 10px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 30px;
   margin: 0 auto;
   box-sizing: border-box;
   display: block;
   border-width: 0px; }
-
-.error-container {
-  margin: 5px 0; }
-
-.error-container:last-child {
-  margin: 5px 0 0; }
-
-.error {
-  padding: 10px 16px;
-  font-family: "Arial Black", Gadget, sans-serif;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #555;
-  vertical-align: middle; }
-
-.error i {
-  font-size: 24px;
-  color: #000000;
-  vertical-align: middle; }
-
-.last-error-container > .error {
-  padding: 10px 16px 0; }
-
-.has-errors {
-  border-bottom: 3px solid #B83E2C; }
-
-.no-errors {
-  border-bottom: 3px solid green; }

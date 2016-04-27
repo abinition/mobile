@@ -1,50 +1,161 @@
-angular.module('starter.services', [])
-
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
-
-  return {
-    all: function() {
-      return chats;
-    },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
-    },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
+mobileApp
+  .factory('addBasicAuth', function ($base64) {
+    return {
+      token: function (user, passwd) {
+        return { 'Authorization': 'Basic ' + $base64.encode(user + ':' + passwd) };
       }
-      return null;
     }
-  };
-});
+  })
+  .factory('addBearerAuth', function ($base64) {
+    return {
+      token: function (authToken) {
+        return { 'Authorization': 'Bearer ' + authToken };
+      }
+    }
+  })
+  .factory('AuthService', function ($resource, addBasicAuth) {
+    var authToken = '';
+    return {
+      getToken: function () { return authToken },
+      login: function (username, password, callback) {
+        var api = $resource(
+          'http://localhost:8081/user',
+          {}, {
+            'query': {
+              method: 'GET',
+              headers: addBasicAuth.token(username, password),
+              transformResponse: function (data, headers) {
+
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                angular.forEach(jsonData, function (item) {
+                  //console.log(item);
+                });
+
+                var authorization = headers('x-auth-token');
+                var results = { 'auth': authorization };
+                return results;
+              }
+            }
+          });
+        api.query(
+          function (response) {
+            authToken = response.auth;
+            callback(response);
+          },
+          function (err) {
+            callback(err);
+          }
+        );
+      }
+    }
+  })
+  .factory('LoadService', function ($resource, $q, addBearerAuth) {
+    return {
+      load: function (authToken, callback) {
+        console.log("Loading...");
+        var load1 = $resource(
+          'http://localhost:8081/restapi/services',
+          {}, {
+            'services': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log ( jsonData ) ;
+                return jsonData;
+              }
+            }
+          });
+
+        var load2 = $resource(
+          'http://localhost:8081/restapi/product-info',
+          {}, {
+            'productInfo': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log ( jsonData ) ;
+                return jsonData;
+              }
+            }
+          });
+          
+        var load3 = $resource(
+          'http://localhost:8081/restapi/systemdata/tenants',
+          {}, {
+            'tenants': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log ( jsonData ) ;
+                return jsonData;
+              }
+            }
+          }); 
+
+        var promise1 = load1.services().$promise;
+        var promise2 = load2.productInfo().$promise;
+        var promise3 = load3.tenants().$promise;
+
+        $q.all([promise1, promise2, promise3]).then(
+          function (results) {
+            var href = new URL ( results[2]._embedded.tenants[0]._links.self.href ) ;
+            var comps = href.pathname.split('/');
+            var appId = comps[comps.length-1] ;
+            console.log ( appId ) ;
+            callback( appId );
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+        );
+      },
+      apps: function (authToken, applicationId, callback) {
+        var load1 = $resource(
+          'http://localhost:8081/restapi/systemdata/tenants/:appId',
+          {appId: applicationId}, {
+            'tenants': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log ( jsonData ) ;
+                return jsonData;
+              }
+            }
+          });
+        var load2 = $resource(
+          'http://localhost:8081/restapi/systemdata/tenants/:appId/applications',
+          {appId: applicationId}, {
+            'applications': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log ( jsonData ) ;
+                return jsonData;
+              }
+            }
+          });     
+          
+        var promise1 = load1.tenants().$promise;
+        var promise2 = load2.applications( /*{'contains': "{&page,size,sort}"}*/ ).$promise; 
+
+        $q.all([promise1, promise2]).then(
+          function (results) {
+            callback( results );
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+        );               
+        }}
+    });

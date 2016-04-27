@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
     <title></title>
 
     <!--
@@ -14,13 +15,13 @@
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above -->
     <link href="css/ionic.app.css" rel="stylesheet">
 
+
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
     <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
-
-
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-messages.js"></script>
-
+    <!--script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-resource.js"></script-->
+    <script src="lib/angular-resource/angular-resource.js"></script>
+    <script src="lib/angular-base64/angular-base64.js"></script>
     <!-- cordova script (this will be a 404 during development) -->
     <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
     <!-- <script src="cordova.js"></script> -->
@@ -35,10 +36,11 @@
     <!--
       The nav bar that will be updated as we navigate between views.
     -->
-    <ion-nav-bar class="bar-stable">
+    <ion-nav-bar class="bar-stable" >
         <ion-nav-back-button>
         </ion-nav-back-button>
     </ion-nav-bar>
+
     <!--
       The views will be rendered in the <ion-nav-view> directive below
       Templates are in the /templates folder (but you could also
@@ -47,33 +49,33 @@
     <ion-nav-view></ion-nav-view>
 
     <script id="auth.html" type="text/ng-template">
-        <ion-view class="view-with-bg">
-            <ion-nav-title>
+        <ion-view class="view-with-bg" hide-nav-bar="true">
+           <!--
+           <ion-nav-title>
                 <img class="image-logo" src="../img/infoarchive42.png">
             </ion-nav-title>
-            <ion-content class="view-content">
+            -->
+            <ion-content class="view-content" >
+                <img class="image-logo" src="../img/infoarchive42.png">
                 <label class="item list-inset form-signin">
                     <form name="authorizationForm" novalidate="" ng-submit="signIn(authorizationForm)">
                         <div class="list list-inset">
-                            <label class="item item-input" ng-class="{ 'has-errors' : authorizationForm.username.$invalid, 'no-errors' : authorizationForm.username.$valid}">
+                            <label class="item item-input"">
                                 <i class="icon ion-person placeholder-icon"></i>
-                                <input type="text" name="username" ng-model="authorization.username" ng-minlength="3" ng-maxlength="40" required placeholder="rita@iacustomer.com">
+                                <input type="text" name="username" ng-model="authorization.username" placeholder="Enter your username">
                             </label>
-                            <div class="error-container" ng-show="authorizationForm.username.$error" ng-messages="authorizationForm.username.$error">
-                                <div ng-messages-include="error-list.html"></div>
-                            </div>
-
+                
                             <label class="item item-input">
                                 <i class="icon ion-locked placeholder-icon"></i>
-                                <input type="text" placeholder="********">
+                                <input type="password" name="password" ng-model="authorization.password" placeholder="Enter your password">
                             </label>
-                            <div class="error-container last-error-container" ng-show="authorizationForm.password.$error && authorizationForm.$submitted"
-                            ng-messages="authorizationForm.password.$error">
-                                <div ng-messages-include="error-list.html"></div>
-                            </div>
+
+                            <div class="item assertive" ng-model="authorization.statusText" ng-show="authorization.error">
+                                    <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
+			                </div>
                             <label class="item item-input item-select">
                                 <i class="icon ion-chatbubble placeholder-icon"></i>
-                                <select>
+                                <select name="language" ng-model="authorization.language">
                                     <option value="  " label="Language">Language</option>
                                     <option value="en" selected="selected" label="English">English</option>
                                     <option value="de" label="German">German</option>
@@ -83,9 +85,11 @@
                                     <option value="zh" label="Chinese">Chinese</option>
                                 </select>
                             </label>
-                            <button class="button button-full button-positive" type="submit">
+                            <label class="item">
+                            <button class="button button-block button-positive" type="submit">
                                 Sign In
                             </button>
+                            </label>
                         </div>
                     </form>
                     </div>
@@ -94,17 +98,14 @@
         </ion-view>
     </script>
 
-    <script id="error-list.html" type="text/ng-template">
-        <div class="error" ng-message="required">
-            <i class="ion-information-circled"></i> This field is required!
-        </div>
-        <div class="error" ng-message="minlength">
-            <i class="ion-information-circled"></i> Minimum length of this field is 5 characters!
-        </div>
-        <div class="error" ng-message="maxlength">
-            <i class="ion-information-circled"></i> Maximum length of this field is 20 characters!
-        </div>
+    <script id="home.html" type="text/ng-template">
+        <ion-view view-title="Second page">
+            <ion-content class="padding">
+                <h1>Welcome</h1>
+            </ion-content>
+        </ion-view>
     </script>
+
 
 </body>
 
