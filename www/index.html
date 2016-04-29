@@ -36,7 +36,7 @@
     <!--
       The nav bar that will be updated as we navigate between views.
     -->
-    <ion-nav-bar class="bar-stable" >
+    <ion-nav-bar class="bar-stable">
         <ion-nav-back-button>
         </ion-nav-back-button>
     </ion-nav-bar>
@@ -48,14 +48,16 @@
     -->
     <ion-nav-view></ion-nav-view>
 
+
+
     <script id="auth.html" type="text/ng-template">
         <ion-view class="view-with-bg" hide-nav-bar="true">
-           <!--
+            <!--
            <ion-nav-title>
                 <img class="image-logo" src="../img/infoarchive42.png">
             </ion-nav-title>
             -->
-            <ion-content class="view-content" >
+            <ion-content class="view-content">
                 <img class="image-logo" src="../img/infoarchive42.png">
                 <label class="item list-inset form-signin">
                     <form name="authorizationForm" novalidate="" ng-submit="signIn(authorizationForm)">
@@ -64,16 +66,16 @@
                                 <i class="icon ion-person placeholder-icon"></i>
                                 <input type="text" name="username" ng-model="authorization.username" placeholder="Enter your username">
                             </label>
-                
-                            <label class="item item-input">
+
+                <label class="item item-input">
                                 <i class="icon ion-locked placeholder-icon"></i>
                                 <input type="password" name="password" ng-model="authorization.password" placeholder="Enter your password">
                             </label>
 
-                            <div class="item assertive" ng-model="authorization.statusText" ng-show="authorization.error">
-                                    <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
-			                </div>
-                            <label class="item item-input item-select">
+                <div class="item assertive" ng-model="authorization.statusText" ng-show="authorization.error">
+                    <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
+                </div>
+                <label class="item item-input item-select">
                                 <i class="icon ion-chatbubble placeholder-icon"></i>
                                 <select name="language" ng-model="authorization.language">
                                     <option value="  " label="Language">Language</option>
@@ -85,28 +87,20 @@
                                     <option value="zh" label="Chinese">Chinese</option>
                                 </select>
                             </label>
-                            <label class="item">
+                <label class="item">
                             <button class="button button-block button-positive" type="submit">
                                 Sign In
                             </button>
                             </label>
-                        </div>
-                    </form>
-                    </div>
+                </div>
+                </form>
+                </div>
 
             </ion-content>
         </ion-view>
     </script>
 
-    <script id="home.html" type="text/ng-template">
-        <ion-view view-title="Second page">
-            <ion-content class="padding">
-                <h1>Welcome</h1>
-            </ion-content>
-        </ion-view>
-    </script>
-
-
+  
 </body>
 
 </html>

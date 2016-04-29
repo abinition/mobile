@@ -61,7 +61,7 @@ mobileApp
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log ( jsonData ) ;
+                console.log(jsonData);
                 return jsonData;
               }
             }
@@ -75,12 +75,12 @@ mobileApp
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log ( jsonData ) ;
+                console.log(jsonData);
                 return jsonData;
               }
             }
           });
-          
+
         var load3 = $resource(
           'http://localhost:8081/restapi/systemdata/tenants',
           {}, {
@@ -89,73 +89,87 @@ mobileApp
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log ( jsonData ) ;
+                console.log(jsonData);
                 return jsonData;
               }
             }
-          }); 
+          });
 
         var promise1 = load1.services().$promise;
         var promise2 = load2.productInfo().$promise;
         var promise3 = load3.tenants().$promise;
 
-        $q.all([promise1, promise2, promise3]).then(
-          function (results) {
-            var href = new URL ( results[2]._embedded.tenants[0]._links.self.href ) ;
-            var comps = href.pathname.split('/');
-            var appId = comps[comps.length-1] ;
-            console.log ( appId ) ;
-            callback( appId );
-          },
-          function (errorMsg) {
-            // if any of the previous promises gets rejected
-            // the success callback will never be executed
-            // the error callback will be called...
-            console.log('An error occurred: ', errorMsg);
-          }
+        $q.all([promise1, promise2, promise3])
+          .then(
+            function (results) {
+              // Extract out the userId and return it to the caller
+              var href = new URL(results[2]._embedded.tenants[0]._links.self.href);
+              var comps = href.pathname.split('/');
+              var userId = comps[comps.length - 1];
+              console.log(userId);
+              callback(userId);
+            },
+            function (errorMsg) {
+              // if any of the previous promises gets rejected
+              // the success callback will never be executed
+              // the error callback will be called...
+              console.log('An error occurred: ', errorMsg);
+           }
         );
       },
-      apps: function (authToken, applicationId, callback) {
+      apps: function (authToken, userId, callback) {
+
         var load1 = $resource(
-          'http://localhost:8081/restapi/systemdata/tenants/:appId',
-          {appId: applicationId}, {
+          'http://localhost:8081/restapi/systemdata/tenants/:user',
+          { user: userId }, {
             'tenants': {
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log ( jsonData ) ;
+                console.log(jsonData);
                 return jsonData;
               }
             }
           });
+
         var load2 = $resource(
-          'http://localhost:8081/restapi/systemdata/tenants/:appId/applications',
-          {appId: applicationId}, {
+          'http://localhost:8081/restapi/systemdata/tenants/:user/applications',
+          { user: userId }, {
             'applications': {
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log ( jsonData ) ;
+                console.log(jsonData);
                 return jsonData;
               }
             }
-          });     
-          
-        var promise1 = load1.tenants().$promise;
-        var promise2 = load2.applications( /*{'contains': "{&page,size,sort}"}*/ ).$promise; 
+          });
 
-        $q.all([promise1, promise2]).then(
-          function (results) {
-            callback( results );
-          },
-          function (errorMsg) {
-            // if any of the previous promises gets rejected
-            // the success callback will never be executed
-            // the error callback will be called...
-            console.log('An error occurred: ', errorMsg);
-          }
-        );               
-        }}
-    });
+        var promise1 = load1.tenants().$promise;
+        var promise2 = load2.applications( /*{'contains': "{&page,size,sort}"}*/).$promise;
+
+        $q.all([promise1, promise2])
+          .then(
+            function (results) {
+              var apps = [] ;
+              var appCount = results[1]._embedded.applications.length ;
+              for ( i=0; i<appCount; i++ ) {
+                var href = new URL ( results[1]._embedded.applications[i]._links.self.href ) ;
+                var comps = href.pathname.split('/');
+                var appId = comps[comps.length - 1];
+                apps.push ( new Object ( { app: appId } ) ) ;
+              }
+              callback(apps);
+            },
+            function (errorMsg) {
+              // if any of the previous promises gets rejected
+              // the success callback will never be executed
+              // the error callback will be called...
+              console.log('An error occurred: ', errorMsg);
+            }
+        );
+      }
+    }
+  });

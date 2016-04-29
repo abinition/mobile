@@ -1,0 +1,77 @@
+<xhtml:html xmlns:xhtml=\ "http://www.w3.org/1999/xhtml\" xmlns:xforms=\ "http://www.w3.org/2002/xforms\" xmlns:xsd=\
+    "http://www.w3.org/2001/XMLSchema\">
+    <xhtml:head>
+        <xforms:model>
+            <xforms:instance xmlns=\ "\">  <data>            <CustomerLastName/><CustomerFirstName/></data></xforms:instance>
+            <xforms:instance
+xmlns=\ "\" id=\ "labels\"> 
+                <labels>
+                    <CustomerLastName>Last Name</CustomerLastName>
+                    <CustomerFirstName>First Name</CustomerFirstName>
+                    <data0>Customer Phone Call Lookup</data0>
+                    <data1>InfoArchive HOL 2016</data1><data2/>
+                </labels>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "hints\"> 
+                    <hints>
+                        <CustomerLastName>Enter the Last Name of the Customer</CustomerLastName>
+                        <CustomerFirstName>Enter a Customers First Name</CustomerFirstName>
+                    </hints>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "prompts\"> 
+                    <prompts>
+                        <CustomerLastName/>
+                        <CustomerFirstName/>
+                    </prompts>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "alerts\"> 
+                    <alerts>
+                        <CustomerLastName/>
+                        <CustomerFirstName/>
+                    </alerts>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "range-messages\"> 
+                    <rangemessages>
+                        <CustomerLastName/>
+                        <CustomerFirstName/>
+                    </rangemessages>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "pattern-messages\"> 
+                    <patternmessages>
+                        <CustomerLastName/>
+                        <CustomerFirstName/>
+                    </patternmessages>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "date-from\"> 
+                    <datefrom/>
+                </xforms:instance>
+                <xforms:instance xmlns=\ "\" id=\ "date-to\"> 
+                    <dateto/>
+                </xforms:instance>
+                <xforms:submission id=\ "submit01\" method=\ "post\" serialization=\ "application/xml\"/>
+                <xsd:schema xmlns:xsd=\ "http://www.w3.org/2001/XMLSchema\" xmlns:xforms=\
+                    "http://www.w3.org/2002/xforms\" targetNamespace=\ "http://www.w3.org/2002/xforms\" elementFormDefault=\ "qualified\"> </xsd:schema>
+                <bind xmlns=\ "http://www.w3.org/2002/xforms\" ref=\ "/data/CustomerLastName\"/>
+                <bind xmlns=\ "http://www.w3.org/2002/xforms\" ref=\ "/data/CustomerFirstName\"/>
+        </xforms:model></xhtml:head>
+    <xhtml:body>
+        <group xmlns=\ "http://www.w3.org/2002/xforms\" id=\ "data0\" style=\
+            "background-color: #999999;border-color: #000000\"><label ref=\ "instance('labels')/data0\"/>
+            <group xmlns=\ "http://www.w3.org/2002/xforms\" id=\ "data2\" style=\
+                "background-color: #BBBBBB;\"><label ref=\ "instance('labels')/data2\"/><input xmlns=\ "http://www.w3.org/2002/xforms\" ref=\
+                    "CustomerLastName\"><label ref=\ "instance('labels')/CustomerLastName\"/>
+                <hint ref=\ "instance('hints')/CustomerLastName\"/>
+                <hint appearance=\ "minimal\" ref=\ "instance('prompts')/CustomerLastName\"/>
+                <alert ref=\ "instance('alerts')/CustomerLastName\"/>
+                <message class=\ "range\" ref=\ "instance('range-messages')/CustomerLastName\"/>
+                <message class=\ "pattern\" ref=\ "instance('pattern-messages')/CustomerLastName\"/>
+                </input><input xmlns=\ "http://www.w3.org/2002/xforms\" ref=\ "CustomerFirstName\"><label ref=\
+                    "instance('labels')/CustomerFirstName\"/>
+                <hint ref=\ "instance('hints')/CustomerFirstName\"/>
+                <hint appearance=\ "minimal\" ref=\ "instance('prompts')/CustomerFirstName\"/>
+                <alert ref=\ "instance('alerts')/CustomerFirstName\"/>
+                <message class=\ "range\" ref=\ "instance('range-messages')/CustomerFirstName\"/>
+                <message class=\ "pattern\" ref=\ "instance('pattern-messages')/CustomerFirstName\"/>
+                </input>
+            </group><output xmlns=\ "http://www.w3.org/2002/xforms\" id=\ "data1\"><label ref=\"instance('labels')/data1\"/></output></group>
+    </xhtml:body></xhtml:html>
