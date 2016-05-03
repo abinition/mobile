@@ -26,7 +26,8 @@ mobileApp
       .state('tab', {
         url: '/tab',
         abstract: true,
-        templateUrl: 'templates/tabs.html'
+        templateUrl: 'templates/tabs.html',
+        controller: 'NavCtlr'
       })
       .state('tab.dash', {
         url: '/dash',
@@ -54,7 +55,34 @@ mobileApp
             controller: 'CompCtrl'
           }
         }
-      });
+      })
+      .state('tab.about', {
+        url: '/about',
+        views: {
+          'tab-comp': {
+            templateUrl: 'templates/tab-about.html',
+            controller: 'AboutCtrl'
+          }
+        }
+      })
+      .state('tab.pref', {
+        url: '/pref',
+        views: {
+          'tab-comp': {
+            templateUrl: 'templates/tab-pref.html',
+            controller: 'PrefCtrl'
+          }
+        }
+      })
+      .state('tab.signout', {
+        url: '/signout',
+        views: {
+          'tab-comp': {
+            templateUrl: 'templates/tab-signout.html',
+            controller: 'SignoutCtrl'
+          }
+        }
+      })
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/auth');

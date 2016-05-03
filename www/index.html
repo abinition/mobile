@@ -48,8 +48,6 @@
     -->
     <ion-nav-view></ion-nav-view>
 
-
-
     <script id="auth.html" type="text/ng-template">
         <ion-view class="view-with-bg" hide-nav-bar="true">
             <!--
@@ -72,7 +70,7 @@
                                 <input type="password" name="password" ng-model="authorization.password" placeholder="Enter your password">
                             </label>
 
-                <div class="item assertive" ng-model="authorization.statusText" ng-show="authorization.error">
+                <div class="item assertive" ng-show="authorization.error">
                     <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
                 </div>
                 <label class="item item-input item-select">

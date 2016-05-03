@@ -15,8 +15,10 @@ mobileApp
   })
   .factory('AuthService', function ($resource, addBasicAuth) {
     var authToken = '';
+    var authority = [] ;
     return {
-      getToken: function () { return authToken },
+      getAuthToken: function () { return authToken },
+      getAuthority: function () { return authority },
       login: function (username, password, callback) {
         var api = $resource(
           'http://localhost:8081/user',
@@ -27,19 +29,19 @@ mobileApp
               transformResponse: function (data, headers) {
 
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                angular.forEach(jsonData, function (item) {
-                  //console.log(item);
-                });
-
-                var authorization = headers('x-auth-token');
-                var results = { 'auth': authorization };
+                var results = {} ;
+                if ( jsonData.length > 0 ) {
+                  results.authority = [ jsonData[0].authority, jsonData[1].authority ]  ;
+                }
+                results.authToken = headers('x-auth-token'); ;
                 return results;
               }
             }
           });
         api.query(
           function (response) {
-            authToken = response.auth;
+            authToken = response.authToken;
+            authority = response.authority ;
             callback(response);
           },
           function (err) {
