@@ -14,12 +14,17 @@ mobileApp
     }
   })
   .factory('AuthService', function ($resource, addBasicAuth) {
+    
     var authToken = '';
     var authority = [] ;
+    var username = '' ;
+    
     return {
       getAuthToken: function () { return authToken },
       getAuthority: function () { return authority },
-      login: function (username, password, callback) {
+      getUsername: function () { return username },
+      login: function (un, password, callback) {
+        username = un ;
         var api = $resource(
           'http://localhost:8081/user',
           {}, {
@@ -156,12 +161,19 @@ mobileApp
           .then(
             function (results) {
               var apps = [] ;
+              console.log( results );
               var appCount = results[1]._embedded.applications.length ;
               for ( i=0; i<appCount; i++ ) {
                 var href = new URL ( results[1]._embedded.applications[i]._links.self.href ) ;
                 var comps = href.pathname.split('/');
                 var appId = comps[comps.length - 1];
-                apps.push ( new Object ( { app: appId } ) ) ;
+                apps.push ( new Object ( { 
+                  appId: appId,
+                  name: results[1]._embedded.applications[i].name,
+                  category: results[1]._embedded.applications[i].category,
+                  description: results[1]._embedded.applications[i].description,
+                  state: results[1]._embedded.applications[i].state  
+                })) ;
               }
               callback(apps);
             },

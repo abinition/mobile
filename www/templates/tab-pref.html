@@ -1,10 +1,15 @@
-
 <ion-view view-title="Preferences">
     <ion-content class="padding">
-       Preferences for rita@iacustomer.com
-Groups and Roles:
-  {{authority[0]}}
-  {{authority[1]}}
-
-  </ion-content>
+        <div>
+            <span>Preferences for {{username}}</span>
+        </div>
+        <div>
+            <span>Groups and Roles:</span>
+            <ion-list >
+                <ion-item ng-repeat="role in authority">
+                    {{role}}
+                </ion-item>
+            </ion-list>
+        </div>
+    </ion-content>
 </ion-view>

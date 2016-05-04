@@ -23,9 +23,8 @@ mobileApp
       username: '',
       password: '',
       language: 'en',
-      statusText: '',
-      error: false,
-      token: ''
+      statusText: 'Unknown error',
+      authToken: ''
     };
 
     $scope.signIn = function (form) {
@@ -38,8 +37,8 @@ mobileApp
           if (tokens.authToken) {
             console.log("Returned token is " + tokens.authToken);
             $scope.authorization.error = false;
-            $scope.authorization.token = tokens.authToken;
-            $state.go('tab.dash');
+            $scope.authorization.authToken = tokens.authToken;
+            $state.go('tab.apps');
           }
           else {
             console.log(tokens.status + ' : ' + tokens.statusText);
@@ -51,20 +50,24 @@ mobileApp
     };
   })
 
-  .controller('DashCtrl', function ($scope, $state, AuthService, LoadService) {
-    console.log("HOME");
+  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService) {
+    
+    $scope.add = function ( index ) {
+      console.log( "Added "+index);
+    };
+      
     LoadService.load(AuthService.getAuthToken(), function (userId) {
       console.log('UserId is ' + userId);
-      LoadService.apps(AuthService.getAuthToken(), userId, function (tokens) {
+      LoadService.apps(AuthService.getAuthToken(), userId, function (apps) {
         console.log('Applications');
-        var appCount = tokens.length;
-        console.log(tokens);
+        var appCount = apps.length;
+        $scope.applications = apps ;
       });
     });
   })
   
-  .controller('AppsCtrl', function ($scope, $state) {
-    console.log("Apps");
+  .controller('DashCtrl', function ($scope, $state) {
+    console.log("Dashboard");
   })
   
   .controller('CompCtrl', function ($scope, $state) {
@@ -78,7 +81,7 @@ mobileApp
   .controller('PrefCtrl', function ($scope, $state, AuthService) {
     console.log("Prefs");
     $scope.authority = AuthService.getAuthority() ;
-    debugger;
+    $scope.username = AuthService.getUsername() ;
   })
   
   .controller('SignoutCtrl', function ($scope, $state) {
