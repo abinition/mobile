@@ -59,7 +59,6 @@ mobileApp
   .factory('LoadService', function ($resource, $q, addBearerAuth) {
     return {
       load: function (authToken, callback) {
-        console.log("Loading...");
         var load1 = $resource(
           'http://localhost:8081/restapi/services',
           {}, {
@@ -176,6 +175,91 @@ mobileApp
                 })) ;
               }
               callback(apps);
+            },
+            function (errorMsg) {
+              // if any of the previous promises gets rejected
+              // the success callback will never be executed
+              // the error callback will be called...
+              console.log('An error occurred: ', errorMsg);
+            }
+        );
+      },
+      app: function (authToken, appId, callback) {
+
+        var load1 = $resource(
+          'http://localhost:8081/restapi/systemdata/applications/:app',
+          { app: appId }, {
+            'application': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log(jsonData);
+                return jsonData;
+              }
+            }
+          });
+
+        var load2 = $resource(
+          'http://localhost:8081/restapi/systemdata/applications/:app/searches',
+          { app: appId }, {
+            'searches': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log(jsonData);
+                return jsonData;
+              }
+            }
+          });
+
+        var promise1 = load1.application().$promise;
+        var promise2 = load2.searches().$promise;
+
+        $q.all([promise1, promise2])
+          .then(
+            function (results) {
+              // Extract out the searchId and return it to the caller
+              var href = new URL(results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"].href);
+              var comps = href.pathname.split('/');
+              var searchId = comps[comps.length - 1];
+              callback(searchId);
+            },
+            function (errorMsg) {
+              // if any of the previous promises gets rejected
+              // the success callback will never be executed
+              // the error callback will be called...
+              console.log('An error occurred: ', errorMsg);
+            }
+        );
+      },
+      form: function (authToken, searchId, callback) {
+
+        var load1 = $resource(
+          'http://localhost:8081/restapi/systemdata/xforms/:search',
+          { search: searchId }, {
+            'xforms': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log(jsonData);
+                return jsonData;
+              }
+            }
+          });
+
+        var promise1 = load1.xforms().$promise;
+
+        $q.all([promise1])
+          .then(
+            function (results) {
+              // Extract out the searchId and return it to the caller
+              console.log ( results ) ;
+              var form = $ ( results[0].form ) ;
+              console.log ( form ) ;
+              callback ( form.find('labels') );
             },
             function (errorMsg) {
               // if any of the previous promises gets rejected

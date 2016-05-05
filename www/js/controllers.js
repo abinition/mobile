@@ -19,6 +19,7 @@ mobileApp
   })
 
   .controller('AuthCtrl', function ($scope, $state, AuthService) {
+    
     $scope.authorization = {
       username: '',
       password: '',
@@ -51,39 +52,48 @@ mobileApp
   })
 
   .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService) {
-    
-    $scope.add = function ( index ) {
-      console.log( "Added "+index);
+
+    $scope.add = function (index) {
+      console.log("Added " + index);
+      var appId = $scope.applications[index].appId;
+      LoadService.app(AuthService.getAuthToken(), appId, function (searchId) {
+        console.log('SearchId is ' + searchId);
+        LoadService.form(AuthService.getAuthToken(), searchId, function (form) {
+          console.log('Forms');
+          console.log(form);
+
+        });
+      });
     };
-      
+
     LoadService.load(AuthService.getAuthToken(), function (userId) {
       console.log('UserId is ' + userId);
       LoadService.apps(AuthService.getAuthToken(), userId, function (apps) {
         console.log('Applications');
         var appCount = apps.length;
-        $scope.applications = apps ;
+        $scope.applications = apps;
       });
     });
   })
-  
+
   .controller('DashCtrl', function ($scope, $state) {
     console.log("Dashboard");
   })
-  
+
   .controller('CompCtrl', function ($scope, $state) {
     console.log("Compliance");
   })
-  
+
   .controller('AboutCtrl', function ($scope, $state) {
     console.log("About");
   })
-  
+
   .controller('PrefCtrl', function ($scope, $state, AuthService) {
     console.log("Prefs");
-    $scope.authority = AuthService.getAuthority() ;
-    $scope.username = AuthService.getUsername() ;
+    $scope.authority = AuthService.getAuthority();
+    $scope.username = AuthService.getUsername();
   })
-  
+
   .controller('SignoutCtrl', function ($scope, $state) {
     console.log("Signout");
   });
