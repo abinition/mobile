@@ -51,18 +51,19 @@ mobileApp
     };
   })
 
-  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService) {
+  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, x2js) {
 
     $scope.add = function (index) {
       console.log("Added " + index);
       var appId = $scope.applications[index].appId;
-      LoadService.app(AuthService.getAuthToken(), appId, function (searchId) {
-        console.log('SearchId is ' + searchId);
-        LoadService.form(AuthService.getAuthToken(), searchId, function (form) {
-          console.log('Forms');
-          console.log(form);
-
-        });
+      LoadService.app(AuthService.getAuthToken(), appId, function (formId) {
+        console.log('FormId is ' + formId);
+        if ( formId ) {
+          LoadService.form(AuthService.getAuthToken(), formId, function (form) {
+            console.log('Forms');
+            console.log(form);
+         });
+        }
       });
     };
 

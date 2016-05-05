@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'base64']);
+var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'base64','cb.x2js']);
 
 mobileApp
   .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {

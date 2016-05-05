@@ -14,17 +14,17 @@ mobileApp
     }
   })
   .factory('AuthService', function ($resource, addBasicAuth) {
-    
+
     var authToken = '';
-    var authority = [] ;
-    var username = '' ;
-    
+    var authority = [];
+    var username = '';
+
     return {
       getAuthToken: function () { return authToken },
       getAuthority: function () { return authority },
       getUsername: function () { return username },
       login: function (un, password, callback) {
-        username = un ;
+        username = un;
         var api = $resource(
           'http://localhost:8081/user',
           {}, {
@@ -34,11 +34,11 @@ mobileApp
               transformResponse: function (data, headers) {
 
                 var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                var results = {} ;
-                if ( jsonData.length > 0 ) {
-                  results.authority = [ jsonData[0].authority, jsonData[1].authority ]  ;
+                var results = {};
+                if (jsonData.length > 0) {
+                  results.authority = [jsonData[0].authority, jsonData[1].authority];
                 }
-                results.authToken = headers('x-auth-token'); ;
+                results.authToken = headers('x-auth-token');;
                 return results;
               }
             }
@@ -46,7 +46,7 @@ mobileApp
         api.query(
           function (response) {
             authToken = response.authToken;
-            authority = response.authority ;
+            authority = response.authority;
             callback(response);
           },
           function (err) {
@@ -107,21 +107,21 @@ mobileApp
 
         $q.all([promise1, promise2, promise3])
           .then(
-            function (results) {
-              // Extract out the userId and return it to the caller
-              var href = new URL(results[2]._embedded.tenants[0]._links.self.href);
-              var comps = href.pathname.split('/');
-              var userId = comps[comps.length - 1];
-              console.log(userId);
-              callback(userId);
-            },
-            function (errorMsg) {
-              // if any of the previous promises gets rejected
-              // the success callback will never be executed
-              // the error callback will be called...
-              console.log('An error occurred: ', errorMsg);
-           }
-        );
+          function (results) {
+            // Extract out the userId and return it to the caller
+            var href = new URL(results[2]._embedded.tenants[0]._links.self.href);
+            var comps = href.pathname.split('/');
+            var userId = comps[comps.length - 1];
+            console.log(userId);
+            callback(userId);
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+          );
       },
       apps: function (authToken, userId, callback) {
 
@@ -158,31 +158,31 @@ mobileApp
 
         $q.all([promise1, promise2])
           .then(
-            function (results) {
-              var apps = [] ;
-              console.log( results );
-              var appCount = results[1]._embedded.applications.length ;
-              for ( i=0; i<appCount; i++ ) {
-                var href = new URL ( results[1]._embedded.applications[i]._links.self.href ) ;
-                var comps = href.pathname.split('/');
-                var appId = comps[comps.length - 1];
-                apps.push ( new Object ( { 
-                  appId: appId,
-                  name: results[1]._embedded.applications[i].name,
-                  category: results[1]._embedded.applications[i].category,
-                  description: results[1]._embedded.applications[i].description,
-                  state: results[1]._embedded.applications[i].state  
-                })) ;
-              }
-              callback(apps);
-            },
-            function (errorMsg) {
-              // if any of the previous promises gets rejected
-              // the success callback will never be executed
-              // the error callback will be called...
-              console.log('An error occurred: ', errorMsg);
+          function (results) {
+            var apps = [];
+            console.log(results);
+            var appCount = results[1]._embedded.applications.length;
+            for (i = 0; i < appCount; i++) {
+              var href = new URL(results[1]._embedded.applications[i]._links.self.href);
+              var comps = href.pathname.split('/');
+              var appId = comps[comps.length - 1];
+              apps.push(new Object({
+                appId: appId,
+                name: results[1]._embedded.applications[i].name,
+                category: results[1]._embedded.applications[i].category,
+                description: results[1]._embedded.applications[i].description,
+                state: results[1]._embedded.applications[i].state
+              }));
             }
-        );
+            callback(apps);
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+          );
       },
       app: function (authToken, appId, callback) {
 
@@ -219,26 +219,30 @@ mobileApp
 
         $q.all([promise1, promise2])
           .then(
-            function (results) {
-              // Extract out the searchId and return it to the caller
-              var href = new URL(results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"].href);
+          function (results) {
+            // Extract out the searchId and return it to the caller
+            var formId = 0 ;
+            var xform = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"];
+            if ( xform ) {
+              var href = new URL(xform.href);
               var comps = href.pathname.split('/');
-              var searchId = comps[comps.length - 1];
-              callback(searchId);
-            },
-            function (errorMsg) {
-              // if any of the previous promises gets rejected
-              // the success callback will never be executed
-              // the error callback will be called...
-              console.log('An error occurred: ', errorMsg);
+              var formId = comps[comps.length - 1];
             }
-        );
+            callback(formId);
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+          );
       },
-      form: function (authToken, searchId, callback) {
+      form: function (authToken, formId, callback) {
 
         var load1 = $resource(
-          'http://localhost:8081/restapi/systemdata/xforms/:search',
-          { search: searchId }, {
+          'http://localhost:8081/restapi/systemdata/xforms/:form',
+          { form: formId }, {
             'xforms': {
               method: 'GET',
               headers: addBearerAuth.token(authToken),
@@ -254,20 +258,38 @@ mobileApp
 
         $q.all([promise1])
           .then(
-            function (results) {
-              // Extract out the searchId and return it to the caller
-              console.log ( results ) ;
-              var form = $ ( results[0].form ) ;
-              console.log ( form ) ;
-              callback ( form.find('labels') );
-            },
-            function (errorMsg) {
-              // if any of the previous promises gets rejected
-              // the success callback will never be executed
-              // the error callback will be called...
-              console.log('An error occurred: ', errorMsg);
+          function (results) {
+            // Extract out the searchId and return it to the caller
+            var xml = results[0].form;
+            var x2js = new X2JS();
+            var form = x2js.xml_str2json(xml);
+         
+            var instances = form.html.head.model.instance;
+            var search = [] ;
+            var labels = {} ;
+            angular.forEach(instances, function (value, key) {
+              if ( value._id == "labels") {
+                labels = value.labels ;
+              }
+            });
+            search.push ( labels ) ;
+            var searchId = 0;
+            var searchRef = results[0]._links["http://identifiers.emc.com/search"];
+            if ( searchRef ) {
+              var href = new URL(searchRef.href);
+              var comps = href.pathname.split('/');
+              var searchId = comps[comps.length - 1];
             }
-        );
+            search.push ( {"searchId:": searchId});
+            callback(search);
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+          );
       }
     }
   });
