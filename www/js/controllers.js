@@ -18,6 +18,9 @@ mobileApp
     };
   })
 
+  .controller('MenuCtlr', function ($scope) {
+  })
+  
   .controller('AuthCtrl', function ($scope, $state, AuthService) {
     
     $scope.authorization = {
@@ -51,7 +54,7 @@ mobileApp
     };
   })
 
-  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, x2js) {
+  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService) {
 
     $scope.add = function (index) {
       console.log("Added " + index);
@@ -62,7 +65,8 @@ mobileApp
           LoadService.form(AuthService.getAuthToken(), formId, function (form) {
             console.log('Forms');
             console.log(form);
-         });
+            $state.go('tab.search');
+          });
         }
       });
     };
@@ -77,6 +81,77 @@ mobileApp
     });
   })
 
+  .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js) {
+    
+    $scope.search = {
+      lastname: '',
+      firstname: ''
+    };
+
+    $scope.signIn = function (form) {
+      console.log ( form ) ;
+      
+      if (form.$valid) {
+
+        var preload = {
+          "data": {
+            "criterion": [
+              {
+                "name": "CustomerLastName",
+                "operator": "EQUAL",
+                "value" : ""
+              },
+              {
+                "name": "CustomerFirstName",
+                "operator": "EQUAL",
+                "value" : ""
+              }
+            ],
+            "order-by": {
+              "name": "CustomerLastName",
+              "direction": "ASCENDING"
+            }
+          }
+        } ;
+        var xml = new X2JS();
+        var payload = xml.json2xml_str ( preload ) ;
+            /*
+            <data>
+              <criterion>
+                <name>CustomerLastName</name>
+                <operator>EQUAL</operator>
+                <value></value>
+             </criterion>
+             <criterion>
+                <name>CustomerFirstName</name>
+                <operator>EQUAL</operator>
+                <value></value>
+             </criterion>
+             <order-by>
+                <name>CustomerLastName</name>
+                <direction>ASCENDING</direction>
+             </order-by>
+           </data>
+          */
+        
+        SearchService.search( AuthService.getAuthToken(), 
+                              LoadService.getSearchId(), 
+                              LoadService.getQueryId(),
+                              payload, 
+                              function (tokens) {
+          console.log('done');
+          if (tokens.results) {
+            
+            $state.go('tab.results');
+          }
+          else {
+
+          }
+        });
+      }
+    };
+  })
+  
   .controller('DashCtrl', function ($scope, $state) {
     console.log("Dashboard");
   })

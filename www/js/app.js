@@ -47,6 +47,15 @@ mobileApp
           }
         }
       })
+      .state('tab.search', {
+        url: '/search',
+        views: {
+          'tab-apps': {
+            templateUrl: 'templates/tab-search.html',
+            controller: 'SearchCtrl'
+          }
+        }
+      })
       .state('tab.comp', {
         url: '/comp',
         views: {
@@ -59,7 +68,7 @@ mobileApp
       .state('tab.about', {
         url: '/about',
         views: {
-          'tab-comp': {
+          'tab-dash': {
             templateUrl: 'templates/tab-about.html',
             controller: 'AboutCtrl'
           }
@@ -74,10 +83,27 @@ mobileApp
           }
         }
       })
+      /*
+      .state('menu', {
+        url: '/menu',
+        abstract: true,
+        templateUrl: 'templates/menu.html',
+        controller: 'MenuCtlr'
+      })
+      .state('menu.pref', {
+        url: '/pref',
+        views: {
+          'menu-pref': {
+            templateUrl: 'templates/tab-pref.html',
+            controller: 'PrefCtrl'
+          }
+        }
+      })
+      */
       .state('tab.signout', {
         url: '/signout',
         views: {
-          'tab-comp': {
+          'tab-signout': {
             templateUrl: 'templates/tab-signout.html',
             controller: 'SignoutCtrl'
           }

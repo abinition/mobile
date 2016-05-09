@@ -59,24 +59,24 @@
             -->
             <ion-content class="view-content">
                 <img class="image-logo" src="../img/infoarchive42.png">
-                <label class="item list-inset form-signin">
+                <div>
                     <form name="authorizationForm" novalidate="" ng-submit="signIn(authorizationForm)">
-                        <div class="list list-inset">
+                        <div class="list list-inset form-signin">
                             <label class="item item-input"">
                                 <i class="icon ion-person placeholder-icon"></i>
                                 <input type="text" name="username" ng-model="authorization.username" placeholder="Enter your username">
                             </label>
 
-                <label class="item item-input">
+                            <label class="item item-input">
                                 <i class="icon ion-locked placeholder-icon"></i>
                                 <input type="password" name="password" ng-model="authorization.password" placeholder="Enter your password">
                             </label>
 
-                <div class="item assertive" ng-show="authorization.error">
-                    <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
-                </div>
-                
-                <label class="item item-input item-select">
+                            <div class="item assertive" ng-show="authorization.error">
+                                <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
+                            </div>
+
+                            <label class="item item-input item-select">
                                 <i class="icon ion-chatbubble placeholder-icon"></i>
                                 <select name="language" ng-model="authorization.language">
                                     <option value="  " label="Language">Language</option>
@@ -88,20 +88,20 @@
                                     <option value="zh" label="Chinese">Chinese</option>
                                 </select>
                             </label>
-                <label class="item">
-                            <button class="button button-block button-positive" type="submit">
+                            <label class="item">
+                                <button class="button button-block button-positive" type="submit">
                                 Sign In
-                            </button>
+                                </button>
                             </label>
-                </div>
-                </form>
+                        </div>
+                    </form>
                 </div>
 
             </ion-content>
         </ion-view>
     </script>
 
-  
+
 </body>
 
 </html>

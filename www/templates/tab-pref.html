@@ -1,11 +1,21 @@
 <ion-view view-title="Preferences">
-    <ion-content class="padding">
+    <!--<ion-nav-buttons side="left">
+
+      <ion-nav-buttons side="left">
+
+        <button menu-toggle="left" class="icon ion-ios7-arrow-back"></button>
+
+      </ion-nav-buttons>
+
+    </ion-nav-buttons>
+   -->
+    <ion-content>
         <div>
             <span>Preferences for {{username}}</span>
         </div>
         <div>
             <span>Groups and Roles:</span>
-            <ion-list >
+            <ion-list>
                 <ion-item ng-repeat="role in authority">
                     {{role}}
                 </ion-item>

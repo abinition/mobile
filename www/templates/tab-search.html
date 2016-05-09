@@ -1,0 +1,22 @@
+<!--<ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'> -->
+<ion-view view-title="Search">
+  <ion-content padding="true">
+
+    <form name="searchForm" novalidate="" ng-submit="signIn(searchForm)">
+      <div class="list list-inset">
+
+        <label class="item item-input">
+        <input type="text" placeholder="Last Name" name="lastname" ng-model="search.lastname"/>
+      </label>
+        <label class="item item-input">
+        <input type="text" placeholder="First Name" name="firstname" ng-model="search.firstname"/>
+      </label>
+        <label class="item">
+        <button class="button button-block button-positive" type="submit">
+          Sign In
+        </button>
+      </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-view>
