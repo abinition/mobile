@@ -83,7 +83,7 @@ mobileApp
           }
         }
       })
-      /*
+      
       .state('menu', {
         url: '/menu',
         abstract: true,
@@ -99,7 +99,7 @@ mobileApp
           }
         }
       })
-      */
+      
       .state('tab.signout', {
         url: '/signout',
         views: {

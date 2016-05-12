@@ -12,13 +12,15 @@ mobileApp
     }
   })
 
-  .controller('NavCtlr', function ($scope, $ionicSideMenuDelegate) {
+  .controller('NavCtlr', function ($scope, $ionicSideMenuDelegate, AuthService ) {
     $scope.toggleLeft = function () {
       $ionicSideMenuDelegate.toggleLeft();
     };
+    $scope.username = AuthService.getUsername();
   })
 
-  .controller('MenuCtlr', function ($scope) {
+  .controller('MenuCtlr', function ($scope,$state) {
+            $state.go('menu.pref');
   })
   
   .controller('AuthCtrl', function ($scope, $state, AuthService) {
@@ -28,28 +30,50 @@ mobileApp
       password: '',
       language: 'en',
       statusText: 'Unknown error',
-      authToken: ''
+      access_token : ''
     };
 
+    $scope.payload = function(obj) {
+        var str = [];
+        for(var p in obj)
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        return str.join("&");
+    } ;
+        
     $scope.signIn = function (form) {
+      
       if (form.$valid) {
 
         console.log("Authenticating");
-        console.log($scope.authorization);
-        AuthService.login($scope.authorization.username, $scope.authorization.password, function (tokens) {
-          console.log('done');
-          if (tokens.authToken) {
-            console.log("Returned token is " + tokens.authToken);
-            $scope.authorization.error = false;
-            $scope.authorization.authToken = tokens.authToken;
-            $state.go('tab.apps');
-          }
-          else {
-            console.log(tokens.status + ' : ' + tokens.statusText);
-            $scope.authorization.error = true;
-            $scope.authorization.statusText = tokens.statusText;
-          }
-        });
+        console.log($scope.authorization);        
+        
+        var postData = {
+            "grant_type": "password",
+            "username" : $scope.authorization.username,
+            "password" : $scope.authorization.password,
+            "client_id" : "infoarchive.iawa",
+            "client_secret" : "secret",
+            "scope" : "search compliance administration"
+        } ;
+        
+        
+        AuthService.login(  $scope.authorization.username, 
+                            $scope.authorization.password,
+                            $scope.payload(postData), 
+          function (tokens) {
+            if (tokens.access_token) {
+              console.log("Returned token is " + tokens.access_token);
+              $scope.authorization.error = false;
+              $scope.authorization.access_token = tokens.access_token;
+              $state.go('tab.apps');
+           }
+            else {
+              if ( !tokens.error ) tokens.error = "Error" ;
+              if ( !tokens.error_description ) tokens.error_description = "Unknown" ;
+              $scope.authorization.error = true;
+              $scope.authorization.statusText = tokens.error + ":" + tokens.error_description ;;
+            }
+          });
       }
     };
   })
@@ -59,10 +83,10 @@ mobileApp
     $scope.add = function (index) {
       console.log("Added " + index);
       var appId = $scope.applications[index].appId;
-      LoadService.app(AuthService.getAuthToken(), appId, function (formId) {
+      LoadService.app(AuthService.getAccessToken(), appId, function (formId) {
         console.log('FormId is ' + formId);
         if ( formId ) {
-          LoadService.form(AuthService.getAuthToken(), formId, function (form) {
+          LoadService.form(AuthService.getAccessToken(), formId, function (form) {
             console.log('Forms');
             console.log(form);
             $state.go('tab.search');
@@ -71,9 +95,9 @@ mobileApp
       });
     };
 
-    LoadService.load(AuthService.getAuthToken(), function (userId) {
+    LoadService.load(AuthService.getAccessToken(), function (userId) {
       console.log('UserId is ' + userId);
-      LoadService.apps(AuthService.getAuthToken(), userId, function (apps) {
+      LoadService.apps(AuthService.getAccessToken(), userId, function (apps) {
         console.log('Applications');
         var appCount = apps.length;
         $scope.applications = apps;
@@ -134,7 +158,7 @@ mobileApp
            </data>
           */
         
-        SearchService.search( AuthService.getAuthToken(), 
+        SearchService.search( AuthService.getAccessToken(), 
                               LoadService.getSearchId(), 
                               LoadService.getQueryId(),
                               payload, 

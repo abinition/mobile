@@ -2,7 +2,8 @@ mobileApp
   .factory('addBasicAuth', function ($base64) {
     return {
       token: function (user, passwd) {
-        return { 'Authorization': 'Basic ' + $base64.encode(user + ':' + passwd) };
+        return {  'Authorization': 'Basic ' + $base64.encode("infoarchive.iawa:secret"),
+                  "Content-Type" : "application/x-www-form-urlencoded" };
       }
     }
   })
@@ -23,39 +24,41 @@ mobileApp
  
   .factory('AuthService', function ($resource, addBasicAuth) {
 
-    var authToken = '';
-    var authority = [];
-    var username = '';
-
+    var username = "" ;
+    var credentials = {
+      access_token: "",
+      expires_in: "",
+      jti : "",
+      refresh_token : "",
+      scope : "administration compliance search",
+      token_type : "bearer"
+    };
+    
     return {
-      getAuthToken: function () { return authToken },
-      getAuthority: function () { return authority },
+      getAccessToken: function () { return credentials.access_token },
+      getAuthority: function () { return [credentials.scope] },
       getUsername: function () { return username },
-      login: function (un, password, callback) {
+      login: function (un, password, payload, callback) {
         username = un;
+
         var api = $resource(
-          'http://localhost:8081/user',
+          'http://localhost:8081/oauth/token',
           {}, 
           {
-            'query': {
-              method: 'GET',
-              headers: addBasicAuth.token(username, password),
+            'oauth': {
+              method: 'POST',
+              headers: addBasicAuth.token(username,password),
               transformResponse: function (data, headers) {
-
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                var results = {};
-                if (jsonData.length > 0) {
-                  results.authority = [jsonData[0].authority, jsonData[1].authority];
-                }
-                results.authToken = headers('x-auth-token');;
-                return results;
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)                
+                return jsonData;
               }
             }
           });
-        api.query(
+        api.oauth(
+          {},
+          payload,
           function (response) {
-            authToken = response.authToken;
-            authority = response.authority;
+            credentials = response ;
             callback(response);
           },
           function (err) {
