@@ -7,6 +7,8 @@
 // 'starter.controllers' is found in controllers.js
 var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'base64','cb.x2js']);
 
+var tabState ;
+
 mobileApp
   .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
@@ -27,7 +29,7 @@ mobileApp
         url: '/tab',
         abstract: true,
         templateUrl: 'templates/tabs.html',
-        controller: 'NavCtlr'
+        controller: 'TabCtlr'
       })
       .state('tab.dash', {
         url: '/dash',
@@ -46,7 +48,7 @@ mobileApp
             controller: 'AppsCtrl'
           }
         }
-      })
+      })    
       .state('tab.search', {
         url: '/search',
         views: {
@@ -74,32 +76,6 @@ mobileApp
           }
         }
       })
-      .state('tab.pref', {
-        url: '/pref',
-        views: {
-          'tab-comp': {
-            templateUrl: 'templates/tab-pref.html',
-            controller: 'PrefCtrl'
-          }
-        }
-      })
-      
-      .state('menu', {
-        url: '/menu',
-        abstract: true,
-        templateUrl: 'templates/menu.html',
-        controller: 'MenuCtlr'
-      })
-      .state('menu.pref', {
-        url: '/pref',
-        views: {
-          'menu-pref': {
-            templateUrl: 'templates/tab-pref.html',
-            controller: 'PrefCtrl'
-          }
-        }
-      })
-      
       .state('tab.signout', {
         url: '/signout',
         views: {
@@ -108,7 +84,18 @@ mobileApp
             controller: 'SignoutCtrl'
           }
         }
+      })  
+      .state('tab.pref', {
+        url: '/pref',
+        views: {
+          'tab-apps': {
+            templateUrl: 'templates/tab-pref.html',
+            controller: 'PrefCtrl'
+          }
+        }
       })
+      
+
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/auth');

@@ -1,25 +1,22 @@
-<ion-side-menus> <!--enable-menu-with-back-views="false"-->>
+<ion-side-menus enable-menu-with-back-views="true" ng-controller="SideCtlr">
 
-      <ion-side-menu-content ng-controller="NavCtlr">
+  <ion-side-menu-content >
 
-        <!--
-        <ion-nav-bar class="bar-energized nav-title-slide-ios7">
-          <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i></ion-nav-back-button>
-        </ion-nav-bar>
-        -->
-        <!---->
-        <ion-nav-bar class="bar-stable">
-          <ion-nav-back-button>
-          </ion-nav-back-button>
-          <ion-nav-buttons side="right">
-            <button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button>
-        </ion-nav-buttons>
-        </ion-nav-bar>
+    <ion-nav-bar class="bar-stable">
       
-      <!--
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+      
+      
+      <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="right"></button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <!--
      <ion-nav-view name="fst" animation="slide-left-right"></ion-nav-view>
-     -->  
-      
+     -->
+
 
     <ion-tabs class="tabs-icon-top tabs-color-active-positive">
       <!-- Applications Tab -->
@@ -51,46 +48,16 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close href="#/menu/pref">
+        <ion-item menu-close ng-click="openPrefPopover($event)"> 
           Preferences
         </ion-item>
-        <ion-item menu-close href="#/tab/about">
+        <ion-item menu-close ng-click="openAboutPopover($event)">
           About
         </ion-item>
-        <ion-item menu-close href="#/tab/signout">
+        <ion-item menu-close ng-click="openSignoutPopover($event)">
           Signout
         </ion-item>
       </ion-list>
     </ion-content>
   </ion-side-menu>
 </ion-side-menus>
-
-<!--
-<ion-side-menus>
-    <ion-side-menu-content ng-controller="NavController">
-
-      <ion-nav-bar class="bar-energized nav-title-slide-ios7">
-        <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i></ion-nav-back-button>
-      </ion-nav-bar>
-      <ion-nav-view name="snd" animation="slide-left-right"></ion-nav-view>
-
-    </ion-side-menu-content>
-    <ion-side-menu side="left" ng-controller="NavController">
-
-      <ion-header-bar class="bar bar-header bar-assertive">
-        <h1 class="title">Second Section Left Menu</h1>
-      </ion-header-bar>
-      <ion-content has-header="true">
-        <ul class="list">
-          <a ui-sref="snd.home" nav-clear class="item" ng-click="toggleLeft()">Home</a>
-          <a ui-sref="snd.chat" nav-clear class="item" ng-click="toggleLeft()">Chat</a>
-          <a ui-sref="snd.drink" nav-clear class="item" ng-click="toggleLeft()">Drink</a>
-        </ul>
-      </ion-content>
-      <ion-footer-bar class="bar bar-footer">
-        <a class="button button-fullwidth" ui-sref="snd.policy" ng-click="toggleLeft()">Privacy Policy</a>
-      </ion-footer-bar>
-
-    </ion-side-menu>
-  </ion-side-menus>
-  -->

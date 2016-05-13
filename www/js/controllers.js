@@ -12,15 +12,62 @@ mobileApp
     }
   })
 
-  .controller('NavCtlr', function ($scope, $ionicSideMenuDelegate, AuthService ) {
+
+  .controller('SideCtlr', function ($scope, AuthService, $ionicPopover) {
+
+    console.log("SIDE CONTROLLER");
+    
+    /*
     $scope.toggleLeft = function () {
       $ionicSideMenuDelegate.toggleLeft();
     };
+    */
     $scope.username = AuthService.getUsername();
+    $scope.authority = AuthService.getAuthority();
+    $scope.username = AuthService.getUsername();
+    
+    $ionicPopover.fromTemplateUrl('templates/pop-pref.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+      $scope.prefPopover = popover;
+    });
+    $ionicPopover.fromTemplateUrl('templates/pop-about.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+      $scope.aboutPopover = popover;
+    });
+    $ionicPopover.fromTemplateUrl('templates/pop-signout.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+      $scope.signoutPopover = popover;
+    });
+    
+    $scope.openPrefPopover = function($event) {
+      $scope.prefPopover.show($event);
+    };
+    $scope.openAboutPopover = function($event) {
+      $scope.aboutPopover.show($event);
+    };
+    $scope.openSignoutPopover = function($event) {
+      $scope.signoutPopover.show($event);
+    };
+    //Cleanup the popover when we're done with it!
+    $scope.$on('$destroy', function() {
+      debugger;
+      $scope.popover.remove();
+    });
+    
   })
-
-  .controller('MenuCtlr', function ($scope,$state) {
-            $state.go('menu.pref');
+  
+  .controller('TabCtlr', function ($scope, $ionicHistory) {
+    console.log ( "TAB CONTROLLER");
+    console.log($ionicHistory.currentStateName());  
   })
   
   .controller('AuthCtrl', function ($scope, $state, AuthService) {
@@ -78,7 +125,7 @@ mobileApp
     };
   })
 
-  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService) {
+  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicHistory) {
 
     $scope.add = function (index) {
       console.log("Added " + index);
@@ -101,8 +148,13 @@ mobileApp
         console.log('Applications');
         var appCount = apps.length;
         $scope.applications = apps;
+        console.log($ionicHistory.currentStateName());
+        tabState = "tab.apps" ;
       });
     });
+    
+       
+       
   })
 
   .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js) {
@@ -178,24 +230,15 @@ mobileApp
   
   .controller('DashCtrl', function ($scope, $state) {
     console.log("Dashboard");
+            tabState = "tab.dash" ;
   })
 
   .controller('CompCtrl', function ($scope, $state) {
     console.log("Compliance");
+            tabState = "tab.comp" ;
   })
 
-  .controller('AboutCtrl', function ($scope, $state) {
-    console.log("About");
-  })
 
-  .controller('PrefCtrl', function ($scope, $state, AuthService) {
-    console.log("Prefs");
-    $scope.authority = AuthService.getAuthority();
-    $scope.username = AuthService.getUsername();
-  })
 
-  .controller('SignoutCtrl', function ($scope, $state) {
-    console.log("Signout");
-  });
 
 
