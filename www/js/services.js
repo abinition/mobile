@@ -3,7 +3,8 @@ mobileApp
     return {
       token: function (user, passwd) {
         return {  'Authorization': 'Basic ' + $base64.encode("infoarchive.iawa:secret"),
-                  "Content-Type" : "application/x-www-form-urlencoded" };
+                  "Content-Type" : "application/x-www-form-urlencoded" 
+                };
       }
     }
   })
@@ -17,7 +18,9 @@ mobileApp
   .factory('addBearerAuth2', function () {
     return {
       token: function (authToken) {
-        return { 'Authorization': 'Bearer ' + authToken,  "Content-Type":"application/xml" };
+        return { 'Authorization': 'Bearer ' + authToken,  
+                 "Content-Type":"application/xml" 
+                };
       }
     }
   })
@@ -69,9 +72,9 @@ mobileApp
     }
   })
   .factory('SearchService', function ($resource, $q, addBearerAuth2) {
-
-    return {
-      search: function (authToken, searchId, queryId, payload, callback) {
+    
+    return {   
+      search: function (authToken, searchId, resultsId, payload, callback) {
         var load1 = $resource(
           'http://localhost:8081/restapi/systemdata/searches/:search',
           {search: searchId }, 
@@ -86,11 +89,12 @@ mobileApp
               }
             }
           });
+
         var load2 = $resource(
-          'http://localhost:8081/restapi/systemdata/queries/:query',
-          {query: queryId }, 
+          'http://localhost:8081/restapi/systemdata/result-masters/:result',
+          {result: resultsId }, 
           {
-            'queries': {
+            'results': {
               method: 'GET',
               headers: addBearerAuth2.token(authToken),
               transformResponse: function (data, headers) {
@@ -100,23 +104,28 @@ mobileApp
               }
             }
           });
-          
         var promise1 = load1.searches({}, payload).$promise;
-        var promise2 = load2.queries().$promise;
-
+        var promise2 = load2.results().$promise;
+        
         $q.all([promise1, promise2])
           .then(
-          function (results) {
-            // Extract out the userId and return it to the caller
-            console.log(results);
-            callback(results);
-          },
-          function (errorMsg) {
-            // if any of the previous promises gets rejected
-            // the success callback will never be executed
-            // the error callback will be called...
-            console.log('An error occurred: ', errorMsg);
-          }
+            function (results) {
+              console.log(results);
+              // Extract the column names from results[1]
+              // Extract the data from results[0]
+              // panels.tabs[0].columns[i].label
+              var tokens = {
+                "results" : [0,1,2,3]
+              };
+              callback(tokens);
+              
+            },
+            function (errorMsg) {
+              // if any of the previous promises gets rejected
+              // the success callback will never be executed
+              // the error callback will be called...
+              console.log('An error occurred: ', errorMsg);
+            }
           );
       }
     }
@@ -128,10 +137,12 @@ mobileApp
     var queryId = '' ;
     var userId = '' ;
     var appId = '' ;
-    
+    var resultsId = '' ;
+        
     return {
       getAppId: function () { return appId },
       getSearchId: function () { return searchId },
+      getResultsId: function () { return resultsId },  
       getFormId: function () { return formId },
       getUserId: function () { return userId },
       getQueryId: function () { return queryId },
@@ -193,7 +204,10 @@ mobileApp
             var comps = href.pathname.split('/');
             userId = comps[comps.length - 1];
             console.log(userId);
-            callback(userId);
+            var tokens = {
+              "userId" : userId 
+            } ;
+            callback(tokens);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected
@@ -297,8 +311,7 @@ mobileApp
               }
             }
           });
-
-
+        
         var load3 = $resource(
           'http://localhost:8081/restapi/systemdata/applications/:app/aics',
           { app: appId }, 
@@ -321,7 +334,7 @@ mobileApp
         $q.all([promise1, promise2, promise3])
           .then(
           function (results) {
-            // Extract out the searchId and return it to the caller
+            // Extract out id's we need
             var xform = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"];
             if ( xform ) {
               var href = new URL(xform.href);
@@ -334,7 +347,18 @@ mobileApp
               var comps = href.pathname.split('/');
               queryId = comps[comps.length - 1];
             }
-            callback(formId);
+            var result = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/result-master"];
+            if ( result ) {
+              var href = new URL(result.href);
+              var comps = href.pathname.split('/');
+              resultsId = comps[comps.length - 1];
+            }
+            var tokens = {
+              "formId": formId,
+              "queryId" : queryId,
+              "resultsId" : resultsId
+            } ;
+            callback(tokens);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected
@@ -344,7 +368,7 @@ mobileApp
           }
           );
       },
-      form: function (authToken, formId, callback) {
+      form: function (authToken, formId, queryId, callback) {
 
         var load1 = $resource(
           'http://localhost:8081/restapi/systemdata/xforms/:form',
@@ -360,10 +384,25 @@ mobileApp
               }
             }
           });
+          
+        var load2 = $resource(
+          'http://localhost:8081/restapi/systemdata/queries/:query',
+          {query: queryId }, 
+          {
+            'queries': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
 
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                return jsonData;
+              }
+            }
+          });
         var promise1 = load1.xforms().$promise;
-
-        $q.all([promise1])
+        var promise2 = load2.queries().$promise;
+        
+        $q.all([promise1,promise2])
           .then(
           function (results) {
             // Extract out the searchId and return it to the caller
@@ -372,22 +411,28 @@ mobileApp
             var form = js.xml_str2json(xml);
          
             var instances = form.html.head.model.instance;
-            var search = [] ;
-            var labels = {} ;
+            var labels = [] ;
+            var label = {} ;
             angular.forEach(instances, function (value, key) {
               if ( value._id == "labels") {
-                labels = value.labels ;
+                label = value.labels ;
               }
             });
-            search.push ( labels ) ;
+            labels.push ( label ) ;
+            
             var searchRef = results[0]._links["http://identifiers.emc.com/search"];
             if ( searchRef ) {
               var href = new URL(searchRef.href);
               var comps = href.pathname.split('/');
               searchId = comps[comps.length - 1];
             }
-            search.push ( {"searchId:": searchId});
-            callback(search);
+            
+            var tokens = {
+              "searchId": searchId,
+              "labels": labels 
+            } ;
+            
+            callback(tokens);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected

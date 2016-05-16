@@ -124,36 +124,40 @@ mobileApp
   .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicHistory) {
 
     $scope.add = function (index) {
+      
       console.log("Added " + index);
       var appId = $scope.applications[index].appId;
-      LoadService.app(AuthService.getAccessToken(), appId, function (formId) {
-        console.log('FormId is ' + formId);
-        if ( formId ) {
-          LoadService.form(AuthService.getAccessToken(), formId, function (form) {
+      
+      LoadService.app(AuthService.getAccessToken(), appId, function (tokens) {
+        
+        if ( tokens.formId && tokens.queryId ) {
+          
+          LoadService.form(AuthService.getAccessToken(), tokens.formId, tokens.queryId, function (tokens) {
             console.log('Forms');
-            console.log(form);
+            console.log( tokens );
             $state.go('tab.search');
           });
+          
         }
       });
     };
 
-    LoadService.load(AuthService.getAccessToken(), function (userId) {
-      console.log('UserId is ' + userId);
-      LoadService.apps(AuthService.getAccessToken(), userId, function (apps) {
+    LoadService.load(AuthService.getAccessToken(), function (tokens) {
+      
+      console.log('UserId is ' + tokens.userId);
+      
+      LoadService.apps(AuthService.getAccessToken(), tokens.userId, function (apps) {
+        
         console.log('Applications');
         var appCount = apps.length;
         $scope.applications = apps;
         console.log($ionicHistory.currentStateName());
         tabState = "tab.apps" ;
+      
       });
-    });
-    
-       
-       
+    });       
   })
  
-
   .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js) {
     
     $scope.search = {
@@ -161,8 +165,7 @@ mobileApp
       firstname: ''
     };
 
-    $scope.signIn = function (form) {
-      console.log ( form ) ;
+    $scope.search = function (form) {
       
       if (form.$valid) {
 
@@ -186,6 +189,7 @@ mobileApp
             }
           }
         } ;
+        
         var xml = new X2JS();
         var payload = xml.json2xml_str ( preload ) ;
             /*
@@ -209,10 +213,11 @@ mobileApp
         
         SearchService.search( AuthService.getAccessToken(), 
                               LoadService.getSearchId(), 
-                              LoadService.getQueryId(),
+                              LoadService.getResultsId(),
                               payload, 
                               function (tokens) {
-          console.log('done');
+          console.log('Results');
+          console.log ( tokens ) ;
           //if (tokens.results) {
             
             $state.go('tab.results');
