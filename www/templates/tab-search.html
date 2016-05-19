@@ -4,16 +4,16 @@
 
     <form name="searchForm" novalidate="" ng-submit="search(searchForm)">
       <div class="list list-inset">
+        <div ng-repeat="element in formData.labels" >
 
-        <label class="item item-input">
-        <input type="text" placeholder="Last Name" name="lastname" ng-model="search.lastname"/>
-      </label>
-        <label class="item item-input">
-        <input type="text" placeholder="First Name" name="firstname" ng-model="search.firstname"/>
-      </label>
+          <label class="item item-input">
+            <input type="text" ng-model="element"/>
+          </label>
+          
+        </div>
         <label class="item">
         <button class="button button-block button-positive" type="submit">
-          Sign In
+          Search
         </button>
       </label>
       </div>

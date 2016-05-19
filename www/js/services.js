@@ -73,7 +73,14 @@ mobileApp
   })
   .factory('SearchService', function ($resource, $q, addBearerAuth2) {
     
-    return {   
+    var data = {} ;
+    
+    return {
+      
+      getResults: function () { 
+        return data ;
+      },
+      
       search: function (authToken, searchId, resultsId, payload, callback) {
         var load1 = $resource(
           'http://localhost:8081/restapi/systemdata/searches/:search',
@@ -112,11 +119,51 @@ mobileApp
             function (results) {
               console.log(results);
               // Extract the column names from results[1]
+              // results[1].panels[0] <-- Main Table
+              //    panels[0].tabs[0].columns.name .label .datatype 
+              // results[1].panels[1] <-- Inline panel
+              // results[1].panels[2] <-- Side panel
+              //
               // Extract the data from results[0]
-              // panels.tabs[0].columns[i].label
-              var tokens = {
-                "results" : [0,1,2,3]
-              };
+              /*
+                  "_embedded" : {
+                     "results" : [ {
+                      "rows" : [ {
+                        "columns" : [ {
+                          "name" : "SentToArchiveDate",
+                          "value" : "2005-12-01"
+                          
+                           $scope.data.columns = [{"id":"1453","name":"Product"},{"id":"1355","name":"Weight"},{"id":"0393","name":"Height"},{"id":"3932","name":"Width"},{"id":"2939","name":"Depth"},{"id":"1234","name":"Color"}];
+    
+  $scope.data.items = [{"1234":"Pink","1355":"21 oz.","1453":"ea","2939":"3 in.","3932":"29  in.","0393":"12  in."},{"1234":"Black","1355":
+               */
+              data = {
+                columns: [],
+                items: []
+              } ;
+
+              var numCols = results[1].panels[0].tabs[0].columns.length ;
+              for ( col=0; col<numCols; col++) {                  
+                var id = results[1].panels[0].tabs[0].columns[col].name ;
+                var label = results[1].panels[0].tabs[0].columns[col].label ;
+                data.columns.push ( { "id": id, "name": label } ) ;
+              }
+
+              
+              var numRows = results[0]._embedded.results[0].rows.length ;
+              for ( row=0; row<numRows; row++ ) {
+                var numCols = results[0]._embedded.results[0].rows[row].columns.length ;
+                var rowData = {} ;
+                for ( col=0; col<numCols; col++) {                  
+                  var id = results[0]._embedded.results[0].rows[0].columns[col].name ;
+                  var val = results[0]._embedded.results[0].rows[row].columns[col].value ;
+                  rowData[id] = val ;
+                }
+                data.items.push ( rowData ) ;
+              }
+              
+              console.log ( data ) ;
+              var tokens = { "rows": numRows } ;
               callback(tokens);
               
             },
@@ -138,6 +185,7 @@ mobileApp
     var userId = '' ;
     var appId = '' ;
     var resultsId = '' ;
+    var formData = {} ;
         
     return {
       getAppId: function () { return appId },
@@ -146,6 +194,7 @@ mobileApp
       getFormId: function () { return formId },
       getUserId: function () { return userId },
       getQueryId: function () { return queryId },
+      getFormData: function () { return formData },
       load: function (authToken, callback) {
         var load1 = $resource(
           'http://localhost:8081/restapi/services',
@@ -334,24 +383,30 @@ mobileApp
         $q.all([promise1, promise2, promise3])
           .then(
           function (results) {
+            console.log ( results ) ;
+            
             // Extract out id's we need
-            var xform = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"];
-            if ( xform ) {
-              var href = new URL(xform.href);
-              var comps = href.pathname.split('/');
-              formId = comps[comps.length - 1];
-            }
-            var query = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/query"];
-            if ( query ) {
-              var href = new URL(query.href);
-              var comps = href.pathname.split('/');
-              queryId = comps[comps.length - 1];
-            }
-            var result = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/result-master"];
-            if ( result ) {
-              var href = new URL(result.href);
-              var comps = href.pathname.split('/');
-              resultsId = comps[comps.length - 1];
+            if ( results[1]._embedded ) {
+              if ( results[1]._embedded.searches ) {
+                var xform = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"];
+                if ( xform ) {
+                  var href = new URL(xform.href);
+                  var comps = href.pathname.split('/');
+                  formId = comps[comps.length - 1];
+                }
+                var query = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/query"];
+                if ( query ) {
+                  var href = new URL(query.href);
+                  var comps = href.pathname.split('/');
+                  queryId = comps[comps.length - 1];
+                }
+                var result = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/result-master"];
+                if ( result ) {
+                  var href = new URL(result.href);
+                  var comps = href.pathname.split('/');
+                  resultsId = comps[comps.length - 1];
+                }
+              }
             }
             var tokens = {
               "formId": formId,
@@ -368,7 +423,7 @@ mobileApp
           }
           );
       },
-      form: function (authToken, formId, queryId, callback) {
+      form: function (authToken, formId /*, queryId*/, callback) {
 
         var load1 = $resource(
           'http://localhost:8081/restapi/systemdata/xforms/:form',
@@ -384,7 +439,7 @@ mobileApp
               }
             }
           });
-          
+          /*
         var load2 = $resource(
           'http://localhost:8081/restapi/systemdata/queries/:query',
           {query: queryId }, 
@@ -399,27 +454,43 @@ mobileApp
               }
             }
           });
+          */
         var promise1 = load1.xforms().$promise;
-        var promise2 = load2.queries().$promise;
+        //var promise2 = load2.queries().$promise;
         
-        $q.all([promise1,promise2])
+        $q.all([promise1/*,promise2*/])
           .then(
           function (results) {
             // Extract out the searchId and return it to the caller
             var xml = results[0].form;
             var js = new X2JS();
             var form = js.xml_str2json(xml);
-         
+            console.log ( form );
+            var inputs = form.html.body.input ;
             var instances = form.html.head.model.instance;
-            var labels = [] ;
-            var label = {} ;
-            angular.forEach(instances, function (value, key) {
-              if ( value._id == "labels") {
-                label = value.labels ;
+            var labels = {} ;
+            var data = {} ;
+            if ( instances.constructor === Array ) {
+              angular.forEach(instances, function (value, key) {
+                
+                if ( value._id == "labels") {
+                  labels = value.labels ;
+                }
+                else if ( value.data ) {
+                  data = value.data ;
+                }
+              });
+            }
+            else {
+              data = instances.data ;
+              labels = data ; 
+              var i = 0 ;
+              for (var key in labels) {
+                if (labels.hasOwnProperty(key)) {
+                  if ( labels[key] == "") labels[key] = inputs[i++].label.__text ;
+                }
               }
-            });
-            labels.push ( label ) ;
-            
+            }
             var searchRef = results[0]._links["http://identifiers.emc.com/search"];
             if ( searchRef ) {
               var href = new URL(searchRef.href);
@@ -429,8 +500,12 @@ mobileApp
             
             var tokens = {
               "searchId": searchId,
-              "labels": labels 
+              "labels": labels,
+              "data" : data ,
+              "inputs" : inputs
             } ;
+            
+            formData = tokens ;
             
             callback(tokens);
           },
