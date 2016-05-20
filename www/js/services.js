@@ -24,7 +24,50 @@ mobileApp
       }
     }
   })
- 
+  .factory('helper', function() {
+    return {
+      findNode: function findNode(id, currentNode) {
+        var i,
+            currentChild,
+            result;
+
+        if (id == currentNode.id) {
+          
+            return currentNode;
+        } 
+        else { 
+
+            // Use a for loop instead of forEach to avoid nested functions
+            // Otherwise "return" will not work properly
+     
+            if ( currentNode instanceof Array ) {
+              for (i = 0; i < currentNode.length; i += 1) {
+                  currentChild = currentNode[i];
+                  // Search in the current child
+                  result = findNode(id, currentChild);
+                  // Return the result if the node has been found
+                  if (result !== false)  return result;
+              }
+            }
+            else {
+              for (var key in currentNode){
+                if ( key == 0) return false ;
+                if (id == key) return currentNode[key] ;
+                
+                if  ( currentNode.hasOwnProperty(key)) {
+                  //recursive call 
+                  result = findNode(id, currentNode[key]);
+                  // Return the result if the node has been found
+                  if (result !== false)  return result;
+                }                
+              }
+            }
+            // The node has not been found and we have no more options
+            return false;
+        }
+      }
+    }
+  })
   .factory('AuthService', function ($resource, addBasicAuth) {
 
     var username = "" ;
@@ -177,7 +220,7 @@ mobileApp
       }
     }
   })
-  .factory('LoadService', function ($resource, $q, addBearerAuth, x2js) {
+  .factory('LoadService', function ($resource, $q, addBearerAuth, helper, x2js) {
     
     var searchId = '' ;
     var formId = '' ;
@@ -482,7 +525,9 @@ mobileApp
             var form = js.xml_str2json(xml);
             console.log ( form );
             
-            var inputs = form.html.body.input ;
+            var inputs = helper.findNode( "input", form ) ;
+             
+            console.log( inputs ) ;
             var instances = form.html.head.model.instance;
             var labels = {} ;
             var data = {} ;
