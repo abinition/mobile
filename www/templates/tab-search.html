@@ -4,10 +4,10 @@
 
     <form name="searchForm" novalidate="" ng-submit="search(searchForm)">
       <div class="list list-inset">
-        <div ng-repeat="element in formData.labels" >
+        <div ng-repeat="element in formData" >
 
           <label class="item item-input">
-            <input type="text" ng-model="element"/>
+            <input type="{{element.type}}" placeholder="{{element.label}}" ng-model="element.value"/>
           </label>
           
         </div>

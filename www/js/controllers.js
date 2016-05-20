@@ -121,16 +121,17 @@ mobileApp
     };
   })
 
-  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicHistory) {
+  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicHistory, $ionicPopover) {
 
-    $scope.add = function (index) {
+    $scope.add = function ($event,$index) {
       
-      console.log("Added " + index);
-      var appId = $scope.applications[index].appId;
+      console.log("Added " + $index);
+      var appId = $scope.applications[$index].appId;
       
       LoadService.app(AuthService.getAccessToken(), appId, function (tokens) {
         
-        if ( tokens.formId /*&& tokens.queryId*/ ) {
+        console.log ( tokens ) ;
+        if ( tokens.formId != "" /*&& tokens.queryId*/ ) {
           
           LoadService.form(AuthService.getAccessToken(), tokens.formId /*,tokens.queryId*/, function (tokens) {
             console.log('Forms');
@@ -139,9 +140,22 @@ mobileApp
           });
           
         }
+        else {
+          console.log ( "NO SEARCH") ;
+          $scope.popover.show($event);
+    
+        }
       });
     };
 
+    $ionicPopover.fromTemplateUrl('templates/pop-nosearch.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+      $scope.popover = popover ;
+    });
+          
     LoadService.load(AuthService.getAccessToken(), function (tokens) {
       
       console.log('UserId is ' + tokens.userId);
@@ -158,69 +172,37 @@ mobileApp
     });       
   })
  
-  .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js) {
+  .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js, $ionicPopover) {
     
     $scope.formData = LoadService.getFormData() ;
 
     console.log ( $scope ) ;
     $scope.search = function (form) {
       
-      if (form.$valid) {
+      if (form.$valid && $scope.formData.length ) {
 
         var preload = {
           "data": {
-            "criterion": [
-              {
-                "name": "CustomerLastName",
-                "operator": "EQUAL",
-                "value" : ""
-              },
-              {
-                "name": "CustomerFirstName",
-                "operator": "EQUAL",
-                "value" : ""
-              }
-            ],
+            "criterion": [],
             "order-by": {
-              "name": "CustomerLastName",
+              "name": $scope.formData[0].id,
               "direction": "ASCENDING"
             }
           }
         } ;
         
+        angular.forEach($scope.formData, function (obj, key) {
+          var criteria = {
+            "name" : obj.id,
+            "operator" : "EQUAL",
+            "value" : obj.value
+          };
+          preload.data.criterion.push ( criteria ) ;
+        });
+     
         var xml = new X2JS();
         var payload = xml.json2xml_str ( preload ) ;
-        /*    
-  <data>
-    <criterion>
-      <name>CallStartDate</name>
-      <operator>BETWEEN</operator>
-      <value>2000-01-01</value>
-      <value>2016-04-10</value>
-    </criterion>
-    <criterion>
-      <name>CustomerID</name>
-      <operator>EQUAL</operator>
-      <value></value>
-    </criterion>
-    <criterion>
-      <name>CustomerLastName</name>
-      <operator>EQUAL</operator>
-      <value></value>
-    </criterion>
-    <criterion>
-      <name>RepresentativeID</name>
-      <operator>EQUAL</operator>
-      <value></value>
-    </criterion>
-    <criterion>
-      <name>CustomerFirstName</name>
-      <operator>EQUAL</operator>
-      <value></value>
-    </criterion>
-  </data>
-          */
-        
+          
         SearchService.search( AuthService.getAccessToken(), 
                               LoadService.getSearchId(), 
                               LoadService.getResultsId(),
@@ -232,9 +214,16 @@ mobileApp
           if (tokens.rows > 0) {
             $state.go('tab.results');
           }
-          //else {
-          // no results
-          //}
+          else {
+            // no results
+            $ionicPopover.fromTemplateUrl('templates/pop-signout.html', {
+              backdropClickToClose: true,
+              scope: $scope
+            })
+            .then(function (popover) {
+              popover.show;
+            });
+          }
         });
       }
     };
@@ -244,14 +233,17 @@ mobileApp
    
     $scope.data = SearchService.getResults();
     $scope.data.sortOn = $scope.data.columns[0].id ;
-    
     $scope.data.sortReverse = false ;
  
     $scope.sortBy =  function (columnId) {
       console.log ( "sorting by column id " + columnId);
       $scope.data.sortOn = columnId ;
-      
       $scope.data.sortReverse = ! $scope.data.sortReverse ;
+    } ;
+    
+     
+    $scope.expand =  function (item) {
+      console.log ( item);
     } ;
      
   })

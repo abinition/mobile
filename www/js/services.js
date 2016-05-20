@@ -185,7 +185,7 @@ mobileApp
     var userId = '' ;
     var appId = '' ;
     var resultsId = '' ;
-    var formData = {} ;
+    var formData = [] ;
         
     return {
       getAppId: function () { return appId },
@@ -331,6 +331,11 @@ mobileApp
       },
       app: function (authToken, appId, callback) {
 
+        formId = '' ;
+        queryId = '' ;
+        resultsId = '';
+        formData = [] ;
+            
         var load1 = $resource(
           'http://localhost:8081/restapi/systemdata/applications/:app',
           { app: appId }, 
@@ -384,7 +389,7 @@ mobileApp
           .then(
           function (results) {
             console.log ( results ) ;
-            
+
             // Extract out id's we need
             if ( results[1]._embedded ) {
               if ( results[1]._embedded.searches ) {
@@ -413,6 +418,7 @@ mobileApp
               "queryId" : queryId,
               "resultsId" : resultsId
             } ;
+            formData = [] ;
             callback(tokens);
           },
           function (errorMsg) {
@@ -461,11 +467,21 @@ mobileApp
         $q.all([promise1/*,promise2*/])
           .then(
           function (results) {
+            
+                        
+            var searchRef = results[0]._links["http://identifiers.emc.com/search"];
+            if ( searchRef ) {
+              var href = new URL(searchRef.href);
+              var comps = href.pathname.split('/');
+              searchId = comps[comps.length - 1];
+            }
+            
             // Extract out the searchId and return it to the caller
             var xml = results[0].form;
             var js = new X2JS();
             var form = js.xml_str2json(xml);
             console.log ( form );
+            
             var inputs = form.html.body.input ;
             var instances = form.html.head.model.instance;
             var labels = {} ;
@@ -491,23 +507,22 @@ mobileApp
                 }
               }
             }
-            var searchRef = results[0]._links["http://identifiers.emc.com/search"];
-            if ( searchRef ) {
-              var href = new URL(searchRef.href);
-              var comps = href.pathname.split('/');
-              searchId = comps[comps.length - 1];
+
+            formData = [];
+            var i = 0 ;
+            for (var key in labels) {
+              if (labels.hasOwnProperty(key)) {
+                if ( labels[key] == "") labels[key] = inputs[i++].label.__text ;
+              }
+              var input = {
+                "id" : key,
+                "label" : labels[key],
+                "type" : "text"
+              };
+              formData.push ( input ) ;
             }
-            
-            var tokens = {
-              "searchId": searchId,
-              "labels": labels,
-              "data" : data ,
-              "inputs" : inputs
-            } ;
-            
-            formData = tokens ;
-            
-            callback(tokens);
+          
+            callback(formData);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected
