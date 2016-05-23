@@ -174,9 +174,16 @@ mobileApp
  
   .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js, $ionicPopover) {
     
+    $ionicPopover.fromTemplateUrl('templates/pop-nosearch.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+      $scope.popover = popover ;
+    });
+    
     $scope.formData = LoadService.getFormData() ;
-
-    console.log ( $scope ) ;
+    
     $scope.search = function (form) {
       
       if (form.$valid && $scope.formData.length ) {
@@ -215,25 +222,19 @@ mobileApp
             $state.go('tab.results');
           }
           else {
-            // no results
-            $ionicPopover.fromTemplateUrl('templates/pop-signout.html', {
-              backdropClickToClose: true,
-              scope: $scope
-            })
-            .then(function (popover) {
-              popover.show;
-            });
+            $scope.popover.show();
           }
         });
       }
     };
   })
   
-  .controller('ResultsCtrl', function ($scope, $state, SearchService) {
+  .controller('ResultsCtrl', function ($scope, $state, SearchService,  $ionicModal) {
    
     $scope.data = SearchService.getResults();
     $scope.data.sortOn = $scope.data.columns[0].id ;
     $scope.data.sortReverse = false ;
+    $scope.side_item = {} ;
  
     $scope.sortBy =  function (columnId) {
       console.log ( "sorting by column id " + columnId);
@@ -241,9 +242,20 @@ mobileApp
       $scope.data.sortReverse = ! $scope.data.sortReverse ;
     } ;
     
+    $ionicModal.fromTemplateUrl('templates/modal-sideresults.html', {
+      animation: 'slide-in-up',
+      scope: $scope
+    })
+    .then(function (modal) {
+      $scope.modal = modal ;
+    });
+    
      
-    $scope.expand =  function (item) {
-      console.log ( item);
+    $scope.expand =  function ($event,item) {
+      console.log ( item );
+      $scope.side_item = item ;
+      $scope.modal.show($event) ;
+      
     } ;
      
   })

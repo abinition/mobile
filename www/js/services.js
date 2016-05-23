@@ -120,9 +120,7 @@ mobileApp
     
     return {
       
-      getResults: function () { 
-        return data ;
-      },
+      getResults: function () {  return data ; },
       
       search: function (authToken, searchId, resultsId, payload, callback) {
         var load1 = $resource(
@@ -168,44 +166,64 @@ mobileApp
               // results[1].panels[2] <-- Side panel
               //
               // Extract the data from results[0]
-              /*
-                  "_embedded" : {
-                     "results" : [ {
-                      "rows" : [ {
-                        "columns" : [ {
-                          "name" : "SentToArchiveDate",
-                          "value" : "2005-12-01"
-                          
-                           $scope.data.columns = [{"id":"1453","name":"Product"},{"id":"1355","name":"Weight"},{"id":"0393","name":"Height"},{"id":"3932","name":"Width"},{"id":"2939","name":"Depth"},{"id":"1234","name":"Color"}];
-    
-  $scope.data.items = [{"1234":"Pink","1355":"21 oz.","1453":"ea","2939":"3 in.","3932":"29  in.","0393":"12  in."},{"1234":"Black","1355":
-               */
               data = {
                 columns: [],
-                items: []
+                items: [],
+                side_columns: []
               } ;
-
+              var numPanels = results[1].panels.length ;
               var numCols = results[1].panels[0].tabs[0].columns.length ;
               for ( col=0; col<numCols; col++) {                  
                 var id = results[1].panels[0].tabs[0].columns[col].name ;
-                var label = results[1].panels[0].tabs[0].columns[col].label ;
+                var label = results[1].panels[0].tabs[0].columns[col].label ;           
+               
                 data.columns.push ( { "id": id, "name": label } ) ;
               }
-
+              if ( numPanels > 1 ) {
+                var numCols = results[1].panels[1].tabs[0].columns.length ;
+                for ( col=0; col<numCols; col++) {                  
+                  var id = results[1].panels[1].tabs[0].columns[col].name ;
+                  var label = results[1].panels[1].tabs[0].columns[col].label ;       
+                  data.side_columns.push ( { "id": id, "name": label} ) ;
+                }
+              }
+              if ( numPanels > 2 ) {
+                var numCols = results[1].panels[2].tabs[0].columns.length ;
+                for ( col=0; col<numCols; col++) {                  
+                  var id = results[1].panels[2].tabs[0].columns[col].name ;
+                  var label = results[1].panels[2].tabs[0].columns[col].label ;       
+                  data.side_columns.push ( { "id": id, "name": label } ) ;
+                }
+              }
               
               var numRows = results[0]._embedded.results[0].rows.length ;
               for ( row=0; row<numRows; row++ ) {
                 var numCols = results[0]._embedded.results[0].rows[row].columns.length ;
                 var rowData = {} ;
                 for ( col=0; col<numCols; col++) {                  
-                  var id = results[0]._embedded.results[0].rows[0].columns[col].name ;
+                  var id  = results[0]._embedded.results[0].rows[0].columns[col].name ;
                   var val = results[0]._embedded.results[0].rows[row].columns[col].value ;
-                  rowData[id] = val ;
+                  if ( val != undefined ) {
+                      rowData[id] = val ;
+                  }
+                  else {
+                    var numRows2 = results[0]._embedded.results[0].rows[row].columns[col].rows.length ;
+                    for ( var row2=0; row2<numRows2; row2++ ) {
+                      var numCols2 = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns.length ;
+                      for ( var col2=0; col2<numCols2; col2++) {                  
+                        var id  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
+                        var val = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns[col2].value ;
+                        //console.log ( id + " = " + val ) ;
+                        rowData[id] = val ;
+                      }
+                    }
+                  }
                 }
                 data.items.push ( rowData ) ;
               }
               
               console.log ( data ) ;
+              
               var tokens = { "rows": numRows } ;
               callback(tokens);
               
@@ -530,12 +548,20 @@ mobileApp
             console.log( inputs ) ;
             var instances = form.html.head.model.instance;
             var labels = {} ;
+            var hints = {} ;
+            var prompts = {} ;
             var data = {} ;
             if ( instances.constructor === Array ) {
               angular.forEach(instances, function (value, key) {
                 
                 if ( value._id == "labels") {
                   labels = value.labels ;
+                }
+                else if ( value._id == "hints") {
+                  hints = value.hints ;
+                }
+                else if ( value._id == "prompts") {
+                  prompts = value.prompts ;
                 }
                 else if ( value.data ) {
                   data = value.data ;
@@ -544,29 +570,42 @@ mobileApp
             }
             else {
               data = instances.data ;
-              labels = data ; 
-              var i = 0 ;
-              for (var key in labels) {
-                if (labels.hasOwnProperty(key)) {
-                  if ( labels[key] == "") labels[key] = inputs[i++].label.__text ;
-                }
-              }
             }
-
+            
             formData = [];
             var i = 0 ;
-            for (var key in labels) {
-              if (labels.hasOwnProperty(key)) {
-                if ( labels[key] == "") labels[key] = inputs[i++].label.__text ;
+            console.log ( data ) ;
+            for (var key in data) {
+              if (data.hasOwnProperty(key)) {
+                var range = "" ;
+                if ( data[key] instanceof Object || data[key] == "") {
+                  if ( data[key] instanceof Object ) {
+                    range = data[key] ;
+                  }
+                  if ( labels[key] && labels[key] != "" ) {
+                    data[key] = labels[key] ;
+                  }
+                  else {
+                    for (i=0; i<inputs.length; i++ ) {
+                      console.log(inputs[i]._bind);
+                      if ( inputs[i]._bind == key ) {
+                        data[key] = inputs[i].label.__text ;
+                        break ;
+                      }
+                    }
+                  }
+
+                }
+                var input = {
+                  "id" : key,
+                  "label" : data[key],
+                  "type" : "text",
+                  "range" : range,
+                  "prompts" : prompts[key]
+                };
+                formData.push ( input ) ;
               }
-              var input = {
-                "id" : key,
-                "label" : labels[key],
-                "type" : "text"
-              };
-              formData.push ( input ) ;
             }
-          
             callback(formData);
           },
           function (errorMsg) {

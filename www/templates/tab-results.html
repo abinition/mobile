@@ -22,12 +22,7 @@
             <div class="column">{{item[column.id]}}&nbsp;</div>
           </div>
         </div>
-               <i ng-click="expand(item)" class="icon ion-chevron-right icon-accessory"></i>
-               <!--
-              <div class="buttons">
-        <button class="button button-icon icon ion-chevron-right icon-accessory" ng-click="expand(item)"></button>
-      </div>
-      -->
+        <i ng-click="expand($event,item)" class="icon ion-chevron-right icon-accessory"></i>
     </ion-list>
 
   </ion-content>
