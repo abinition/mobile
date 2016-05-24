@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'base64','cb.x2js']);
+var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'ngStorage', 'base64','cb.x2js']);
 
 var tabState ;
 
@@ -17,6 +17,7 @@ mobileApp
     // Set up the various states which the app can be in.
     // Each state's controller can be found in controllers.js
     $ionicConfigProvider.tabs.position('bottom');
+    //$localStorageProvider.get('settings');
     $stateProvider
 
       //setup an abstract state for the tabs directive

@@ -1,4 +1,5 @@
 mobileApp
+
   .factory('addBasicAuth', function ($base64) {
     return {
       token: function (user, passwd) {
@@ -68,7 +69,7 @@ mobileApp
       }
     }
   })
-  .factory('AuthService', function ($resource, addBasicAuth) {
+  .factory('AuthService', function ($resource, $rootScope, addBasicAuth) {
 
     var username = "" ;
     var credentials = {
@@ -87,8 +88,9 @@ mobileApp
       login: function (un, password, payload, callback) {
         username = un;
 
+console.log($rootScope.server) ;
         var api = $resource(
-          'http://localhost:8081/oauth/token',
+          $rootScope.server + 'oauth/token',
           {}, 
           {
             'oauth': {
@@ -114,7 +116,7 @@ mobileApp
       }
     }
   })
-  .factory('SearchService', function ($resource, $q, addBearerAuth2) {
+  .factory('SearchService', function ($resource, $rootScope, $q, addBearerAuth2) {
     
     var data = {} ;
     
@@ -124,7 +126,7 @@ mobileApp
       
       search: function (authToken, searchId, resultsId, payload, callback) {
         var load1 = $resource(
-          'http://localhost:8081/restapi/systemdata/searches/:search',
+          $rootScope.server + 'restapi/systemdata/searches/:search',
           {search: searchId }, 
           {
             'searches': {
@@ -139,7 +141,7 @@ mobileApp
           });
 
         var load2 = $resource(
-          'http://localhost:8081/restapi/systemdata/result-masters/:result',
+          $rootScope.server + 'restapi/systemdata/result-masters/:result',
           {result: resultsId }, 
           {
             'results': {
@@ -202,23 +204,22 @@ mobileApp
                 var rowData = {} ;
                 for ( col=0; col<numCols; col++) {                  
                   var id  = results[0]._embedded.results[0].rows[0].columns[col].name ;
-                  var val = results[0]._embedded.results[0].rows[row].columns[col].value ;
-                  if ( val != undefined ) {
-                      rowData[id] = val ;
-                  }
-                  else {
+                  if ( results[0]._embedded.results[0].rows[row].columns[col].rows ) {
                     var numRows2 = results[0]._embedded.results[0].rows[row].columns[col].rows.length ;
-                    if ( numRows2 != undefined ) {
-                      for ( var row2=0; row2<numRows2; row2++ ) {
-                        var numCols2 = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns.length ;
-                        for ( var col2=0; col2<numCols2; col2++) {                  
-                          var id  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
-                          var val = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns[col2].value ;
-                          //console.log ( id + " = " + val ) ;
-                          rowData[id] = val ;
-                        }
+                    for ( var row2=0; row2<numRows2; row2++ ) {
+                      var numCols2 = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns.length ;
+                      for ( var col2=0; col2<numCols2; col2++) {                  
+                        var id  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
+                        var val = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns[col2].value ;
+                        //console.log ( id + " = " + val ) ;
+                        rowData[id] = val ;
                       }
                     }
+                  }
+                  else {
+                    var val = results[0]._embedded.results[0].rows[row].columns[col].value ;
+                    if ( val == undefined ) val = "" ;
+                    rowData[id] = val ;
                   }
                 }
                 data.items.push ( rowData ) ;
@@ -240,7 +241,7 @@ mobileApp
       }
     }
   })
-  .factory('LoadService', function ($resource, $q, addBearerAuth, helper, x2js) {
+  .factory('LoadService', function ($resource, $rootScope, $q, addBearerAuth, helper, x2js) {
     
     var searchId = '' ;
     var formId = '' ;
@@ -260,7 +261,7 @@ mobileApp
       getFormData: function () { return formData },
       load: function (authToken, callback) {
         var load1 = $resource(
-          'http://localhost:8081/restapi/services',
+          $rootScope.server + 'restapi/services',
           {}, 
           {
             'services': {
@@ -275,7 +276,7 @@ mobileApp
           });
 
         var load2 = $resource(
-          'http://localhost:8081/restapi/product-info',
+          $rootScope.server + 'restapi/product-info',
           {}, 
           {
             'productInfo': {
@@ -290,7 +291,7 @@ mobileApp
           });
 
         var load3 = $resource(
-          'http://localhost:8081/restapi/systemdata/tenants',
+          $rootScope.server + 'restapi/systemdata/tenants',
           {}, 
           {
             'tenants': {
@@ -332,7 +333,7 @@ mobileApp
       apps: function (authToken, userId, callback) {
 
         var load1 = $resource(
-          'http://localhost:8081/restapi/systemdata/tenants/:user',
+          $rootScope.server + 'restapi/systemdata/tenants/:user',
           { user: userId }, 
           {
             'tenants': {
@@ -347,7 +348,7 @@ mobileApp
           });
 
         var load2 = $resource(
-          'http://localhost:8081/restapi/systemdata/tenants/:user/applications',
+          $rootScope.server + 'restapi/systemdata/tenants/:user/applications',
           { user: userId }, 
           {
             'applications': {
@@ -400,7 +401,7 @@ mobileApp
         formData = [] ;
             
         var load1 = $resource(
-          'http://localhost:8081/restapi/systemdata/applications/:app',
+          $rootScope.server + 'restapi/systemdata/applications/:app',
           { app: appId }, 
           {
             'application': {
@@ -415,7 +416,7 @@ mobileApp
           });
 
         var load2 = $resource(
-          'http://localhost:8081/restapi/systemdata/applications/:app/searches',
+          $rootScope.server + 'restapi/systemdata/applications/:app/searches',
           { app: appId }, 
           {
             'searches': {
@@ -430,7 +431,7 @@ mobileApp
           });
         
         var load3 = $resource(
-          'http://localhost:8081/restapi/systemdata/applications/:app/aics',
+          $rootScope.server + 'restapi/systemdata/applications/:app/aics',
           { app: appId }, 
           {
             'aics': {
@@ -495,7 +496,7 @@ mobileApp
       form: function (authToken, formId /*, queryId*/, callback) {
 
         var load1 = $resource(
-          'http://localhost:8081/restapi/systemdata/xforms/:form',
+          $rootScope.server + 'restapi/systemdata/xforms/:form',
           { form: formId }, 
           {
             'xforms': {
@@ -510,7 +511,7 @@ mobileApp
           });
           /*
         var load2 = $resource(
-          'http://localhost:8081/restapi/systemdata/queries/:query',
+          $rootScope.server + 'restapi/systemdata/queries/:query',
           {query: queryId }, 
           {
             'queries': {
