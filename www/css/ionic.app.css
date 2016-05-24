@@ -9836,7 +9836,8 @@ a.button {
   overflow: hidden;
   max-width: 87%;
   float: left;
-  padding: 2px 5px; }
+  padding: 2px 5px;
+  font-size: small; }
 
 .col-header > .column {
   padding: 5px 5px; }

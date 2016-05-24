@@ -208,13 +208,15 @@ mobileApp
                   }
                   else {
                     var numRows2 = results[0]._embedded.results[0].rows[row].columns[col].rows.length ;
-                    for ( var row2=0; row2<numRows2; row2++ ) {
-                      var numCols2 = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns.length ;
-                      for ( var col2=0; col2<numCols2; col2++) {                  
-                        var id  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
-                        var val = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns[col2].value ;
-                        //console.log ( id + " = " + val ) ;
-                        rowData[id] = val ;
+                    if ( numRows2 != undefined ) {
+                      for ( var row2=0; row2<numRows2; row2++ ) {
+                        var numCols2 = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns.length ;
+                        for ( var col2=0; col2<numCols2; col2++) {                  
+                          var id  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
+                          var val = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns[col2].value ;
+                          //console.log ( id + " = " + val ) ;
+                          rowData[id] = val ;
+                        }
                       }
                     }
                   }

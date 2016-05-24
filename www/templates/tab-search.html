@@ -3,11 +3,12 @@
   <ion-content padding="true">
 
     <form name="searchForm" novalidate="" ng-submit="search(searchForm)">
-      <div class="list list-inset">
+      <div class="listet">
         <div ng-repeat="element in formData" >
 
           <label class="item item-input">
-            <input type="{{element.type}}" placeholder="{{element.label}}" ng-model="element.value"/>
+            <span class="input-label">{{element.label}}</span>
+            <input type="{{element.type}}" ng-model="element.value"/>
           </label>
           
         </div>

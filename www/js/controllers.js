@@ -172,16 +172,20 @@ mobileApp
     });       
   })
  
-  .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js, $ionicPopover) {
+  .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js, $ionicPopup) {
     
-    $ionicPopover.fromTemplateUrl('templates/pop-nosearch.html', {
-      backdropClickToClose: true,
-      scope: $scope
-    })
-    .then(function (popover) {
-      $scope.popover = popover ;
-    });
-    
+     // An alert dialog
+    $scope.showAlert = function() {
+      var alertPopup = $ionicPopup.alert({
+        title: 'No Results found',
+        template: 'Expand your search criteria'
+      });
+
+      alertPopup.then(function(res) {
+        console.log('No results');
+      });
+    };
+
     $scope.formData = LoadService.getFormData() ;
     
     $scope.search = function (form) {
@@ -222,7 +226,7 @@ mobileApp
             $state.go('tab.results');
           }
           else {
-            $scope.popover.show();
+            $scope.showAlert();
           }
         });
       }
