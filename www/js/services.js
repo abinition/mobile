@@ -12,7 +12,8 @@ mobileApp
   .factory('addBearerAuth', function () {
     return {
       token: function (authToken) {
-        return { 'Authorization': 'Bearer ' + authToken };
+        return { 'Authorization': 'Bearer ' + authToken,
+                 'Accept' : 'application/hal+json' };
       }
     }
   })
@@ -113,6 +114,18 @@ console.log($rootScope.server) ;
             callback(err);
           }
         );
+      }
+    }
+  })
+  .factory('ResultsService', function () {
+    
+    var results = {} ;
+    return {
+      setResults: function (item) {
+        results = item ;
+      },
+      getResults: function () {
+        return results ;
       }
     }
   })

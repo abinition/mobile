@@ -68,6 +68,15 @@ mobileApp
           }
         }
       })
+      .state('tab.details', {
+        url: '/details',
+        views: {
+          'tab-apps': {
+            templateUrl: 'templates/tab-details.html',
+            controller: 'DetailsCtrl'
+          }
+        }
+      })
       .state('tab.comp', {
         url: '/comp',
         views: {

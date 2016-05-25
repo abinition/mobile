@@ -1,6 +1,6 @@
 <!--<ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'> -->
 <ion-view view-title="Applications">
-  <ion-content>
+  <ion-content class="padding">
     
     <div class="row header">
       <div class="col">Name</div>
@@ -13,7 +13,9 @@
         <button class="button button-positive" ng-click="add($event,$index)">Submit</button>
       </div>
       <!--<div class="col">{{app.description}}</div>-->
-      <div class="col">{{app.category}}</div>
+      <div class="col">{{app.category}}&nbsp;
+        <i ng-click="info($event,$index)" class="icon ion-information-circled"></i>
+      </div>
       <div class="col">{{app.state}}</div>
     </div>
   </ion-content>

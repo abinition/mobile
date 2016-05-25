@@ -172,6 +172,20 @@ mobileApp
         }
       });
     };
+    
+    $scope.info = function ($event, $index) {
+      $scope.appInfo = $scope.applications[$index].description ;
+      $scope.popover2.show($event) ;
+    }
+ 
+    $ionicPopover.fromTemplateUrl('templates/pop-info.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+      .then(function (popover) {
+        $scope.popover2 = popover;
+      });
+
 
     $ionicPopover.fromTemplateUrl('templates/pop-nosearch.html', {
       backdropClickToClose: true,
@@ -238,6 +252,9 @@ mobileApp
 
         var xml = new X2JS();
         var payload = xml.json2xml_str(preload);
+        
+        //payload = 
+        //"<data><EMPNO></EMPNO><LAST_NAME></LAST_NAME><GENDER></GENDER><STATUS></STATUS></data>" ;
 
         SearchService.search(AuthService.getAccessToken(),
           LoadService.getSearchId(),
@@ -258,7 +275,7 @@ mobileApp
     };
   })
 
-  .controller('ResultsCtrl', function ($scope, $state, SearchService, $ionicModal) {
+  .controller('ResultsCtrl', function ($scope, $state, SearchService, ResultsService /*, $ionicModal */) {
 
     $scope.data = SearchService.getResults();
     $scope.data.sortOn = $scope.data.columns[0].id;
@@ -271,6 +288,7 @@ mobileApp
       $scope.data.sortReverse = !$scope.data.sortReverse;
     };
 
+    /*
     $ionicModal.fromTemplateUrl('templates/modal-sideresults.html', {
       animation: 'slide-in-up',
       scope: $scope
@@ -278,16 +296,25 @@ mobileApp
       .then(function (modal) {
         $scope.modal = modal;
       });
-
+    */
 
     $scope.expand = function ($event, item) {
       console.log(item);
       $scope.side_item = item;
-      $scope.modal.show($event);
+      //$scope.modal.show($event);
+      ResultsService.setResults(item);
+      $state.go("tab.details") ;
 
     };
 
   })
+  
+  .controller('DetailsCtrl', function ($scope, $state, ResultsService) {
+      
+     $scope.item = ResultsService.getResults();
+
+  })
+  
   .controller('DashCtrl', function ($scope, $state) {
     console.log("Dashboard");
     tabState = "tab.dash";
