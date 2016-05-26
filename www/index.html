@@ -60,19 +60,19 @@
                 <div>
                     <form name="authorizationForm" novalidate="" ng-submit="signIn(authorizationForm)">
                         <div class="list list-inset form-signin">
-                            <label class="item item-input"">
+                            <label class="item item-input padding">
                                 <i class="icon ion-person placeholder-icon"></i>
                                 <input type="text" name="username" ng-model="authorization.username" placeholder="Enter your username">
                             </label>
 
-                            <label class="item item-input">
+                            <label class="item item-input padding">
                                 <i class="icon ion-locked placeholder-icon"></i>
                                 <input type="password" name="password" ng-model="authorization.password" placeholder="Enter your password">
                             </label>
 
-                            <div class="item assertive" ng-show="authorization.error">
+                            <label class="item assertive padding" ng-show="authorization.error">
                                 <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
-                            </div>
+                            </label>
 
                             <label class="item item-input item-select">
                                 <i class="icon ion-chatbubble placeholder-icon"></i>
@@ -86,10 +86,22 @@
                                     <option value="zh" label="Chinese">Chinese</option>
                                 </select>
                             </label>
+                            
                             <label class="item">
                                 <button class="button button-block button-positive" type="submit">
                                 Sign In
                                 </button>
+                            </label>
+                            
+                        </div>
+                        <div class="list form-signin"> 
+                            <label class="item item-input item-stacked-label padding">
+                                <span class="input-label">Server</span>
+                                <input type="text" name="server" ng-model="authorization.server">
+                            </label>
+                            <label class="item item-input item-stacked-label padding">
+                                <span class="input-label">Port</span>
+                                <input type="number" name="port" ng-model="authorization.port" >
                             </label>
                         </div>
                     </form>

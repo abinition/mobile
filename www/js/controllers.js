@@ -26,7 +26,8 @@ mobileApp
     $scope.authority = AuthService.getAuthority();
     $scope.username = AuthService.getUsername();
     $scope.settings  = {
-      "server" : $localStorage.server 
+      "server" : $localStorage.server ,
+      "port" : $localStorage.port
     };
 
     $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
@@ -60,7 +61,11 @@ mobileApp
     $scope.saveSettings = function (settingsForm) {
       if (settingsForm.$valid) {
         $localStorage.server = $scope.settings.server ;
-        $rootScope.server = $scope.settings.server ;
+        $localStorage.port    = $scope.settings.port ;        
+        $rootScope.serverURL = 
+          "http://" + 
+           $localStorage.server + ":" +  $localStorage.port + 
+          "/" ; 
       }
       $scope.modal.hide();
     };
@@ -71,6 +76,7 @@ mobileApp
     };
 
     $scope.openAboutPopover = function ($event) {
+      $scope.version = $localStorage.version ;
       $scope.aboutPopover.show($event);
     };
 
@@ -93,7 +99,9 @@ mobileApp
       password: '',
       language: 'en',
       statusText: 'Unknown error',
-      access_token: ''
+      access_token: '',
+      server: '',
+      port: null
     };
 
     $scope.payload = function (obj) {
@@ -103,17 +111,39 @@ mobileApp
       return str.join("&");
     };
     
-    if ( angular.isUndefined ( $localStorage.server ) ) {                       
-        $localStorage = $localStorage.$default({server: "http://localhost:8081/"}); 
-    }
-    
     $scope.signIn = function (form) {
 
       if (form.$valid) {
 
         console.log("Authenticating");
         console.log($scope.authorization);
-        $rootScope.server = "http://localhost:8081/" ; //$localStorage.server  ;
+        
+        if ( typeof (Storage) != "undefined") {
+
+          if (angular.isUndefined($localStorage.server))
+            $localStorage.server = "localhost";
+            
+          if (angular.isUndefined($localStorage.port))
+            $localStorage.port = "8080";
+            
+          if (angular.isUndefined($localStorage.version))
+            $localStorage.version = "0.9-1";
+        }
+  
+        else {
+          alert("LocalStorage not supported!");
+        }
+
+  
+        if ( $scope.authorization.server != "" ) 
+          $localStorage.server = $scope.authorization.server ;
+        if ( $scope.authorization.port != null ) 
+          $localStorage.port   = $scope.authorization.port ;
+        
+        $rootScope.serverURL = 
+          "http://" + 
+           $localStorage.server + ":" +  $localStorage.port + 
+          "/" ; 
     
         var postData = {
           "grant_type": "password",
@@ -231,30 +261,39 @@ mobileApp
 
       if (form.$valid && $scope.formData.length) {
 
-        var preload = {
-          "data": {
-            "criterion": [],
-            "order-by": {
-              "name": $scope.formData[0].id,
-              "direction": "ASCENDING"
+        var appParms = LoadService.getAppParms() ;
+        console.log ( appParms ) ;
+        var preload = {} ;
+        if ( appParms.archiveType == 'SIP' ) {
+          preload = {
+            "data": {
+              "criterion": [],
+              "order-by": {
+                "name": $scope.formData[0].id,
+                "direction": "ASCENDING"
+              }
             }
-          }
-        };
-
-        angular.forEach($scope.formData, function (obj, key) {
-          var criteria = {
-            "name": obj.id,
-            "operator": "EQUAL",
-            "value": obj.value
           };
-          preload.data.criterion.push(criteria);
-        });
 
+          angular.forEach($scope.formData, function (obj, key) {
+            var criteria = {
+              "name": obj.id,
+              "operator": "EQUAL",
+              "value": obj.value
+            };
+            preload.data.criterion.push(criteria);
+          });
+        } 
+        else if ( appParms.archiveType == 'TABLE') {
+          preload.data = {} ;
+          angular.forEach( $scope.formData, function (obj, key) {
+            preload.data[obj.id] = obj.value ;
+          });       
+        }
         var xml = new X2JS();
         var payload = xml.json2xml_str(preload);
         
-        //payload = 
-        //"<data><EMPNO></EMPNO><LAST_NAME></LAST_NAME><GENDER></GENDER><STATUS></STATUS></data>" ;
+        console.log(payload);
 
         SearchService.search(AuthService.getAccessToken(),
           LoadService.getSearchId(),

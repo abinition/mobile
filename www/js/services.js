@@ -89,9 +89,8 @@ mobileApp
       login: function (un, password, payload, callback) {
         username = un;
 
-console.log($rootScope.server) ;
         var api = $resource(
-          $rootScope.server + 'oauth/token',
+          $rootScope.serverURL + 'oauth/token',
           {}, 
           {
             'oauth': {
@@ -139,7 +138,7 @@ console.log($rootScope.server) ;
       
       search: function (authToken, searchId, resultsId, payload, callback) {
         var load1 = $resource(
-          $rootScope.server + 'restapi/systemdata/searches/:search',
+          $rootScope.serverURL + 'restapi/systemdata/searches/:search',
           {search: searchId }, 
           {
             'searches': {
@@ -154,7 +153,7 @@ console.log($rootScope.server) ;
           });
 
         var load2 = $resource(
-          $rootScope.server + 'restapi/systemdata/result-masters/:result',
+          $rootScope.serverURL + 'restapi/systemdata/result-masters/:result',
           {result: resultsId }, 
           {
             'results': {
@@ -262,19 +261,28 @@ console.log($rootScope.server) ;
     var userId = '' ;
     var appId = '' ;
     var resultsId = '' ;
+    var archiveType = '' ;
     var formData = [] ;
+    var appParms = {
+      archiveType: '' ,
+      category : '',
+      description : '',
+      name : ''
+    } ;
+
         
     return {
       getAppId: function () { return appId },
       getSearchId: function () { return searchId },
       getResultsId: function () { return resultsId },  
       getFormId: function () { return formId },
+      getAppParms: function () { return appParms },
       getUserId: function () { return userId },
       getQueryId: function () { return queryId },
       getFormData: function () { return formData },
       load: function (authToken, callback) {
         var load1 = $resource(
-          $rootScope.server + 'restapi/services',
+          $rootScope.serverURL + 'restapi/services',
           {}, 
           {
             'services': {
@@ -289,7 +297,7 @@ console.log($rootScope.server) ;
           });
 
         var load2 = $resource(
-          $rootScope.server + 'restapi/product-info',
+          $rootScope.serverURL + 'restapi/product-info',
           {}, 
           {
             'productInfo': {
@@ -304,7 +312,7 @@ console.log($rootScope.server) ;
           });
 
         var load3 = $resource(
-          $rootScope.server + 'restapi/systemdata/tenants',
+          $rootScope.serverURL + 'restapi/systemdata/tenants',
           {}, 
           {
             'tenants': {
@@ -346,7 +354,7 @@ console.log($rootScope.server) ;
       apps: function (authToken, userId, callback) {
 
         var load1 = $resource(
-          $rootScope.server + 'restapi/systemdata/tenants/:user',
+          $rootScope.serverURL + 'restapi/systemdata/tenants/:user',
           { user: userId }, 
           {
             'tenants': {
@@ -361,7 +369,7 @@ console.log($rootScope.server) ;
           });
 
         var load2 = $resource(
-          $rootScope.server + 'restapi/systemdata/tenants/:user/applications',
+          $rootScope.serverURL + 'restapi/systemdata/tenants/:user/applications',
           { user: userId }, 
           {
             'applications': {
@@ -383,6 +391,7 @@ console.log($rootScope.server) ;
           function (results) {
             var apps = [];
             console.log(results);
+            
             var appCount = results[1]._embedded.applications.length;
             for (i = 0; i < appCount; i++) {
               var href = new URL(results[1]._embedded.applications[i]._links.self.href);
@@ -408,13 +417,15 @@ console.log($rootScope.server) ;
       },
       app: function (authToken, appId, callback) {
 
+        // Clear
         formId = '' ;
         queryId = '' ;
         resultsId = '';
         formData = [] ;
+        appParms = {} ;
             
         var load1 = $resource(
-          $rootScope.server + 'restapi/systemdata/applications/:app',
+          $rootScope.serverURL + 'restapi/systemdata/applications/:app',
           { app: appId }, 
           {
             'application': {
@@ -429,7 +440,7 @@ console.log($rootScope.server) ;
           });
 
         var load2 = $resource(
-          $rootScope.server + 'restapi/systemdata/applications/:app/searches',
+          $rootScope.serverURL + 'restapi/systemdata/applications/:app/searches',
           { app: appId }, 
           {
             'searches': {
@@ -444,7 +455,7 @@ console.log($rootScope.server) ;
           });
         
         var load3 = $resource(
-          $rootScope.server + 'restapi/systemdata/applications/:app/aics',
+          $rootScope.serverURL + 'restapi/systemdata/applications/:app/aics',
           { app: appId }, 
           {
             'aics': {
@@ -467,6 +478,11 @@ console.log($rootScope.server) ;
           function (results) {
             console.log ( results ) ;
 
+            appParms.archiveType = results[0].archiveType ;       
+            appParms.name = results[0].name ;    
+            appParms.description = results[0].description ;
+            appParms.category = results[0].category ;
+            
             // Extract out id's we need
             if ( results[1]._embedded ) {
               if ( results[1]._embedded.searches ) {
@@ -509,7 +525,7 @@ console.log($rootScope.server) ;
       form: function (authToken, formId /*, queryId*/, callback) {
 
         var load1 = $resource(
-          $rootScope.server + 'restapi/systemdata/xforms/:form',
+          $rootScope.serverURL + 'restapi/systemdata/xforms/:form',
           { form: formId }, 
           {
             'xforms': {
@@ -524,7 +540,7 @@ console.log($rootScope.server) ;
           });
           /*
         var load2 = $resource(
-          $rootScope.server + 'restapi/systemdata/queries/:query',
+          $rootScope.serverURL + 'restapi/systemdata/queries/:query',
           {query: queryId }, 
           {
             'queries': {

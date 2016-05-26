@@ -4,6 +4,7 @@
     </ion-header-bar>
 
     <ion-content class="padding">
+        <!--
         <div>
             <span>Settings for {{username}}</span>
         </div>
@@ -15,14 +16,19 @@
                 </ion-item>
             </ion-list>
         </div>
+        -->
 
         <form name="settingsForm" novalidate="" ng-submit="saveSettings(settingsForm)">
             <div class="list list-inset form-signin">
-                <label class="item item-input item-label">
-            <span class="input-label">Server url</span>
-            <input type="text" placeholder="{{settings.server}}" ng-model="settings.server" >
-                </label>
-
+              <label class="item item-input item-label">
+                <span class="input-label">Server</span>
+                <input type="text" placeholder="{{settings.server}}" ng-model="settings.server" >
+              </label>
+              <label class="item item-input item-label">
+                <span class="input-label">Port</span>
+                <input type="text" placeholder="{{settings.port}}" ng-model="settings.port" >
+              </label>
+              
                 <div class="button-bar">
                     <button class="button button-positive" type="submit">
                 Save
