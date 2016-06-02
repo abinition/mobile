@@ -1,7 +1,7 @@
 {
-  "name": "mobile",
-  "version": "1.1.1",
-  "description": "mobile: An Ionic project",
+  "name": "InfoArchiveMobile",
+  "version": "0.9.2",
+  "description": "InfoArchive Mobile App",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
@@ -21,7 +21,8 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "cordova-plugin-inappbrowser"
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-file-transfer"
   ],
   "cordovaPlatforms": [
     "android"

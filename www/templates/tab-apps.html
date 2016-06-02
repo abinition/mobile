@@ -1,22 +1,17 @@
 <!--<ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'> -->
 <ion-view view-title="Applications">
-  <ion-content class="padding">
+  <ion-content>
     
-    <div class="row header">
-      <div class="col">Name</div>
-      <!--<div class="col">Description</div>-->
-      <div class="col">Category</div>
-      <div class="col">Status</div>
-    </div>
-    <div class="row" ng-repeat="app in applications">
-      <div class="col">{{app.name}}
-        <button class="button button-positive" ng-click="add($event,$index)">Submit</button>
+    <div class="list">
+
+        <div  ng-repeat="app in applications">
+          <div class="item item-button-right" ng-if="app.state == 'READY' || app.state == 'ACTIVE' ">
+            {{app.name}}&nbsp;
+            <span><i ng-click="info($event,$index)" class="icon ion-information-circled"></i><span>
+            <button class="button button-positive button-small pull-right" ng-click="add($event,$index)">Select</button>
+         </div>
       </div>
-      <!--<div class="col">{{app.description}}</div>-->
-      <div class="col">{{app.category}}&nbsp;
-        <i ng-click="info($event,$index)" class="icon ion-information-circled"></i>
-      </div>
-      <div class="col">{{app.state}}</div>
+     
     </div>
   </ion-content>
 </ion-view>

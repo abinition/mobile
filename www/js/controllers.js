@@ -127,7 +127,7 @@ mobileApp
             $localStorage.port = "8080";
             
           if (angular.isUndefined($localStorage.version))
-            $localStorage.version = "0.9-1";
+            $localStorage.version = "0.9-2";
         }
   
         else {
@@ -205,6 +205,7 @@ mobileApp
     
     $scope.info = function ($event, $index) {
       $scope.appInfo = $scope.applications[$index].description ;
+      $scope.appCategory = $scope.applications[$index].category ;
       $scope.popover2.show($event) ;
     }
  
@@ -235,7 +236,7 @@ mobileApp
         var appCount = apps.length;
         $scope.applications = apps;
         //console.log($ionicHistory.currentStateName());
-        tabState = "tab.apps";
+        //tabState = "tab.apps";
 
       });
     });
@@ -356,12 +357,12 @@ mobileApp
   
   .controller('DashCtrl', function ($scope, $state) {
     console.log("Dashboard");
-    tabState = "tab.dash";
+    //tabState = "tab.dash";
   })
 
   .controller('CompCtrl', function ($scope, $state) {
     console.log("Compliance");
-    tabState = "tab.comp";
+    //tabState = "tab.comp";
   })
 
 
