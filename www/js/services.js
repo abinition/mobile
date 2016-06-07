@@ -186,27 +186,33 @@ mobileApp
                 side_columns: []
               } ;
               var numPanels = results[1].panels.length ;
-              var numCols = results[1].panels[0].tabs[0].columns.length ;
-              for ( col=0; col<numCols; col++) {                  
-                var id = results[1].panels[0].tabs[0].columns[col].name ;
-                var label = results[1].panels[0].tabs[0].columns[col].label ;           
-               
-                data.columns.push ( { "id": id, "name": label } ) ;
+              if ( results[1].panels[0].tabs.length > 0 ) {
+                var numCols = results[1].panels[0].tabs[0].columns.length ;
+                for ( col=0; col<numCols; col++) {                  
+                  var id = results[1].panels[0].tabs[0].columns[col].name ;
+                  var label = results[1].panels[0].tabs[0].columns[col].label ;           
+                
+                  data.columns.push ( { "id": id, "name": label } ) ;
+                }
               }
               if ( numPanels > 1 ) {
-                var numCols = results[1].panels[1].tabs[0].columns.length ;
-                for ( col=0; col<numCols; col++) {                  
-                  var id = results[1].panels[1].tabs[0].columns[col].name ;
-                  var label = results[1].panels[1].tabs[0].columns[col].label ;       
-                  data.side_columns.push ( { "id": id, "name": label} ) ;
+                if ( results[1].panels[1].tabs.length > 0 ) {
+                  var numCols = results[1].panels[1].tabs[0].columns.length ;
+                  for ( col=0; col<numCols; col++) {                  
+                    var id = results[1].panels[1].tabs[0].columns[col].name ;
+                    var label = results[1].panels[1].tabs[0].columns[col].label ;       
+                    data.side_columns.push ( { "id": id, "name": label} ) ;
+                  }
                 }
               }
               if ( numPanels > 2 ) {
-                var numCols = results[1].panels[2].tabs[0].columns.length ;
-                for ( col=0; col<numCols; col++) {                  
-                  var id = results[1].panels[2].tabs[0].columns[col].name ;
-                  var label = results[1].panels[2].tabs[0].columns[col].label ;       
-                  data.side_columns.push ( { "id": id, "name": label } ) ;
+                if ( results[1].panels[2].tabs.length > 0 ) {
+                  var numCols = results[1].panels[2].tabs[0].columns.length ;
+                  for ( col=0; col<numCols; col++) {                  
+                    var id = results[1].panels[2].tabs[0].columns[col].name ;
+                    var label = results[1].panels[2].tabs[0].columns[col].label ;       
+                    data.side_columns.push ( { "id": id, "name": label } ) ;
+                  }
                 }
               }
               
@@ -513,13 +519,15 @@ mobileApp
                     var comps = href.pathname.split('/');
                     resultsId = comps[comps.length - 1];
                   }
-                  
+                  var description = results[1]._embedded.searches[i].description ;
+                  if ( !description ) description = "No description supplied" ;
                   var search = {
                     'formId' : formId,
                     'queryId' : queryId,
                     'resultsId' : resultsId,
                     'name' : results[1]._embedded.searches[i].name,
-                    'state' : results[1]._embedded.searches[i].state
+                    'state' : results[1]._embedded.searches[i].state, 
+                    'description' : description,
                   } ;
                   searchData.push ( search ) ;
                 }

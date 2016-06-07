@@ -176,7 +176,7 @@ mobileApp
     };
   })
 
-  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicHistory, $ionicPopover) {
+  .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicPopover) {
 
     $scope.add = function ($event, $index) {
 
@@ -189,14 +189,14 @@ mobileApp
 
         if (searches.length > 0) {
 
-          if (searches.length > 1) {
+          //if (searches.length > 1) {
             $state.go('tab.searches');
-          }
-          else {
-            LoadService.form(AuthService.getAccessToken(), searches[0].formId, function (tokens) {
-              $state.go('tab.search');
-            });
-          }
+          //}
+          //else {
+          //  LoadService.form(AuthService.getAccessToken(), searches[0].formId, function (tokens) {
+          //    $state.go('tab.search');
+          //  });
+          //}
         }
         else {
           //console.log ( "NO SEARCH") ;
@@ -212,7 +212,7 @@ mobileApp
       $scope.popover2.show($event);
     }
 
-    $ionicPopover.fromTemplateUrl('templates/pop-info.html', {
+    $ionicPopover.fromTemplateUrl('templates/pop-appinfo.html', {
       backdropClickToClose: true,
       scope: $scope
     })
@@ -237,7 +237,7 @@ mobileApp
     });
   })
 
-  .controller('SearchesCtrl', function ($scope, $state, LoadService, AuthService) {
+  .controller('SearchesCtrl', function ($scope, $state, LoadService, AuthService, $ionicPopover) {
     $scope.add = function ($event, $index) {
 
       var formId = $scope.searches[$index].formId;
@@ -246,7 +246,20 @@ mobileApp
       });
     };
     $scope.searches = LoadService.getSearchData();
+    
+    $scope.info = function ($event, $index) {
+      $scope.description = $scope.searches[$index].description;
+      $scope.name = $scope.searches[$index].name;
+      $scope.popover.show($event);
+    }
 
+    $ionicPopover.fromTemplateUrl('templates/pop-searchinfo.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+        $scope.popover = popover;
+    });
 
   })
   .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js, $ionicPopup) {
