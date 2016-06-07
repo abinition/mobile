@@ -13,7 +13,7 @@ mobileApp
   })
 
 
-  .controller('SideCtlr', function ($scope, $state, $rootScope,AuthService, $ionicPopover, $ionicModal, $localStorage, $sessionStorage) {
+  .controller('SideCtlr', function ($scope, $state, $rootScope, AuthService, $ionicPopover, $ionicModal, $localStorage, $sessionStorage) {
 
     console.log("SIDE CONTROLLER");
 
@@ -25,18 +25,18 @@ mobileApp
     $scope.username = AuthService.getUsername();
     $scope.authority = AuthService.getAuthority();
     $scope.username = AuthService.getUsername();
-    $scope.settings  = {
-      "server" : $localStorage.server ,
-      "port" : $localStorage.port
+    $scope.settings = {
+      "server": $localStorage.server,
+      "port": $localStorage.port
     };
 
     $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
       animation: 'slide-in-up',
       scope: $scope
     })
-    .then(function (modal) {
-      $scope.modal = modal;
-    });
+      .then(function (modal) {
+        $scope.modal = modal;
+      });
 
     $ionicPopover.fromTemplateUrl('templates/pop-about.html', {
       backdropClickToClose: true,
@@ -60,12 +60,12 @@ mobileApp
 
     $scope.saveSettings = function (settingsForm) {
       if (settingsForm.$valid) {
-        $localStorage.server = $scope.settings.server ;
-        $localStorage.port    = $scope.settings.port ;        
-        $rootScope.serverURL = 
-          "http://" + 
-           $localStorage.server + ":" +  $localStorage.port + 
-          "/" ; 
+        $localStorage.server = $scope.settings.server;
+        $localStorage.port = $scope.settings.port;
+        $rootScope.serverURL =
+          "http://" +
+          $localStorage.server + ":" + $localStorage.port +
+          "/";
       }
       $scope.modal.hide();
     };
@@ -76,7 +76,7 @@ mobileApp
     };
 
     $scope.openAboutPopover = function ($event) {
-      $scope.version = $localStorage.version ;
+      $scope.version = $localStorage.version;
       $scope.aboutPopover.show($event);
     };
 
@@ -110,41 +110,41 @@ mobileApp
         str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
       return str.join("&");
     };
-    
+
     $scope.signIn = function (form) {
 
       if (form.$valid) {
 
         console.log("Authenticating");
         console.log($scope.authorization);
-        
-        if ( typeof (Storage) != "undefined") {
+
+        if (typeof (Storage) != "undefined") {
 
           if (angular.isUndefined($localStorage.server))
             $localStorage.server = "localhost";
-            
+
           if (angular.isUndefined($localStorage.port))
             $localStorage.port = "8080";
-            
+
           if (angular.isUndefined($localStorage.version))
-            $localStorage.version = "0.9-2";
+            $localStorage.version = "0.9-1";
         }
-  
+
         else {
           alert("LocalStorage not supported!");
         }
 
-  
-        if ( $scope.authorization.server != "" ) 
-          $localStorage.server = $scope.authorization.server ;
-        if ( $scope.authorization.port != null ) 
-          $localStorage.port   = $scope.authorization.port ;
-        
-        $rootScope.serverURL = 
-          "http://" + 
-           $localStorage.server + ":" +  $localStorage.port + 
-          "/" ; 
-    
+
+        if ($scope.authorization.server != "")
+          $localStorage.server = $scope.authorization.server;
+        if ($scope.authorization.port != null)
+          $localStorage.port = $scope.authorization.port;
+
+        $rootScope.serverURL =
+          "http://" +
+          $localStorage.server + ":" + $localStorage.port +
+          "/";
+
         var postData = {
           "grant_type": "password",
           "username": $scope.authorization.username,
@@ -183,17 +183,20 @@ mobileApp
       //console.log("Added " + $index);
       var appId = $scope.applications[$index].appId;
 
-      LoadService.app(AuthService.getAccessToken(), appId, function (tokens) {
+      LoadService.app(AuthService.getAccessToken(), appId, function (searches) {
 
-        console.log(tokens);
-        if (tokens.formId != "" /*&& tokens.queryId*/) {
+        console.log(searches);
 
-          LoadService.form(AuthService.getAccessToken(), tokens.formId /*,tokens.queryId*/, function (tokens) {
-            //console.log('Forms');
-            //console.log( tokens );
-            $state.go('tab.search');
-          });
+        if (searches.length > 0) {
 
+          if (searches.length > 1) {
+            $state.go('tab.searches');
+          }
+          else {
+            LoadService.form(AuthService.getAccessToken(), searches[0].formId, function (tokens) {
+              $state.go('tab.search');
+            });
+          }
         }
         else {
           //console.log ( "NO SEARCH") ;
@@ -202,46 +205,50 @@ mobileApp
         }
       });
     };
-    
+
     $scope.info = function ($event, $index) {
-      $scope.appInfo = $scope.applications[$index].description ;
-      $scope.appCategory = $scope.applications[$index].category ;
-      $scope.popover2.show($event) ;
+      $scope.appInfo = $scope.applications[$index].description;
+      $scope.appCategory = $scope.applications[$index].category;
+      $scope.popover2.show($event);
     }
- 
+
     $ionicPopover.fromTemplateUrl('templates/pop-info.html', {
       backdropClickToClose: true,
       scope: $scope
     })
-      .then(function (popover) {
+    .then(function (popover) {
         $scope.popover2 = popover;
-      });
-
+    });
 
     $ionicPopover.fromTemplateUrl('templates/pop-nosearch.html', {
       backdropClickToClose: true,
       scope: $scope
-    })
-      .then(function (popover) {
+    }).then(function (popover) {
         $scope.popover = popover;
-      });
+    });
 
     LoadService.load(AuthService.getAccessToken(), function (tokens) {
 
-      //console.log('UserId is ' + tokens.userId);
-
       LoadService.apps(AuthService.getAccessToken(), tokens.userId, function (apps) {
-
         //console.log('Applications');
         var appCount = apps.length;
         $scope.applications = apps;
-        //console.log($ionicHistory.currentStateName());
-        //tabState = "tab.apps";
-
       });
     });
   })
 
+  .controller('SearchesCtrl', function ($scope, $state, LoadService, AuthService) {
+    $scope.add = function ($event, $index) {
+
+      var formId = $scope.searches[$index].formId;
+      LoadService.form(AuthService.getAccessToken(), formId, function (tokens) {
+        $state.go('tab.search');
+      });
+    };
+    $scope.searches = LoadService.getSearchData();
+
+
+  })
   .controller('SearchCtrl', function ($scope, $state, AuthService, LoadService, SearchService, x2js, $ionicPopup) {
 
     // An alert dialog
@@ -262,10 +269,10 @@ mobileApp
 
       if (form.$valid && $scope.formData.length) {
 
-        var appParms = LoadService.getAppParms() ;
-        console.log ( appParms ) ;
-        var preload = {} ;
-        if ( appParms.archiveType == 'SIP' ) {
+        var appParms = LoadService.getAppParms();
+        console.log(appParms);
+        var preload = {};
+        if (appParms.archiveType == 'SIP') {
           preload = {
             "data": {
               "criterion": [],
@@ -284,16 +291,16 @@ mobileApp
             };
             preload.data.criterion.push(criteria);
           });
-        } 
-        else if ( appParms.archiveType == 'TABLE') {
-          preload.data = {} ;
-          angular.forEach( $scope.formData, function (obj, key) {
-            preload.data[obj.id] = obj.value ;
-          });       
+        }
+        else if (appParms.archiveType == 'TABLE') {
+          preload.data = {};
+          angular.forEach($scope.formData, function (obj, key) {
+            preload.data[obj.id] = obj.value;
+          });
         }
         var xml = new X2JS();
         var payload = xml.json2xml_str(preload);
-        
+
         console.log(payload);
 
         SearchService.search(AuthService.getAccessToken(),
@@ -343,26 +350,24 @@ mobileApp
       $scope.side_item = item;
       //$scope.modal.show($event);
       ResultsService.setResults(item);
-      $state.go("tab.details") ;
+      $state.go("tab.details");
 
     };
 
   })
-  
+
   .controller('DetailsCtrl', function ($scope, $state, ResultsService) {
-      
-     $scope.item = ResultsService.getResults();
+
+    $scope.item = ResultsService.getResults();
 
   })
-  
+
   .controller('DashCtrl', function ($scope, $state) {
     console.log("Dashboard");
-    //tabState = "tab.dash";
   })
 
   .controller('CompCtrl', function ($scope, $state) {
     console.log("Compliance");
-    //tabState = "tab.comp";
   })
 
 

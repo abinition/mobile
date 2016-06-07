@@ -49,13 +49,24 @@ mobileApp
             controller: 'AppsCtrl'
           }
         }
-      })    
+      })
+   
       .state('tab.search', {
         url: '/search',
         views: {
           'tab-apps': {
             templateUrl: 'templates/tab-search.html',
             controller: 'SearchCtrl'
+          }
+        }
+      })
+         
+      .state('tab.searches', {
+        url: '/searches',
+        views: {
+          'tab-apps': {
+            templateUrl: 'templates/tab-searches.html',
+            controller: 'SearchesCtrl'
           }
         }
       })

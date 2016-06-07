@@ -263,6 +263,7 @@ mobileApp
     var resultsId = '' ;
     var archiveType = '' ;
     var formData = [] ;
+    var searchData = [] ;
     var appParms = {
       archiveType: '' ,
       category : '',
@@ -280,6 +281,7 @@ mobileApp
       getUserId: function () { return userId },
       getQueryId: function () { return queryId },
       getFormData: function () { return formData },
+      getSearchData: function() { return searchData },
       load: function (authToken, callback) {
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/services',
@@ -422,6 +424,7 @@ mobileApp
         queryId = '' ;
         resultsId = '';
         formData = [] ;
+        searchData = [] ;
         appParms = {} ;
             
         var load1 = $resource(
@@ -485,34 +488,44 @@ mobileApp
             
             // Extract out id's we need
             if ( results[1]._embedded ) {
+              
               if ( results[1]._embedded.searches ) {
-                var xform = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/xform"];
-                if ( xform ) {
-                  var href = new URL(xform.href);
-                  var comps = href.pathname.split('/');
-                  formId = comps[comps.length - 1];
-                }
-                var query = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/query"];
-                if ( query ) {
-                  var href = new URL(query.href);
-                  var comps = href.pathname.split('/');
-                  queryId = comps[comps.length - 1];
-                }
-                var result = results[1]._embedded.searches[0]._links["http://identifiers.emc.com/result-master"];
-                if ( result ) {
-                  var href = new URL(result.href);
-                  var comps = href.pathname.split('/');
-                  resultsId = comps[comps.length - 1];
+                
+                var searchCount = results[1]._embedded.searches.length ;
+                
+                for ( i=0; i<searchCount; i++ ) {
+                
+                  var xform = results[1]._embedded.searches[i]._links["http://identifiers.emc.com/xform"];
+                  if ( xform ) {
+                    var href = new URL(xform.href);
+                    var comps = href.pathname.split('/');
+                    formId = comps[comps.length - 1];
+                  }
+                  var query = results[1]._embedded.searches[i]._links["http://identifiers.emc.com/query"];
+                  if ( query ) {
+                    var href = new URL(query.href);
+                    var comps = href.pathname.split('/');
+                    queryId = comps[comps.length - 1];
+                  }
+                  var result = results[1]._embedded.searches[i]._links["http://identifiers.emc.com/result-master"];
+                  if ( result ) {
+                    var href = new URL(result.href);
+                    var comps = href.pathname.split('/');
+                    resultsId = comps[comps.length - 1];
+                  }
+                  
+                  var search = {
+                    'formId' : formId,
+                    'queryId' : queryId,
+                    'resultsId' : resultsId,
+                    'name' : results[1]._embedded.searches[i].name,
+                    'state' : results[1]._embedded.searches[i].state
+                  } ;
+                  searchData.push ( search ) ;
                 }
               }
             }
-            var tokens = {
-              "formId": formId,
-              "queryId" : queryId,
-              "resultsId" : resultsId
-            } ;
-            formData = [] ;
-            callback(tokens);
+            callback(searchData);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected
