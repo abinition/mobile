@@ -149,8 +149,8 @@ mobileApp
           "grant_type": "password",
           "username": $scope.authorization.username,
           "password": $scope.authorization.password,
-          //"client_id": "infoarchive.iawa",
-          //"client_secret": "secret",
+          "client_id": "infoarchive.iawa",
+          "client_secret": "secret",
           "scope": "search compliance administration"
         };
 
@@ -231,7 +231,7 @@ mobileApp
 
       LoadService.apps(AuthService.getAccessToken(), tokens.userId, function (apps) {
         //console.log('Applications');
-        $scope.appCount = apps.length;
+        var appCount = apps.length;
         $scope.applications = apps;
       });
     });

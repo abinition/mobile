@@ -90,7 +90,7 @@ mobileApp
         username = un;
 
         var api = $resource(
-          $rootScope.serverURL + 'oauth/token',
+          $rootScope.serverURL + 'login',
           {}, 
           {
             'oauth': {
