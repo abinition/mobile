@@ -88,7 +88,6 @@ mobileApp
       getUsername: function () { return username },
       login: function (un, password, payload, callback) {
         username = un;
-
         var api = $resource(
           $rootScope.serverURL + 'login',
           {}, 
@@ -136,10 +135,11 @@ mobileApp
       
       getResults: function () {  return data ; },
       
-      search: function (authToken, searchId, resultsId, payload, callback) {
+      search: function (authToken, sId, rId, payload, callback) {
+        
         var load1 = $resource(
-          $rootScope.serverURL + 'restapi/systemdata/searches/:search',
-          {search: searchId }, 
+          $rootScope.serverURL + 'restapi/systemdata/search-compositions/:search',
+          {search: sId }, 
           {
             'searches': {
               method: 'POST',
@@ -153,8 +153,8 @@ mobileApp
           });
 
         var load2 = $resource(
-          $rootScope.serverURL + 'restapi/systemdata/result-masters/:result',
-          {result: resultsId }, 
+          $rootScope.serverURL + 'restapi/systemdata/result-masters/:result/',
+          {result: rId }, 
           {
             'results': {
               method: 'GET',
@@ -261,15 +261,20 @@ mobileApp
   })
   .factory('LoadService', function ($resource, $rootScope, $q, addBearerAuth, helper, x2js) {
     
-    var searchId = '' ;
-    var formId = '' ;
-    var queryId = '' ;
-    var userId = '' ;
-    var appId = '' ;
-    var resultsId = '' ;
-    var archiveType = '' ;
+    /* LoadService variables */
+    var searchesId = '' ;     // A group of searches
+    var queryId = '' ;        // The query identifier
+    var userId = '' ;         // The user id
+    var resultsId = '' ;      // Search results
+    
+    var formId = '' ;         // The search form id
     var formData = [] ;
+
+    var searchesId = '' ;     // A group of searches
+    var searchId = '' ;       // A single search id
     var searchData = [] ;
+
+    var appId = '' ;          // The application id
     var appParms = {
       archiveType: '' ,
       category : '',
@@ -283,12 +288,17 @@ mobileApp
       getSearchId: function () { return searchId },
       getResultsId: function () { return resultsId },  
       getFormId: function () { return formId },
+      getSearchesId: function () { return searchesId },
       getAppParms: function () { return appParms },
       getUserId: function () { return userId },
       getQueryId: function () { return queryId },
       getFormData: function () { return formData },
       getSearchData: function() { return searchData },
       load: function (authToken, callback) {
+
+        // Clear
+        userId = '' ;
+
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/services',
           {}, 
@@ -345,7 +355,6 @@ mobileApp
             var href = new URL(results[2]._embedded.tenants[0]._links.self.href);
             var comps = href.pathname.split('/');
             userId = comps[comps.length - 1];
-            console.log(userId);
             var tokens = {
               "userId" : userId 
             } ;
@@ -359,11 +368,11 @@ mobileApp
           }
           );
       },
-      apps: function (authToken, userId, callback) {
+      apps: function (authToken, uId, callback) {
 
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/tenants/:user',
-          { user: userId }, 
+          { user: uId }, 
           {
             'tenants': {
               method: 'GET',
@@ -378,7 +387,7 @@ mobileApp
 
         var load2 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/tenants/:user/applications',
-          { user: userId }, 
+          { user: uId }, 
           {
             'applications': {
               method: 'GET',
@@ -423,10 +432,11 @@ mobileApp
           }
           );
       },
-      app: function (authToken, appId, callback) {
+      app: function (authToken, aId, callback) {
 
         // Clear
         formId = '' ;
+        searchesId = '' ;
         queryId = '' ;
         resultsId = '';
         formData = [] ;
@@ -435,7 +445,7 @@ mobileApp
             
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/applications/:app',
-          { app: appId }, 
+          { app: aId }, 
           {
             'application': {
               method: 'GET',
@@ -450,7 +460,7 @@ mobileApp
 
         var load2 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/applications/:app/searches',
-          { app: appId }, 
+          { app: aId }, 
           {
             'searches': {
               method: 'GET',
@@ -465,7 +475,7 @@ mobileApp
         
         var load3 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/applications/:app/aics',
-          { app: appId }, 
+          { app: aId }, 
           {
             'aics': {
               method: 'GET',
@@ -501,11 +511,11 @@ mobileApp
                 
                 for ( i=0; i<searchCount; i++ ) {
                 
-                  var xform = results[1]._embedded.searches[i]._links["http://identifiers.emc.com/xform"];
-                  if ( xform ) {
-                    var href = new URL(xform.href);
+                  var srch = results[1]._embedded.searches[i]._links.self;
+                  if ( srch ) {
+                    var href = new URL(srch.href);
                     var comps = href.pathname.split('/');
-                    formId = comps[comps.length - 1];
+                    searchesId = comps[comps.length - 1];
                   }
                   var query = results[1]._embedded.searches[i]._links["http://identifiers.emc.com/query"];
                   if ( query ) {
@@ -513,23 +523,17 @@ mobileApp
                     var comps = href.pathname.split('/');
                     queryId = comps[comps.length - 1];
                   }
-                  var result = results[1]._embedded.searches[i]._links["http://identifiers.emc.com/result-master"];
-                  if ( result ) {
-                    var href = new URL(result.href);
-                    var comps = href.pathname.split('/');
-                    resultsId = comps[comps.length - 1];
-                  }
+
                   var description = results[1]._embedded.searches[i].description ;
                   if ( !description ) description = "No description supplied" ;
-                  var search = {
-                    'formId' : formId,
+                  var searches = {
+                    'searchesId' : searchesId,
                     'queryId' : queryId,
-                    'resultsId' : resultsId,
                     'name' : results[1]._embedded.searches[i].name,
                     'state' : results[1]._embedded.searches[i].state, 
                     'description' : description,
                   } ;
-                  searchData.push ( search ) ;
+                  searchData.push ( searches ) ;
                 }
               }
             }
@@ -543,13 +547,13 @@ mobileApp
           }
           );
       },
-      form: function (authToken, formId /*, queryId*/, callback) {
+      searches: function (authToken, sId , qId, callback) {
 
         var load1 = $resource(
-          $rootScope.serverURL + 'restapi/systemdata/xforms/:form',
-          { form: formId }, 
+          $rootScope.serverURL + 'restapi/systemdata/searches/:searches/search-compositions',
+          { searches: sId }, 
           {
-            'xforms': {
+            'searchCompositions': {
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
@@ -559,10 +563,10 @@ mobileApp
               }
             }
           });
-          /*
+          
         var load2 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/queries/:query',
-          {query: queryId }, 
+          {query: qId }, 
           {
             'queries': {
               method: 'GET',
@@ -574,16 +578,69 @@ mobileApp
               }
             }
           });
-          */
-        var promise1 = load1.xforms().$promise;
-        //var promise2 = load2.queries().$promise;
+          
+        var promise1 = load1.searchCompositions().$promise;
+        var promise2 = load2.queries().$promise;
         
-        $q.all([promise1/*,promise2*/])
+        $q.all([promise1,promise2])
           .then(
           function (results) {
-            
                         
-            var searchRef = results[0]._links["http://identifiers.emc.com/search"];
+            console.log ( results ) ;
+                        
+            var formRef = results[0]._embedded.searchCompositions[0]._links["http://identifiers.emc.com/xform"];
+            console.log( formRef ) ;
+            if ( formRef ) {
+              var href = new URL(formRef.href);
+              var comps = href.pathname.split('/');
+              formId = comps[comps.length - 1];
+             
+            }
+
+            var result = results[0]._embedded.searchCompositions[0]._links["http://identifiers.emc.com/result-master"];
+            if ( result ) {
+              var href = new URL(result.href);
+              var comps = href.pathname.split('/');
+              resultsId = comps[comps.length - 1];
+            }
+
+            var tokens = { "formId" : formId, "resultsId": resultsId } ;
+            
+            callback(tokens);
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+          );
+      },
+      form: function (authToken, fId, callback) {
+
+        var load1 = $resource(
+          $rootScope.serverURL + 'restapi/systemdata/xforms/:form',
+          { form: fId }, 
+          {
+            'xforms': {
+              method: 'GET',
+              headers: addBearerAuth.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log(jsonData);
+                return jsonData;
+              }
+            }
+          });
+              
+        var promise1 = load1.xforms().$promise;
+        
+        $q.all([promise1])
+          .then(
+          function (results) {
+                  
+            console.log ( results ) ;
+            var searchRef = results[0]._links["http://identifiers.emc.com/search-composition"];
             if ( searchRef ) {
               var href = new URL(searchRef.href);
               var comps = href.pathname.split('/');

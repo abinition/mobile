@@ -240,9 +240,13 @@ mobileApp
   .controller('SearchesCtrl', function ($scope, $state, LoadService, AuthService, $ionicPopover) {
     $scope.add = function ($event, $index) {
 
-      var formId = $scope.searches[$index].formId;
-      LoadService.form(AuthService.getAccessToken(), formId, function (tokens) {
-        $state.go('tab.search');
+      var searchesId = $scope.searches[$index].searchesId;
+      var queryId = $scope.searches[$index].queryId 
+      LoadService.searches(AuthService.getAccessToken(), searchesId, queryId, function (tokens) {
+          console.log ( tokens ) ;
+          LoadService.form(AuthService.getAccessToken(), tokens.formId, function (tokens) {
+            $state.go('tab.search');
+          });
       });
     };
     $scope.searches = LoadService.getSearchData();
