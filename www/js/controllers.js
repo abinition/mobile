@@ -322,6 +322,7 @@ mobileApp
 
         SearchService.search(AuthService.getAccessToken(),
           LoadService.getSearchId(),
+          LoadService.getResultId(),
           LoadService.getResultsId(),
           payload,
           function (tokens) {

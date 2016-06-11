@@ -135,7 +135,7 @@ mobileApp
       
       getResults: function () {  return data ; },
       
-      search: function (authToken, sId, rId, payload, callback) {
+      search: function (authToken, sId, rId, rsId, payload, callback) {
         
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/search-compositions/:search',
@@ -152,20 +152,39 @@ mobileApp
             }
           });
 
-        var load2 = $resource(
-          $rootScope.serverURL + 'restapi/systemdata/result-masters/:result/',
-          {result: rId }, 
-          {
-            'results': {
-              method: 'GET',
-              headers: addBearerAuth2.token(authToken),
-              transformResponse: function (data, headers) {
+        var load2 ;
+        if ( rId ) {
+          load2 = $resource(
+            $rootScope.serverURL + 'restapi/systemdata/result-masters/:result/',
+            {result: rId }, 
+            {
+              'results': {
+                method: 'GET',
+                headers: addBearerAuth2.token(authToken),
+                transformResponse: function (data, headers) {
 
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                return jsonData;
+                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                  return jsonData;
+                }
               }
-            }
-          });
+            });
+         }
+         else {
+          load2 = $resource(
+            $rootScope.serverURL + 'restapi/systemdata/result-masters/:result/',
+            {result: rId }, 
+            {
+              'results': {
+                method: 'GET',
+                headers: addBearerAuth2.token(authToken),
+                transformResponse: function (data, headers) {
+
+                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                  return jsonData;
+                }
+              }
+            });
+         }
         var promise1 = load1.searches({}, payload).$promise;
         var promise2 = load2.results().$promise;
         
@@ -265,7 +284,8 @@ mobileApp
     var searchesId = '' ;     // A group of searches
     var queryId = '' ;        // The query identifier
     var userId = '' ;         // The user id
-    var resultsId = '' ;      // Search results
+    var resultId = '' ;       // Search result-master
+    var resultsId = '' ;      // Search result-masters
     
     var formId = '' ;         // The search form id
     var formData = [] ;
@@ -286,6 +306,7 @@ mobileApp
     return {
       getAppId: function () { return appId },
       getSearchId: function () { return searchId },
+      getResultId: function () { return resultId },  
       getResultsId: function () { return resultsId },  
       getFormId: function () { return formId },
       getSearchesId: function () { return searchesId },
@@ -438,6 +459,7 @@ mobileApp
         formId = '' ;
         searchesId = '' ;
         queryId = '' ;
+        resultId = '';
         resultsId = '';
         formData = [] ;
         searchData = [] ;
@@ -563,7 +585,7 @@ mobileApp
               }
             }
           });
-          
+        /*  
         var load2 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/queries/:query',
           {query: qId }, 
@@ -578,11 +600,11 @@ mobileApp
               }
             }
           });
-          
+        */  
         var promise1 = load1.searchCompositions().$promise;
-        var promise2 = load2.queries().$promise;
+        /*var promise2 = load2.queries().$promise;*/
         
-        $q.all([promise1,promise2])
+        $q.all([promise1/*,promise2*/])
           .then(
           function (results) {
                         
@@ -601,10 +623,15 @@ mobileApp
             if ( result ) {
               var href = new URL(result.href);
               var comps = href.pathname.split('/');
+              resultId = comps[comps.length - 1];
+            }
+            var result = results[0]._embedded.searchCompositions[0]._links["http://identifiers.emc.com/result-masters"];
+            if ( result ) {
+              var href = new URL(result.href);
+              var comps = href.pathname.split('/');
               resultsId = comps[comps.length - 1];
             }
-
-            var tokens = { "formId" : formId, "resultsId": resultsId } ;
+            var tokens = { "formId" : formId, "resultId": resultId, "resultsId": resultsId } ;
             
             callback(tokens);
           },
@@ -673,7 +700,7 @@ mobileApp
                 else if ( value._id == "prompts") {
                   prompts = value.prompts ;
                 }
-                else if ( value.data ) {
+                else if ( value._id == undefined && value.data ) {
                   data = value.data ;
                 }
               });
@@ -686,8 +713,11 @@ mobileApp
             var i = 0 ;
             console.log ( data ) ;
             for (var key in data) {
+              console.log ( "key") ;
+              console.log ( key ) ;
               if (data.hasOwnProperty(key)) {
                 var range = "" ;
+                debugger;
                 if ( data[key] instanceof Object || data[key] == "") {
                   if ( data[key] instanceof Object ) {
                     range = data[key] ;
@@ -716,6 +746,7 @@ mobileApp
                 formData.push ( input ) ;
               }
             }
+            console.log ( formData ) ;
             callback(formData);
           },
           function (errorMsg) {
