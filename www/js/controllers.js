@@ -378,9 +378,30 @@ mobileApp
       cid = cid.replace ( /:/g, '%3A') ;
       
       
-      //LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, function (tokens) {
-      //    console.log ( "downloaded" ) ;
-      //});
+      LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, fn, function (tokens) {
+
+        console.log ( tokens ) ;
+        console.log ( cordova.file ) ;
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
+
+            console.log('file system open: ' + fs.name);
+            fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
+
+                console.log("fileEntry is file?" + fileEntry.isFile.toString());
+                console.log(fileEntry);
+                // fileEntry.name == 'someFile.txt'
+                // fileEntry.fullPath == '/someFile.txt'
+                writeFile(fileEntry, tokens.data );
+
+            }, onErrorCreateFile);
+
+        }, onErrorLoadFs);
+
+       console.log ( "downloaded" ) ;
+
+      });
+      
+      /*  Will not work, because of ':' in URI value for cid
       var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
           LoadService.getAppId() +
           '/ci?cid=' + cid; 
@@ -399,6 +420,8 @@ mobileApp
           $scope.downloadProgress = (progress.loaded / progress.total) * 100;
         });
       });
+
+      */
     };
 
   })
@@ -411,7 +434,54 @@ mobileApp
     console.log("Compliance");
   })
 
+function onErrorCreateFile() {
+  console.log("no go create file");
+}
+function onErrorLoadFs() {
+  console.log("no go load fs");
+}  
+function onErrorReadFile() {
+  console.log("no go load fs");
+}  
+function writeFile(fileEntry, dataObj, isAppend) {
+    // Create a FileWriter object for our FileEntry (log.txt).
+    fileEntry.createWriter(function (fileWriter) {
 
+        fileWriter.onwriteend = function() {
+            console.log("Successful file read...");
+            readFile(fileEntry);
+        };
 
+        fileWriter.onerror = function (e) {
+            console.log("Failed file read: " + e.toString());
+        };
+
+        // If we are appending data to file, go to the end of the file.
+        if (isAppend) {
+            try {
+                fileWriter.seek(fileWriter.length);
+            }
+            catch (e) {
+                console.log("file doesn't exist!");
+            }
+        }
+        fileWriter.write(dataObj);
+    });
+}
+
+function readFile(fileEntry) {
+
+    fileEntry.file(function (file) {
+        var reader = new FileReader();
+
+        reader.onloadend = function() {
+            console.log("Successful file read: " + this.result);
+            //displayFileData(fileEntry.fullPath + ": " + this.result);
+        };
+
+        reader.readAsText(file);
+
+    }, onErrorReadFile);
+}
 
 

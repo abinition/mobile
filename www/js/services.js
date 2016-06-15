@@ -771,9 +771,8 @@ mobileApp
           }
           );
       },
-      download: function (authToken, aId, cId, callback) {
+      download: function (authToken, aId, cId, fn, callback) {
 
-console.log ( cId ) ;
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/applications/:app/ci?cid=' + cId,
           { app: aId }, 
@@ -782,22 +781,23 @@ console.log ( cId ) ;
               method: 'GET',
               headers: addBearerAuth3.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                return data;
               }
             }
           });
               
         var promise1 = load1.download().$promise;
         
-        $q.all([promise1])
+        $q.all(promise1)
           .then(
           function (results) {
                   
-            console.log ( results ) ;
+            var fileSpec = {
+              "name" : fn,
+              "data" : results
+            } ;
            
-            callback(results);
+            callback(fileSpec);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected
