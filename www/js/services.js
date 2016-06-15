@@ -26,6 +26,15 @@ mobileApp
       }
     }
   })
+ .factory('addBearerAuth3', function () {
+    return {
+      token: function (authToken) {
+        return { 'Authorization': 'Bearer ' + authToken,  
+                 "Accept":"*/*" 
+                };
+      }
+    }
+  })
   .factory('helper', function() {
     return {
       findNode: function findNode(id, currentNode) {
@@ -154,7 +163,7 @@ mobileApp
 
         var load2 ;
         if ( rId ) {
-          load2 = $resource(
+	        load2 = $resource(
             $rootScope.serverURL + 'restapi/systemdata/result-masters/:result/',
             {result: rId }, 
             {
@@ -168,11 +177,11 @@ mobileApp
                 }
               }
             });
-         }
-         else {
+        }
+        else {
           load2 = $resource(
-            $rootScope.serverURL + 'restapi/systemdata/result-masters/:result/',
-            {result: rId }, 
+            $rootScope.serverURL + 'restapi/systemdata/search-compositions/:result/result-masters',
+            {result: rsId }, 
             {
               'results': {
                 method: 'GET',
@@ -185,6 +194,7 @@ mobileApp
               }
             });
          }
+    
         var promise1 = load1.searches({}, payload).$promise;
         var promise2 = load2.results().$promise;
         
@@ -208,7 +218,8 @@ mobileApp
               if ( results[1].panels[0].tabs.length > 0 ) {
                 var numCols = results[1].panels[0].tabs[0].columns.length ;
                 for ( col=0; col<numCols; col++) {                  
-                  var id = results[1].panels[0].tabs[0].columns[col].name ;
+                  var id_pre = results[1].panels[0].tabs[0].columns[col].name ;
+                  var id = id_pre.split(' ').join('_') ;
                   var label = results[1].panels[0].tabs[0].columns[col].label ;           
                 
                   data.columns.push ( { "id": id, "name": label } ) ;
@@ -218,7 +229,8 @@ mobileApp
                 if ( results[1].panels[1].tabs.length > 0 ) {
                   var numCols = results[1].panels[1].tabs[0].columns.length ;
                   for ( col=0; col<numCols; col++) {                  
-                    var id = results[1].panels[1].tabs[0].columns[col].name ;
+                    var id_pre = results[1].panels[1].tabs[0].columns[col].name ;
+                    var id = id_pre.split(' ').join('_') ;
                     var label = results[1].panels[1].tabs[0].columns[col].label ;       
                     data.side_columns.push ( { "id": id, "name": label} ) ;
                   }
@@ -240,13 +252,15 @@ mobileApp
                 var numCols = results[0]._embedded.results[0].rows[row].columns.length ;
                 var rowData = {} ;
                 for ( col=0; col<numCols; col++) {                  
-                  var id  = results[0]._embedded.results[0].rows[0].columns[col].name ;
+                  var id_pre  = results[0]._embedded.results[0].rows[0].columns[col].name ;
+                  var id = id_pre.split(' ').join('_') ;
                   if ( results[0]._embedded.results[0].rows[row].columns[col].rows ) {
                     var numRows2 = results[0]._embedded.results[0].rows[row].columns[col].rows.length ;
                     for ( var row2=0; row2<numRows2; row2++ ) {
                       var numCols2 = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns.length ;
                       for ( var col2=0; col2<numCols2; col2++) {                  
-                        var id  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
+                        var id_pre  = results[0]._embedded.results[0].rows[row].columns[col].rows[0].columns[col2].name ;
+                        var id = id_pre.split(' ').join('_') ;
                         var val = results[0]._embedded.results[0].rows[row].columns[col].rows[row2].columns[col2].value ;
                         //console.log ( id + " = " + val ) ;
                         rowData[id] = val ;
@@ -278,7 +292,7 @@ mobileApp
       }
     }
   })
-  .factory('LoadService', function ($resource, $rootScope, $q, addBearerAuth, helper, x2js) {
+  .factory('LoadService', function ($resource, $rootScope, $q,addBearerAuth,addBearerAuth3, helper, x2js) {
     
     /* LoadService variables */
     var searchesId = '' ;     // A group of searches
@@ -464,6 +478,9 @@ mobileApp
         formData = [] ;
         searchData = [] ;
         appParms = {} ;
+
+        // Set  
+        appId = aId ;
             
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/systemdata/applications/:app',
@@ -616,7 +633,6 @@ mobileApp
               var href = new URL(formRef.href);
               var comps = href.pathname.split('/');
               formId = comps[comps.length - 1];
-             
             }
 
             var result = results[0]._embedded.searchCompositions[0]._links["http://identifiers.emc.com/result-master"];
@@ -629,7 +645,7 @@ mobileApp
             if ( result ) {
               var href = new URL(result.href);
               var comps = href.pathname.split('/');
-              resultsId = comps[comps.length - 1];
+              resultsId = comps[comps.length - 2];
             }
             var tokens = { "formId" : formId, "resultId": resultId, "resultsId": resultsId } ;
             
@@ -713,11 +729,9 @@ mobileApp
             var i = 0 ;
             console.log ( data ) ;
             for (var key in data) {
-              console.log ( "key") ;
-              console.log ( key ) ;
               if (data.hasOwnProperty(key)) {
                 var range = "" ;
-                debugger;
+               
                 if ( data[key] instanceof Object || data[key] == "") {
                   if ( data[key] instanceof Object ) {
                     range = data[key] ;
@@ -748,6 +762,42 @@ mobileApp
             }
             console.log ( formData ) ;
             callback(formData);
+          },
+          function (errorMsg) {
+            // if any of the previous promises gets rejected
+            // the success callback will never be executed
+            // the error callback will be called...
+            console.log('An error occurred: ', errorMsg);
+          }
+          );
+      },
+      download: function (authToken, aId, cId, callback) {
+
+console.log ( cId ) ;
+        var load1 = $resource(
+          $rootScope.serverURL + 'restapi/systemdata/applications/:app/ci?cid=' + cId,
+          { app: aId }, 
+          {
+            'download': {
+              method: 'GET',
+              headers: addBearerAuth3.token(authToken),
+              transformResponse: function (data, headers) {
+                var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                console.log(jsonData);
+                return jsonData;
+              }
+            }
+          });
+              
+        var promise1 = load1.download().$promise;
+        
+        $q.all([promise1])
+          .then(
+          function (results) {
+                  
+            console.log ( results ) ;
+           
+            callback(results);
           },
           function (errorMsg) {
             // if any of the previous promises gets rejected

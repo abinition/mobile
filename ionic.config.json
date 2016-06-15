@@ -1,5 +1,8 @@
 {
   "name": "InfoArchive Mobile App",
-  "app_id": "",
-  "gulpStartupTasks": ["sass", "watch"]
+  "app_id": "ca24bbb2",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ]
 }

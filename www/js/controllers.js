@@ -15,8 +15,6 @@ mobileApp
 
   .controller('SideCtlr', function ($scope, $state, $rootScope, AuthService, $ionicPopover, $ionicModal, $localStorage, $sessionStorage) {
 
-    console.log("SIDE CONTROLLER");
-
     /*
     $scope.toggleLeft = function () {
       $ionicSideMenuDelegate.toggleLeft();
@@ -88,8 +86,7 @@ mobileApp
   })
 
   .controller('TabCtlr', function ($scope, $ionicHistory) {
-    console.log("TAB CONTROLLER");
-    console.log($ionicHistory.currentStateName());
+    //console.log($ionicHistory.currentStateName());
   })
 
   .controller('AuthCtrl', function ($scope, $state, $localStorage, $rootScope, AuthService) {
@@ -180,7 +177,6 @@ mobileApp
 
     $scope.add = function ($event, $index) {
 
-      //console.log("Added " + $index);
       var appId = $scope.applications[$index].appId;
 
       LoadService.app(AuthService.getAccessToken(), appId, function (searches) {
@@ -326,9 +322,6 @@ mobileApp
           LoadService.getResultsId(),
           payload,
           function (tokens) {
-
-            console.log('Results');
-            console.log(tokens);
             if (tokens.rows > 0) {
               $state.go('tab.results');
             }
@@ -364,7 +357,6 @@ mobileApp
     */
 
     $scope.expand = function ($event, item) {
-      console.log(item);
       $scope.side_item = item;
       //$scope.modal.show($event);
       ResultsService.setResults(item);
@@ -374,9 +366,40 @@ mobileApp
 
   })
 
-  .controller('DetailsCtrl', function ($scope, $state, ResultsService) {
+  .controller('DetailsCtrl', function ($scope, $state, AuthService, ResultsService, LoadService, $rootScope, $cordovaFileTransfer ) {
 
     $scope.item = ResultsService.getResults();
+    $scope.download = function ($event, $index) {
+      console.log (  $scope.item["cid"] ) ;
+      
+      
+      var fn = $scope.item["FileName"] ; 
+      var cid = $scope.item["cid"] ; 
+      cid = cid.replace ( /:/g, '%3A') ;
+      
+      
+      //LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, function (tokens) {
+      //    console.log ( "downloaded" ) ;
+      //});
+      var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
+          LoadService.getAppId() +
+          '/ci?cid=' + cid; 
+          console.log ( cordova ) ;
+      var targetPath = cordova.file.externalDataDirectory  + fn;
+      var trustHosts = true;
+      var options = {};
+
+      $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
+      .then(function(result) {
+        // Success!
+      }, function(err) {
+        // Error
+      }, function (progress) {
+        $timeout(function () {
+          $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+        });
+      });
+    };
 
   })
 

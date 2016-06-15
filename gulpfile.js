@@ -49,3 +49,14 @@ gulp.task('git-check', function(done) {
   }
   done();
 });
+
+gulp.task('browser:serve', function() {
+    gulp.src(paths.browser)
+        .pipe(webserver({
+            livereload: {enable: true, port: 35729},
+            directoryListing: false,
+            host: localhost,
+            port: 8100,
+            open: true
+        }));
+});

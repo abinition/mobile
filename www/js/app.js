@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'ngStorage', 'base64','cb.x2js']);
+var mobileApp = angular.module('starter', ['ionic', 'ionic.service.core', 'ngResource', 'ngStorage', 'ngCordova', 'base64','cb.x2js']);
 
 var tabState ;
 
@@ -108,6 +108,8 @@ mobileApp
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
         cordova.plugins.Keyboard.disableScroll(true);
+
+
 
       }
       if (window.StatusBar) {

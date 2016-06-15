@@ -3,6 +3,7 @@
     <div class="row" ng-repeat="(key,value) in item">
       <div class="col">
         <span class="underlined">{{key}}</span> : <span>{{value}}&nbsp;</span></div>
+        <span ><a class="button button-icon icon ion-ios-cloud-download" ng-if="key == 'FileName'" ng-click="download($event,$index)"></a></span>
     </div>
     </div>
   </ion-content>
