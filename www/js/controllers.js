@@ -229,6 +229,8 @@ mobileApp
         //console.log('Applications');
         $scope.appCount = apps.length;
         $scope.applications = apps;
+        $scope.activeCount = 0 ;
+        for ( i=0; i<$scope.appCount; i++ ) if ( apps[i].state == 'READY' || apps[i].state == 'ACTIVE' ) $scope.activeCount++ ;
       });
     });
   })
@@ -366,38 +368,42 @@ mobileApp
 
   })
 
-  .controller('DetailsCtrl', function ($scope, $state, AuthService, ResultsService, LoadService, $rootScope, $cordovaFileTransfer ) {
+  .controller('DetailsCtrl', function ($scope, $state, AuthService, ResultsService, LoadService, $ionicPopover, $rootScope, $cordovaFileTransfer ) {
 
     $scope.item = ResultsService.getResults();
     $scope.download = function ($event, $index) {
-      console.log (  $scope.item["cid"] ) ;
-      
-      
       var fn = $scope.item["FileName"] ; 
       var cid = $scope.item["cid"] ; 
       cid = cid.replace ( /:/g, '%3A') ;
-      
-      
+         
       LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, fn, function (tokens) {
 
-        console.log ( tokens ) ;
+        //console.log ( tokens ) ;
         console.log ( cordova.file ) ;
+        $scope.downloadFile = tokens.name ;
+
+        //window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function (dirEntry) {
+        //    console.log('file system open: ' + dirEntry.name);
+        //    //var isAppend = true;
+        //    createFile(dirEntry, "fileToAppend.txt", isAppend);
+        //}, onErrorLoadFs);
+
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
+          console.log('file system open: ' + fs.name);
+          console.log ( fs ) ;
+          fs.root.getFile($scope.downloadFile, { create: true, exclusive: false }, function (fileEntry) {
 
-            console.log('file system open: ' + fs.name);
-            fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
+                  console.log("fileEntry is file?" + fileEntry.isFile.toString());
+                  console.log(fileEntry);
+                  // fileEntry.name == 'someFile.txt'
+                  // fileEntry.fullPath == '/someFile.txt'
+                  //var blob = new Blob([tokens.data], { type: 'image/png' });
+                  var isAppend = false ;
+                  writeFile(fileEntry, tokens.name, isAppend  );
+                  $scope.popover.show($event);
 
-                console.log("fileEntry is file?" + fileEntry.isFile.toString());
-                console.log(fileEntry);
-                // fileEntry.name == 'someFile.txt'
-                // fileEntry.fullPath == '/someFile.txt'
-                writeFile(fileEntry, tokens.data );
-
-            }, onErrorCreateFile);
-
+              }, onErrorCreateFile);
         }, onErrorLoadFs);
-
-       console.log ( "downloaded" ) ;
 
       });
       
@@ -424,6 +430,14 @@ mobileApp
       */
     };
 
+    $ionicPopover.fromTemplateUrl('templates/pop-downloaded.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+        $scope.popover = popover;
+    });
+
   })
 
   .controller('DashCtrl', function ($scope, $state) {
@@ -441,21 +455,17 @@ function onErrorLoadFs() {
   console.log("no go load fs");
 }  
 function onErrorReadFile() {
-  console.log("no go load fs");
+  console.log("no go readFile");
 }  
 function writeFile(fileEntry, dataObj, isAppend) {
-    // Create a FileWriter object for our FileEntry (log.txt).
     fileEntry.createWriter(function (fileWriter) {
-
         fileWriter.onwriteend = function() {
             console.log("Successful file read...");
             readFile(fileEntry);
         };
-
         fileWriter.onerror = function (e) {
             console.log("Failed file read: " + e.toString());
         };
-
         // If we are appending data to file, go to the end of the file.
         if (isAppend) {
             try {
@@ -470,18 +480,29 @@ function writeFile(fileEntry, dataObj, isAppend) {
 }
 
 function readFile(fileEntry) {
-
     fileEntry.file(function (file) {
         var reader = new FileReader();
-
         reader.onloadend = function() {
             console.log("Successful file read: " + this.result);
             //displayFileData(fileEntry.fullPath + ": " + this.result);
         };
-
         reader.readAsText(file);
-
     }, onErrorReadFile);
 }
 
+function createFile(dirEntry, fileName, isAppend) {
+    // Creates a new file or returns the file if it already exists.
+    dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
+        writeFile(fileEntry, null, isAppend);
+    }, onErrorCreateFile);
 
+}
+
+function saveFile(dirEntry, fileData, fileName) {
+
+    dirEntry.getFile(fileName, { create: true, exclusive: false }, function (fileEntry) {
+
+        writeFile(fileEntry, fileData);
+
+    }, onErrorCreateFile);
+}
