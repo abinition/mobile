@@ -374,61 +374,82 @@ mobileApp
     $scope.download = function ($event, $index) {
       var fn = $scope.item["FileName"] ; 
       var cid = $scope.item["cid"] ; 
-      cid = cid.replace ( /:/g, '%3A') ;
+      //cid = cid.replace ( /:/g, '%3A') ;
          
       LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, fn, function (tokens) {
 
         //console.log ( tokens ) ;
         console.log ( cordova.file ) ;
-        $scope.downloadFile = tokens.name ;
 
-        //window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function (dirEntry) {
-        //    console.log('file system open: ' + dirEntry.name);
-        //    //var isAppend = true;
-        //    createFile(dirEntry, "fileToAppend.txt", isAppend);
-        //}, onErrorLoadFs);
+        var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
+            LoadService.getAppId() +
+            '/ci?cid=' + cid; 
+          
+        var targetPath = cordova.file.externalDataDirectory  + fn;
+        var trustHosts = true;
+        var options = {};
 
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
-          console.log('file system open: ' + fs.name);
-          console.log ( fs ) ;
-          fs.root.getFile($scope.downloadFile, { create: true, exclusive: false }, function (fileEntry) {
-
-                  console.log("fileEntry is file?" + fileEntry.isFile.toString());
-                  console.log(fileEntry);
-                  // fileEntry.name == 'someFile.txt'
-                  // fileEntry.fullPath == '/someFile.txt'
-                  //var blob = new Blob([tokens.data], { type: 'image/png' });
-                  var isAppend = false ;
-                  writeFile(fileEntry, tokens.name, isAppend  );
-                  $scope.popover.show($event);
-
-              }, onErrorCreateFile);
-        }, onErrorLoadFs);
-
-      });
-      
-      /*  Will not work, because of ':' in URI value for cid
-      var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
-          LoadService.getAppId() +
-          '/ci?cid=' + cid; 
-          console.log ( cordova ) ;
-      var targetPath = cordova.file.externalDataDirectory  + fn;
-      var trustHosts = true;
-      var options = {};
-
-      $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
-      .then(function(result) {
-        // Success!
-      }, function(err) {
-        // Error
-      }, function (progress) {
-        $timeout(function () {
-          $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+        $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
+        .then(function(result) {
+          // Success!
+          $scope.popover.show($event);
+        }, function(err) {
+          // Error
+        }, function (progress) {
+          $timeout(function () {
+            $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+          });
         });
-      });
 
-      */
-    };
+        /*
+        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
+          console.log('file system open: ' + dirEntry.name);
+          var isAppend = false;
+          $scope.downloadFile = dirEntry.name + tokens.name ;
+          createFile(dirEntry,tokens.name, isAppend);
+          $scope.popover.show($event);
+        }, onErrorLoadFs);
+        */
+
+        /*
+        fs.root.getDirectory(
+          "Download",
+          {
+            create: true
+          },
+          function(dirEntry) {
+            dirEntry.getFile(
+              tokens.name, 
+              { 
+                create: true, 
+                exclusive: false 
+              }, 
+              function (fileEntry) {
+                console.log(fileEntry);
+                $scope.downloadFile = fileEntry.fullPath ;
+                var isAppend = false ;
+                writeFile(fileEntry, tokens.data, isAppend  );
+                $scope.popover.show($event);
+              }, onErrorCreateFile);
+            }, onErrorLoadFs);
+            */
+
+            /*
+            fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
+
+                console.log(fileEntry);
+                // fileEntry.name == 'someFile.txt'
+                // fileEntry.fullPath == '/someFile.txt'
+                writeFile(fileEntry, tokens.data);
+                $scope.downloadFile = fileEntry.fullPath ;
+                $scope.popover.show($event);
+
+            }, onErrorCreateFile);
+            */
+
+      });
+    }
+            
 
     $ionicPopover.fromTemplateUrl('templates/pop-downloaded.html', {
       backdropClickToClose: true,
@@ -448,6 +469,7 @@ mobileApp
     console.log("Compliance");
   })
 
+/*
 function onErrorCreateFile() {
   console.log("no go create file");
 }
@@ -499,10 +521,8 @@ function createFile(dirEntry, fileName, isAppend) {
 }
 
 function saveFile(dirEntry, fileData, fileName) {
-
     dirEntry.getFile(fileName, { create: true, exclusive: false }, function (fileEntry) {
-
         writeFile(fileEntry, fileData);
-
     }, onErrorCreateFile);
 }
+*/

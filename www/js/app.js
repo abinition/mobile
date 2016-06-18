@@ -108,13 +108,53 @@ mobileApp
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
         cordova.plugins.Keyboard.disableScroll(true);
-
-
-
       }
       if (window.StatusBar) {
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
+      
+      /*
+      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;   
+      navigator.webkitPersistentStorage.requestQuota( 50*1024*1024, function (grantedBytes) {  
+          window.requestFileSystem(window.PERSISTENT, grantedBytes, onInitFs, errorHandler);
+      }, function (e) {
+          console.log('Error', e);
+      });
+      */
     });
   });
+
+/*
+var fs ;
+function onInitFs(fileSystem) {
+  fs = fileSystem ;  
+    console.log('Opened file system: ' + fs.name);
+}
+var errorHandler = function (fileName, e) {  
+    var msg = '';
+
+    switch (e.code) {
+        case FileError.QUOTA_EXCEEDED_ERR:
+            msg = 'Storage quota exceeded';
+            break;
+        case FileError.NOT_FOUND_ERR:
+            msg = 'File not found';
+            break;
+        case FileError.SECURITY_ERR:
+            msg = 'Security error';
+            break;
+        case FileError.INVALID_MODIFICATION_ERR:
+            msg = 'Invalid modification';
+            break;
+        case FileError.INVALID_STATE_ERR:
+            msg = 'Invalid state';
+            break;
+        default:
+            msg = 'Unknown error';
+            break;
+    };
+
+    console.log('Error (' + fileName + '): ' + msg);
+}
+*/
