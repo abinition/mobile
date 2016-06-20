@@ -368,24 +368,41 @@ mobileApp
 
   })
 
-  .controller('DetailsCtrl', function ($scope, $state, AuthService, ResultsService, LoadService, $ionicPopover, $rootScope, $cordovaFileTransfer ) {
+  .controller('DetailsCtrl', function ($scope, $state, AuthService, ResultsService, LoadService, $ionicPopover, $rootScope, $cordovaFileTransfer, $timeout ) {
 
     $scope.item = ResultsService.getResults();
+    
+    $ionicPopover.fromTemplateUrl('templates/pop-downloaded.html', {
+      backdropClickToClose: true,
+      scope: $scope
+    })
+    .then(function (popover) {
+        $scope.popover = popover;
+    });
+
     $scope.download = function ($event, $index) {
       var fn = $scope.item["FileName"] ; 
       var cid = $scope.item["cid"] ; 
-      //cid = cid.replace ( /:/g, '%3A') ;
+      cid = cid.replace ( /:/g, '%3A') ;
          
       LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, fn, function (tokens) {
 
-        //console.log ( tokens ) ;
         console.log ( cordova.file ) ;
 
+/*
+        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
+          console.log('file system open: ' + dirEntry.name);
+          $scope.downloadFile = dirEntry.name + tokens.name ;
+          createFile(dirEntry, tokens.name, tokens.data);
+          $scope.popover.show($event);
+        }, onErrorResolveFS);
+        
+  */     
         var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
             LoadService.getAppId() +
             '/ci?cid=' + cid; 
           
-        var targetPath = cordova.file.externalDataDirectory  + fn;
+        var targetPath = cordova.file.dataDirectory  + fn;
         var trustHosts = true;
         var options = {};
 
@@ -393,23 +410,31 @@ mobileApp
         .then(function(result) {
           // Success!
           $scope.popover.show($event);
-        }, function(err) {
+        }, 
+        function(err) {
           // Error
-        }, function (progress) {
+        }, 
+        function (progress) {
           $timeout(function () {
             $scope.downloadProgress = (progress.loaded / progress.total) * 100;
           });
         });
+        
 
         /*
-        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
-          console.log('file system open: ' + dirEntry.name);
-          var isAppend = false;
-          $scope.downloadFile = dirEntry.name + tokens.name ;
-          createFile(dirEntry,tokens.name, isAppend);
-          $scope.popover.show($event);
-        }, onErrorLoadFs);
+        mobileApp.fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
+
+            console.log(fileEntry);
+            // fileEntry.name == 'someFile.txt'
+            // fileEntry.fullPath == '/someFile.txt'
+            writeFile(fileEntry, tokens.data);
+            $scope.downloadFile = fileEntry.fullPath ;
+            $scope.popover.show($event);
+
+        }, onErrorCreateFile);
         */
+
+
 
         /*
         fs.root.getDirectory(
@@ -434,30 +459,11 @@ mobileApp
             }, onErrorLoadFs);
             */
 
-            /*
-            fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
-
-                console.log(fileEntry);
-                // fileEntry.name == 'someFile.txt'
-                // fileEntry.fullPath == '/someFile.txt'
-                writeFile(fileEntry, tokens.data);
-                $scope.downloadFile = fileEntry.fullPath ;
-                $scope.popover.show($event);
-
-            }, onErrorCreateFile);
-            */
 
       });
     }
-            
 
-    $ionicPopover.fromTemplateUrl('templates/pop-downloaded.html', {
-      backdropClickToClose: true,
-      scope: $scope
-    })
-    .then(function (popover) {
-        $scope.popover = popover;
-    });
+
 
   })
 
@@ -467,18 +473,16 @@ mobileApp
 
   .controller('CompCtrl', function ($scope, $state) {
     console.log("Compliance");
-  })
+  }) ;
 
-/*
-function onErrorCreateFile() {
-  console.log("no go create file");
+function createFile(dirEntry, fileName, dataObj) {
+    // Creates a new file or returns the file if it already exists.
+    dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
+        writeFile(fileEntry, dataObj);
+    }, onErrorCreateFile);
+
 }
-function onErrorLoadFs() {
-  console.log("no go load fs");
-}  
-function onErrorReadFile() {
-  console.log("no go readFile");
-}  
+ 
 function writeFile(fileEntry, dataObj, isAppend) {
     fileEntry.createWriter(function (fileWriter) {
         fileWriter.onwriteend = function() {
@@ -512,17 +516,20 @@ function readFile(fileEntry) {
     }, onErrorReadFile);
 }
 
-function createFile(dirEntry, fileName, isAppend) {
-    // Creates a new file or returns the file if it already exists.
-    dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
-        writeFile(fileEntry, null, isAppend);
-    }, onErrorCreateFile);
-
-}
-
 function saveFile(dirEntry, fileData, fileName) {
     dirEntry.getFile(fileName, { create: true, exclusive: false }, function (fileEntry) {
         writeFile(fileEntry, fileData);
     }, onErrorCreateFile);
 }
-*/
+
+function onErrorResolveFS(evt) {
+  console.log(evt);
+} 
+
+function onErrorCreateFile(evt) {
+  console.log(evt);
+}
+ 
+function onErrorReadFile(evt) {
+  console.log(evt);
+} 

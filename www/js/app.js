@@ -114,22 +114,24 @@ mobileApp
         StatusBar.styleDefault();
       }
       
-      /*
+      
       window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;   
       navigator.webkitPersistentStorage.requestQuota( 50*1024*1024, function (grantedBytes) {  
-          window.requestFileSystem(window.PERSISTENT, grantedBytes, onInitFs, errorHandler);
+          window.requestFileSystem(LocalFileSystem.PERSISTENT, grantedBytes, onFileSystemSuccess, errorHandler);
       }, function (e) {
           console.log('Error', e);
       });
-      */
+      
     });
-  });
+  })
+  .globals = {
+    "fs" : ''
+  };
 
-/*
-var fs ;
-function onInitFs(fileSystem) {
-  fs = fileSystem ;  
-    console.log('Opened file system: ' + fs.name);
+function onFileSystemSuccess(fileSystem) {
+  console.log(fileSystem.name);
+  mobileApp.globals.fs = fileSystem ;  
+  console.log('Opened file system: ' + mobileApp.globals.fs.name);
 }
 var errorHandler = function (fileName, e) {  
     var msg = '';
@@ -157,4 +159,3 @@ var errorHandler = function (fileName, e) {
 
     console.log('Error (' + fileName + '): ' + msg);
 }
-*/
