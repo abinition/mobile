@@ -1,0 +1,13 @@
+// <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>
+ion-view(view-title='Applications')
+  ion-content
+    .list
+      div(ng-repeat='app in applications')
+        .item.item-button-right(ng-if="app.state == 'READY' || app.state == 'ACTIVE' ")
+          | {{app.name}} 
+          span
+            i.icon.ion-information-circled(ng-click='info($event,$index)')
+            span
+              button.button.button-positive.button-small.pull-right(ng-click='add($event,$index)') Select
+      div(ng-if='activeCount == 0')
+        h4 No active applications found.

@@ -6,15 +6,20 @@ var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
+var pug = require( 'gulp-pug' );
+var prettify = require('gulp-html-prettify');
+var bulkSass = require('gulp-sass-bulk-import'); 
 
 var paths = {
-  sass: ['./scss/**/*.scss']
+  sass: ['./scss/**/*.scss'],
+  pug: ['./pug/**/*.pug']
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['sass','pug']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
+    .pipe(bulkSass())
     .pipe(sass())
     .on('error', sass.logError)
     .pipe(gulp.dest('./www/css/'))
@@ -26,8 +31,17 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
+gulp.task('pug', function(done) {  
+  gulp.src('./pug/**/*.pug')
+    .pipe(pug())
+    .pipe(prettify({indent_char: ' ', indent_size: 2}))
+    .pipe(gulp.dest('./www/'))
+    .on('end', done);
+});
+
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
+  gulp.watch( paths.sass, ['sass'] );
+  gulp.watch( paths.pug,  ['pug']  );
 });
 
 gulp.task('install', ['git-check'], function() {
@@ -48,15 +62,4 @@ gulp.task('git-check', function(done) {
     process.exit(1);
   }
   done();
-});
-
-gulp.task('browser:serve', function() {
-    gulp.src(paths.browser)
-        .pipe(webserver({
-            livereload: {enable: true, port: 35729},
-            directoryListing: false,
-            host: localhost,
-            port: 8100,
-            open: true
-        }));
 });

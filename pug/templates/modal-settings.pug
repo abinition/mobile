@@ -1,0 +1,29 @@
+ion-modal-view
+  ion-header-bar
+    h1.title Settings
+  ion-content.padding
+    //
+      <div>
+      <span>Settings for {{username}}</span>
+      </div>
+      <div>
+      <span>Groups and Roles:</span>
+      <ion-list>
+      <ion-item ng-repeat="role in authority">
+      {{role}}
+      </ion-item>
+      </ion-list>
+      </div>
+    form(name='settingsForm', novalidate='', ng-submit='saveSettings(settingsForm)')
+      .list.list-inset.form-signin
+        label.item.item-input.item-label
+          span.input-label Server
+          input(type='text', placeholder='{{settings.server}}', ng-model='settings.server')
+        label.item.item-input.item-label
+          span.input-label Port
+          input(type='text', placeholder='{{settings.port}}', ng-model='settings.port')
+        .button-bar
+          button.button.button-positive(type='submit')
+            | Save
+          button.button.button-positive(ng-click='cancelSettings()')
+            | Cancel

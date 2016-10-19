@@ -1,0 +1,16 @@
+// <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>
+ion-view(view-title='Results')
+  ion-content.padding
+    ion-list
+      .item.col-header.item-icon-right
+        .flex-container.wrap
+          div(ng-repeat='column in data.columns', ng-click='sortBy(column.id)')
+            .column(ng-class="{ 'underlined' : data.sortOn === column.id }")
+              | {{column.name}} 
+              span.column-sort
+                i(ng-class="{'ion-chevron-up' : data.sortReverse === false, 'ion-chevron-down' : data.sortReverse === true} ", ng-if='data.sortOn === column.id')
+      .item.low-pad-item.item-icon-right(ng-repeat='item in data.items | orderBy:data.sortOn:data.sortReverse ')
+        .flex-container.wrap
+          div(ng-repeat='column in data.columns')
+            .column {{item[column.id]}} 
+        i.icon.ion-chevron-right.icon-accessory(ng-click='expand($event,item)')

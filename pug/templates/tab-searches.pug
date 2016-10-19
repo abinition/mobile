@@ -1,0 +1,11 @@
+// <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>
+ion-view(view-title='Searches')
+  ion-content
+    .list
+      div(ng-repeat='search in searches')
+        .item.item-button-right
+          | {{search.name}} 
+          span
+            i.icon.ion-information-circled(ng-click='info($event,$index)')
+            span
+              button.button.button-positive.button-small.pull-right(ng-click='add($event,$index)') Select

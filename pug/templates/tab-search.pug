@@ -1,0 +1,12 @@
+// <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>
+ion-view(view-title='Search')
+  ion-content.padding
+    form(name='searchForm', novalidate='', ng-submit='search(searchForm)')
+      .list.list-inset
+        div(ng-repeat='element in formData')
+          label.item.item-input
+            span.input-label {{element.label}}
+            input(type='{{element.type}}', ng-model='element.value')
+        label.item
+          button.button.button-block.button-positive(type='submit')
+            | Search

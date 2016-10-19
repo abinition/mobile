@@ -1,0 +1,35 @@
+ion-view.view-with-bg(hide-nav-bar='true')
+  ion-content.view-content
+    img.image-logo(src='img/infoarchive42.png')
+    div
+      form(name='authorizationForm', novalidate='', ng-submit='signIn(authorizationForm)')
+        .list.list-inset.form-signin
+          label.item.item-input.padding
+            i.icon.ion-person.placeholder-icon
+            input(type='text', name='username', ng-model='authorization.username', placeholder='Enter your username')
+          label.item.item-input.padding
+            i.icon.ion-locked.placeholder-icon
+            input(type='password', name='password', ng-model='authorization.password', placeholder='Enter your password')
+          label.item.assertive.padding(ng-show='authorization.error')
+            i.icon.ion-alert-circled
+            | {{authorization.statusText}}
+          label.item.item-input.item-select
+            i.icon.ion-chatbubble.placeholder-icon
+            select(name='language', ng-model='authorization.language')
+              option(value='  ', label='Language') Language
+              option(value='en', selected='selected', label='English') English
+              option(value='de', label='German') German
+              option(value='fr', label='French') French
+              option(value='es', label='Spanish') Spanish
+              option(value='it', label='Italian') Italian
+              option(value='zh', label='Chinese') Chinese
+          label.item
+            button.button.button-block.button-positive(type='submit')
+              | Sign In
+        .list.form-signin
+          label.item.item-input.item-stacked-label.padding
+            span.input-label Server
+            input(type='text', name='server', ng-model='authorization.server')
+          label.item.item-input.item-stacked-label.padding
+            span.input-label Port
+            input(type='number', name='port', ng-model='authorization.port')

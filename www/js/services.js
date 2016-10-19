@@ -333,7 +333,6 @@ mobileApp
 
         // Clear
         userId = '' ;
-
         var load1 = $resource(
           $rootScope.serverURL + 'restapi/services',
           {}, 
@@ -342,9 +341,15 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                console.log(data);
+                try {
+                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                  console.log(jsonData);
+                  return jsonData;
+                }
+                catch ( e ) {
+                  console.log(e) ;
+                }
               }
             }
           });
@@ -357,9 +362,15 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                console.log(data);
+                try {
+                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
+                  console.log(jsonData);
+                  return jsonData;
+                } catch ( e ) {
+                  console.log ( e );
+                  return null ;
+                }
               }
             }
           });
@@ -780,21 +791,22 @@ mobileApp
             'download': {
               method: 'GET',
               headers: addBearerAuth3.token(authToken),
-              transformResponse: function (data, headers) {
-                return data;
+              transformResponse: function(data, headersGetter) {
+                headers = headersGetter() ;
+                // Stores the ArrayBuffer object in a property called "data"
+                return { data : data, type:  headers['content-type'] } ;
               }
             }
           });
               
-        var promise1 = load1.download().$promise;
-        
-        $q.all(promise1)
-          .then(
+        load1.download().$promise.then(
           function (results) {
-                  
+            console.log(results);
+            var arr = new Array ( results.data ) ;
+                var blob = new Blob ( arr, {'type': results.type} );
             var fileSpec = {
               "name" : fn,
-              "data" : results
+              "data" : blob
             } ;
            
             callback(fileSpec);

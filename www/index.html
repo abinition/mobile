@@ -2,116 +2,42 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos; *; style-src  &apos;self&apos; &apos;unsafe-inline&apos; *">
-    <title></title>
-
-    <!--
-      <link href="lib/ionic/css/ionic.css" rel="stylesheet">
-      <link href="css/style.css" rel="stylesheet">
-    -->
-
-    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above -->
-    <link href="css/ionic.app.css" rel="stylesheet">
-
-
-    <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
-    <!--script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-resource.js"></script-->
-    <script src="lib/angular-resource/angular-resource.js"></script>
-    <script src="lib/angular-base64/angular-base64.js"></script>
-    <script src="lib/x2js/xml2json.js"></script>
-    <script src="lib/angular-x2js/src/x2js.js"></script>
-    <script src="lib/ngstorage/ngStorage.js"></script>
-    <script src="lib/ngCordova/dist/ng-cordova.js"></script>
-    <!-- cordova script (this will be a 404 during development) -->
-    <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
-    <script src="cordova.js"></script>
-
-    <!-- your app's js -->
-    <script src="js/app.js"></script>
-    <script src="js/controllers.js"></script>
-    <script src="js/services.js"></script>
-    <!--<script src="js/directives.js"></script>-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
+  <title></title>
+  <!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">-->
+  <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above-->
+  <link href="css/ionic.app.css" rel="stylesheet">
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="lib/ionic.cloud.min.js"></script>
+  <!-- <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>-->
+  <script src="lib/angular-resource/angular-resource.js"></script>
+  <script src="lib/angular-base64/angular-base64.js"></script>
+  <script src="lib/x2js/xml2json.js"></script>
+  <script src="lib/angular-x2js/src/x2js.js"></script>
+  <script src="lib/ngstorage/ngStorage.js"></script>
+  <script src="lib/ngCordova/dist/ng-cordova.js"></script>
+  <!-- cordova script (this will be a 404 during development)-->
+  <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client...-->
+  <script src="cordova.js"></script>
+  <!-- your app's js-->
+  <script src="js/app.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/services.js"></script>
+  <!-- <script src="js/directives.js"></script>-->
 </head>
 
 <body ng-app="starter">
-    <!--
-      The nav bar that will be updated as we navigate between views.
-    -->
-    <ion-nav-bar class="bar-stable">
-        <ion-nav-back-button>
-        </ion-nav-back-button>
-    </ion-nav-bar>
-
-    <!--
-      The views will be rendered in the <ion-nav-view> directive below
-      Templates are in the /templates folder (but you could also
-      have templates inline in this html file if you'd like).
-    -->
-    <ion-nav-view></ion-nav-view>
-
-    <script id="auth.html" type="text/ng-template">
-    
-        <ion-view class="view-with-bg" hide-nav-bar="true">
-            <ion-content class="view-content">
-                <img class="image-logo" src="img/infoarchive42.png">
-                <div>
-                    <form name="authorizationForm" novalidate="" ng-submit="signIn(authorizationForm)">
-                        <div class="list list-inset form-signin">
-                            <label class="item item-input padding">
-                                <i class="icon ion-person placeholder-icon"></i>
-                                <input type="text" name="username" ng-model="authorization.username" placeholder="Enter your username">
-                            </label>
-
-                            <label class="item item-input padding">
-                                <i class="icon ion-locked placeholder-icon"></i>
-                                <input type="password" name="password" ng-model="authorization.password" placeholder="Enter your password">
-                            </label>
-
-                            <label class="item assertive padding" ng-show="authorization.error">
-                                <i class="icon ion-alert-circled"></i>{{authorization.statusText}}
-                            </label>
-
-                            <label class="item item-input item-select">
-                                <i class="icon ion-chatbubble placeholder-icon"></i>
-                                <select name="language" ng-model="authorization.language">
-                                    <option value="  " label="Language">Language</option>
-                                    <option value="en" selected="selected" label="English">English</option>
-                                    <option value="de" label="German">German</option>
-                                    <option value="fr" label="French">French</option>
-                                    <option value="es" label="Spanish">Spanish</option>
-                                    <option value="it" label="Italian">Italian</option>
-                                    <option value="zh" label="Chinese">Chinese</option>
-                                </select>
-                            </label>
-                            
-                            <label class="item">
-                                <button class="button button-block button-positive" type="submit">
-                                Sign In
-                                </button>
-                            </label>
-                            
-                        </div>
-                        <div class="list form-signin"> 
-                            <label class="item item-input item-stacked-label padding">
-                                <span class="input-label">Server</span>
-                                <input type="text" name="server" ng-model="authorization.server">
-                            </label>
-                            <label class="item item-input item-stacked-label padding">
-                                <span class="input-label">Port</span>
-                                <input type="number" name="port" ng-model="authorization.port" >
-                            </label>
-                        </div>
-                    </form>
-                </div>
-
-            </ion-content>
-        </ion-view>
-    </script>
-
+  <!--The nav bar that will be updated as we navigate between views.-->
+  <ion-nav-bar class="bar-stable">
+    <ion-nav-back-button></ion-nav-back-button>
+  </ion-nav-bar>
+  <!--The views will be rendered in the <ion-nav-view> directive below
+Templates are in the /templates folder (but you could also
+have templates inline in this html file if you'd like).-->
+  <ion-nav-view></ion-nav-view>
 </body>
 
 </html>

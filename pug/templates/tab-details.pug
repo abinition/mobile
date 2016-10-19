@@ -1,0 +1,9 @@
+ion-view(view-title='Details')
+  ion-content(has-header='true', padding='true')
+    .row(ng-repeat='(key,value) in item')
+      .col
+        span.underlined {{key}}
+        |  : 
+        span {{value}} 
+      span
+        a.button.button-icon.icon.ion-ios-cloud-download(ng-if="key == 'FileName'", ng-click='download($event,$index)')

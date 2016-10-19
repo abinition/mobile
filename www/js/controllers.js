@@ -27,7 +27,10 @@ mobileApp
       "server": $localStorage.server,
       "port": $localStorage.port
     };
-
+    $rootScope.serverURL =
+          "http://" +
+          $localStorage.server + ":" + $localStorage.port +
+          "/";
     $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
       animation: 'slide-in-up',
       scope: $scope
@@ -160,6 +163,7 @@ mobileApp
               console.log("Returned token is " + tokens.access_token);
               $scope.authorization.error = false;
               $scope.authorization.access_token = tokens.access_token;
+              console.log("To apps");
               $state.go('tab.apps');
             }
             else {
@@ -174,6 +178,8 @@ mobileApp
   })
 
   .controller('AppsCtrl', function ($scope, $state, AuthService, LoadService, $ionicPopover) {
+
+    console.log("Apps ctrl"); 
 
     $scope.add = function ($event, $index) {
 
@@ -224,9 +230,9 @@ mobileApp
     });
 
     LoadService.load(AuthService.getAccessToken(), function (tokens) {
-
+      console.log("Loaded");
       LoadService.apps(AuthService.getAccessToken(), tokens.userId, function (apps) {
-        //console.log('Applications');
+        console.log('Applications');
         $scope.appCount = apps.length;
         $scope.applications = apps;
         $scope.activeCount = 0 ;
@@ -383,88 +389,72 @@ mobileApp
     $scope.download = function ($event, $index) {
       var fn = $scope.item["FileName"] ; 
       var cid = $scope.item["cid"] ; 
-      cid = cid.replace ( /:/g, '%3A') ;
-         
-      LoadService.download(AuthService.getAccessToken(), LoadService.getAppId(), cid, fn, function (tokens) {
-
-        console.log ( cordova.file ) ;
-
-/*
-        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
-          console.log('file system open: ' + dirEntry.name);
-          $scope.downloadFile = dirEntry.name + tokens.name ;
-          createFile(dirEntry, tokens.name, tokens.data);
-          $scope.popover.show($event);
-        }, onErrorResolveFS);
-        
-  */     
-        var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
+      var access_token = AuthService.getAccessToken() ;
+      
+       var url = $rootScope.serverURL + 'restapi/systemdata/applications/' + 
             LoadService.getAppId() +
             '/ci?cid=' + cid; 
-          
-        var targetPath = cordova.file.dataDirectory  + fn;
-        var trustHosts = true;
-        var options = {};
-
-        $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
-        .then(function(result) {
-          // Success!
-          $scope.popover.show($event);
-        }, 
-        function(err) {
-          // Error
-        }, 
-        function (progress) {
-          $timeout(function () {
-            $scope.downloadProgress = (progress.loaded / progress.total) * 100;
-          });
-        });
+       console.log ( url ) ;          
         
+        if ( typeof cordova == 'undefined' ) {
 
-        /*
-        mobileApp.fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
+          /* Chrome API */
+          cid = cid.replace ( /:/g, '%3A') ;   
+          LoadService.download(access_token, LoadService.getAppId(), cid, fn, function (tokens) {
 
-            console.log(fileEntry);
-            // fileEntry.name == 'someFile.txt'
-            // fileEntry.fullPath == '/someFile.txt'
-            writeFile(fileEntry, tokens.data);
-            $scope.downloadFile = fileEntry.fullPath ;
-            $scope.popover.show($event);
+            console.log ( tokens ) ;
 
-        }, onErrorCreateFile);
-        */
+            mobileApp.globals.fs.root.getDirectory(
+              "Downloads",
+              {
+                create: true
+              },
+              function(dirEntry) {
+                dirEntry.getFile(
+                  tokens.name, 
+                  { 
+                    create: true, 
+                    exclusive: false 
+                  }, 
+                  function (fileEntry) {
+                    console.log(fileEntry);
+                    $scope.downloadFile = fileEntry.fullPath ;
+                    var isAppend = false ;
+                    writeFile(fileEntry, tokens.data, isAppend  );
+                    $scope.popover.show($event);
+                  }, onErrorCreateFile);
+                }, onErrorCreateDir);
+            
+          });
+        }
+        else {
 
+          var targetPath = cordova.file.dataDirectory + fn;
+          var trustHosts = true;
+          var options = {};
+          var uri = encodeURI(url);
 
-
-        /*
-        fs.root.getDirectory(
-          "Download",
-          {
-            create: true
-          },
-          function(dirEntry) {
-            dirEntry.getFile(
-              tokens.name, 
-              { 
-                create: true, 
-                exclusive: false 
-              }, 
-              function (fileEntry) {
-                console.log(fileEntry);
-                $scope.downloadFile = fileEntry.fullPath ;
-                var isAppend = false ;
-                writeFile(fileEntry, tokens.data, isAppend  );
-                $scope.popover.show($event);
-              }, onErrorCreateFile);
-            }, onErrorLoadFs);
-            */
-
-
-      });
+          mobileApp.globals.ft.download(
+              uri,
+              targetPath,
+              function(entry) {
+                  console.log("download complete: " + entry.fullPath);
+              },
+              function(error) {
+                  console.log("download error source " + error.source);
+                  console.log("download error target " + error.target);
+                  console.log("upload error code" + error.code);
+              },
+              false,
+              {
+                  headers: {
+                    'Authorization': 'Bearer ' + access_token,  
+                    'Accept': '*/*'                  
+                  }
+              }
+          );
+        }
     }
-
-
-
   })
 
   .controller('DashCtrl', function ($scope, $state) {
@@ -475,61 +465,25 @@ mobileApp
     console.log("Compliance");
   }) ;
 
-function createFile(dirEntry, fileName, dataObj) {
-    // Creates a new file or returns the file if it already exists.
-    dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
-        writeFile(fileEntry, dataObj);
-    }, onErrorCreateFile);
+/*
+        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirEntry) {
+          console.log('file system open: ' + dirEntry.name);
+          $scope.downloadFile = dirEntry.name + tokens.name ;
+          createFile(dirEntry, tokens.name, tokens.data);
+          $scope.popover.show($event);
+        }, onErrorResolveFS);
+  */  
 
-}
- 
-function writeFile(fileEntry, dataObj, isAppend) {
-    fileEntry.createWriter(function (fileWriter) {
-        fileWriter.onwriteend = function() {
-            console.log("Successful file read...");
-            readFile(fileEntry);
-        };
-        fileWriter.onerror = function (e) {
-            console.log("Failed file read: " + e.toString());
-        };
-        // If we are appending data to file, go to the end of the file.
-        if (isAppend) {
-            try {
-                fileWriter.seek(fileWriter.length);
-            }
-            catch (e) {
-                console.log("file doesn't exist!");
-            }
-        }
-        fileWriter.write(dataObj);
-    });
-}
+        /*
+        mobileApp.globals.fs.root.getFile(tokens.name, { create: true, exclusive: false }, function (fileEntry) {
 
-function readFile(fileEntry) {
-    fileEntry.file(function (file) {
-        var reader = new FileReader();
-        reader.onloadend = function() {
-            console.log("Successful file read: " + this.result);
-            //displayFileData(fileEntry.fullPath + ": " + this.result);
-        };
-        reader.readAsText(file);
-    }, onErrorReadFile);
-}
+            console.log(fileEntry);
+            // fileEntry.name == 'someFile.txt'
+            // fileEntry.fullPath == '/someFile.txt';
+            writeFile(fileEntry, tokens.data );
+            $scope.downloadFile = fileEntry.fullPath ;
+            $scope.popover.show($event);
 
-function saveFile(dirEntry, fileData, fileName) {
-    dirEntry.getFile(fileName, { create: true, exclusive: false }, function (fileEntry) {
-        writeFile(fileEntry, fileData);
-    }, onErrorCreateFile);
-}
-
-function onErrorResolveFS(evt) {
-  console.log(evt);
-} 
-
-function onErrorCreateFile(evt) {
-  console.log(evt);
-}
- 
-function onErrorReadFile(evt) {
-  console.log(evt);
-} 
+        }, onErrorCreateFile);
+        
+        */

@@ -4,5 +4,16 @@ node_modules/
 platforms/
 plugins/
 hooks/
-resources/
+resources/android
+resources/ios
+resources/wp8
 www/lib/
+www/css/
+.DS_Store
+npm-debug.log
+.saas-cache
+.tmp/
+*.jade
+*.html
+.vscode/
+www/templates/

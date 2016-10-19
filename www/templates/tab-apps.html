@@ -1,18 +1,14 @@
-<!--<ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'> -->
+<!-- <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>-->
 <ion-view view-title="Applications">
   <ion-content>
-
     <div class="list">
       <div ng-repeat="app in applications">
-        <div class="item item-button-right" ng-if="app.state == 'READY' || app.state == 'ACTIVE' ">
-          {{app.name}}&nbsp;
-          <span><i ng-click="info($event,$index)" class="icon ion-information-circled"></i><span>
-            <button class="button button-positive button-small pull-right" ng-click="add($event,$index)">Select</button>
-           </div>
+        <div class="item item-button-right" ng-if="app.state == 'READY' || app.state == 'ACTIVE' ">{{app.name}} <span><i class="icon ion-information-circled" ng-click="info($event,$index)"></i><span><button class="button button-positive button-small pull-right" ng-click="add($event,$index)">Select</button></span></span>
         </div>
-        <div ng-if="activeCount == 0" >
-           <h4>No active applications found.</h4>
-         </div>
+      </div>
+      <div ng-if="activeCount == 0">
+        <h4>No active applications found.</h4>
+      </div>
     </div>
   </ion-content>
 </ion-view>
