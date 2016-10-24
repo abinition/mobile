@@ -1,14 +1,13 @@
-<!-- <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>-->
-<ion-view view-title="Search">
+<ion-view class="pane" view-title="SEARCH">
   <ion-content class="padding">
     <form name="searchForm" novalidate="" ng-submit="search(searchForm)">
-      <div class="list list-inset">
+      <div class="list">
         <div ng-repeat="element in formData">
-          <label class="item item-input"><span class="input-label">{{element.label}}</span>
-            <input type="{{element.type}}" ng-model="element.value" />
+          <label class="item search item-input item-floating-label"><span class="input-label">{{element.label}}</span>
+            <input type="{{element.type}}" ng-model="element.value" placeholder="{{element.label}}" />
           </label>
         </div>
-        <label class="item">
+        <label>
           <button class="button button-block button-positive" type="submit">Search</button>
         </label>
       </div>

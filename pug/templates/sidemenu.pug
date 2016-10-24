@@ -1,0 +1,14 @@
+ion-content.sidemenu
+    ion-list
+        ion-item(item-type="item-icon-left",nav-clear,menu-close,ng-click='openSettingsModal($event)')
+            i.icon.ion-gear-b
+                | &nbsp;&nbsp;SETTINGS
+            i.icon.ion-arrow-right-b.pull-right
+        ion-item(item-type="item-icon-left",nav-clearmenu-close='', ng-click='openAboutPopover($event)')
+            i.icon.ion-help-circled
+                | &nbsp;&nbsp;ABOUT
+            i.icon.ion-arrow-right-b.pull-right
+        ion-item(item-type="item-icon-left",nav-clearmenu-close='', ng-click='openSignoutPopover($event)')
+            i.icon.ion-log-out
+                | &nbsp;&nbsp;SIGN OUT
+            i.icon.ion-arrow-right-b.pull-right

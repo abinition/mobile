@@ -21,14 +21,159 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
-/* Empty. Add your own CSS if you like */
+// Include material
+$RobotoDraftFontPath: "../lib/robotodraft/fonts"; // REMINDER: edit as appropriate!
+$RobotoDraftFontName: "RobotoDraft";
+$RobotoDraftFontVersion: "1.0.0";
+@import "www/lib/robotodraft/sass/robotodraft.scss";    // REMINDER: edit as appropriate!
+@import "www/lib/ionic-material/src/scss/index.scss";    // REMINDER: edit as appropriate!
 
-.view-with-bg {
-  .view-content {
-    background-image: url('../img/background.png') !important;
-    background-size: cover !important;
-  }
+
+.pane {
+        background: url('../img/bg.jpg') no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        background-size: cover;
 }
+
+.bar.bar-header {
+  background: rgba(255,255,255,.10);
+  border-bottom-width: 0;
+}
+ 
+.bar.bar-header h1 {
+  color: black !important;
+}
+
+.bar.bar-balanced .title {
+    color: #e7e3e3 !important;;
+}
+
+.scroll-content {
+  overflow: visible !important;
+}
+ 
+.platform-ios.platform-cordova:not(.fullscreen) .has-header {
+  top:0px;
+}
+
+.list {
+    .item.apps {
+        border-color: #ddd;
+        background: rgba(255,255,255,.10);
+        color: #eeeaea;
+        position: relative;
+        z-index: 2;
+        display: block;
+        margin: -1px;
+        padding: 16px;
+        border-width: 1px;
+        border-style: solid;
+        font-size: 20px;
+    }
+}
+.list {
+    .item.col-header.item-icon-right {
+    border-color: #ddd;
+    background: rgba(255,255,255,.10);
+    color: #eeeaea;
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin: -1px;
+    padding: 16px;
+    border-width: 1px;
+    border-style: solid;
+    font-size: 20px;
+    }
+}
+
+.list {
+    .item.low-pad-item.item-icon-right {
+    border-color: #ddd;
+    background: rgba(255,255,255,.10);
+    color: #eeeaea;
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin: -1px;
+    padding: 16px;
+    border-width: 1px;
+    border-style: solid;
+    font-size: 20px;
+    }
+}
+
+.item-button-right > .button, .item-button-right .item-content > .button, .item-button-right > .buttons, .item-button-right .item-content > .buttons {
+    font-size: 30px;
+     color: #eeeaea;
+}
+
+label.item.auth {
+    border-width: 0px;
+    background-color: #faffbd;;
+    border-radius: 25px;
+    margin-bottom: 20px;
+}
+
+label.item.search {
+    border-width: 0px;
+    background-color: white;
+    border-radius: 25px;
+    margin-bottom: 20px;
+}
+
+.col.details {
+    font-size: 16px;
+     color: #eeeaea;
+
+}
+
+/*
+.tab-nav.tabs {
+
+    background: rgba(255,255,255,.10);
+
+}
+*/
+
+label input[type="text"], textarea {
+
+  background-color : white !important; 
+
+}
+
+.sidemenu .item {
+    background-color: #1b1a1a;
+    color: #e7faf6;
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin: -1px;
+    padding: 16px;
+    border-width: 0px;
+    border-style: solid;
+    font-size: 16px;
+}
+
+.sidemenu.scroll-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    margin-top: -1px;
+    padding-top: 1px;
+    margin-bottom: -1px;
+    width: auto;
+    height: auto;
+    background-color: black;
+}
+
+ label button[type="submit"] {
+    padding: 0 30px;
+ }
 
 .image-logo {
     top: 0 !important;
@@ -36,11 +181,11 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     display: block;
     margin-left: auto;
     margin-right: auto;
-    height: 50px;
+    height: 70px;
+    margin-top: 100px;
 }
 
 .form-signin {
-    background-color: rgba(55,147,208,.3);
     max-width: 390px;
     max-height: 324px;
     padding-top: 10px;

@@ -83,14 +83,11 @@ mobileApp
 
     $scope.openSignoutPopover = function ($event) {
       $scope.signoutPopover.show($event);
-      $state.go("auth");
+      $state.go("auth.login");
     };
 
   })
 
-  .controller('TabCtlr', function ($scope, $ionicHistory) {
-    //console.log($ionicHistory.currentStateName());
-  })
 
   .controller('AuthCtrl', function ($scope, $state, $localStorage, $rootScope, AuthService) {
 

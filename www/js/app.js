@@ -4,7 +4,9 @@ mobileApp
   .config(function ($stateProvider, $urlRouterProvider,$provide, $ionicCloudProvider,$ionicConfigProvider) {
 
     $ionicConfigProvider.tabs.position('bottom');  
-    
+    $ionicConfigProvider.backButton.text('');
+    $ionicConfigProvider.backButton.previousTitleText('');
+        $ionicConfigProvider.backButton.icon('ion-arrow-left-b');
     $ionicCloudProvider.init({
     "core": {
       "app_id": "ca24bbb2"
@@ -26,14 +28,24 @@ mobileApp
       //setup an abstract state for the tabs directive
       .state('auth', {
         url: '/auth',
+        abstract: true,
         templateUrl: 'templates/auth.html',
-        controller: 'AuthCtrl'
+        controller: 'SideCtlr'
+      })
+      .state('auth.login', {
+        url: '/login',
+        views: {
+          'viewContent':  {
+            templateUrl: 'templates/auth.login.html',
+            controller: 'AuthCtrl'
+          }
+        }
       })
       .state('tab', {
         url: '/tab',
         abstract: true,
         templateUrl: 'templates/tabs.html',
-        controller: 'TabCtlr'
+        controller: 'SideCtlr'
       })
       .state('tab.dash', {
         url: '/dash',
@@ -102,7 +114,7 @@ mobileApp
       })
       
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/auth');
+    $urlRouterProvider.otherwise('/auth/login');
   })
   .run(function ($ionicPlatform,$cordovaFileTransfer,$cordovaFile) {
     $ionicPlatform.ready(function () {

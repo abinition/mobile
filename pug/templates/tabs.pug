@@ -1,14 +1,9 @@
 ion-side-menus(enable-menu-with-back-views='true', ng-controller='SideCtlr')
   ion-side-menu-content
-    ion-nav-bar.bar-stable
-      ion-nav-back-button
-      ion-nav-buttons(side='right')
-        button.button.button-icon.button-clear.ion-navicon(menu-toggle='right')
-    //
-      <ion-nav-view name="fst" animation="slide-left-right"></ion-nav-view>
+    include ./navbar.pug
     ion-tabs.tabs-icon-top.tabs-color-active-positive
       // Applications Tab
-      ion-tab(title='Applications', icon-off='ion-ios-analytics-outline', icon-on='ion-ios-analytics', href='#/tab/apps')
+      ion-tab(title='Applications', icon-off='ion-ios-keypad-outline', icon-on='ion-ios-keypad', href='#/tab/apps')
         ion-nav-view(name='tab-apps')
       // Dashboard Tab
       ion-tab(title='Dashboard', icon-off='ion-ios-home-outline', icon-on='ion-ios-home', href='#/tab/dash')
@@ -16,17 +11,7 @@ ion-side-menus(enable-menu-with-back-views='true', ng-controller='SideCtlr')
       // Compliance Tab
       ion-tab(title='Compliance', icon-off='ion-ios-checkmark-outline', icon-on='ion-ios-checkmark', href='#/tab/comp')
         ion-nav-view(name='tab-comp')
-  // Side Menu
+        //include ./footer.pug                   
   ion-side-menu(side='right')
-    ion-header-bar.bar-stable
-      label
-        i.icon.ion-person.placeholder-icon
-        span.title {{username}}
-    ion-content
-      ion-list
-        ion-item(menu-close='', ng-click='openSettingsModal($event)')
-          | Settings
-        ion-item(menu-close='', ng-click='openAboutPopover($event)')
-          | About
-        ion-item(menu-close='', ng-click='openSignoutPopover($event)')
-          | Signout
+    include ./sidemenu.pug        
+

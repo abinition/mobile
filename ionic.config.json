@@ -2,7 +2,12 @@
   "name": "InfoArchive Mobile App",
   "app_id": "ca24bbb2",
   "gulpStartupTasks": [
+    "pug",
     "sass",
     "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
   ]
 }

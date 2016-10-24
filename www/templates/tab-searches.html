@@ -1,9 +1,9 @@
-<!-- <ion-view title='<img class="image-logo" src="../img/infoarchive42.png" />'>-->
-<ion-view view-title="Searches">
+<ion-view class="pane" view-title="SEARCHES">
   <ion-content>
     <div class="list">
       <div ng-repeat="search in searches">
-        <div class="item item-button-right">{{search.name}} <span><i class="icon ion-information-circled" ng-click="info($event,$index)"></i><span><button class="button button-positive button-small pull-right" ng-click="add($event,$index)">Select</button></span></span>
+        <div class="item apps item-button-right"><i class="icon icon-large ion-help-circled" ng-click="info($event,$index)"></i>&nbsp; &nbsp;&nbsp;{{search.name}} 
+          <button class="button button-icon ion-arrow-right-b pull-right" ng-click="add($event,$index)"></button>
         </div>
       </div>
     </div>
