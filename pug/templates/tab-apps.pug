@@ -1,9 +1,9 @@
-ion-view.pane(view-title='APPLICATIONS')
-  ion-content
+ion-view(view-title='APPLICATIONS')
+  ion-content.has-header.scroll-tab
     .list
       div(ng-repeat='app in applications')
         .item.apps.item-button-right(ng-if="app.state == 'READY' || app.state == 'ACTIVE' ")
-          i.icon.icon-large.ion-help-circled(ng-click='info($event,$index)')
+          i.icon.ion-help-circled(style='font-size:20px;',ng-click='info($event,$index)')
           | &nbsp; &nbsp;&nbsp;{{app.name}} 
           button.button.button-icon.ion-arrow-right-b.pull-right(ng-click='add($event,$index)')
       div(ng-if='activeCount == 0')

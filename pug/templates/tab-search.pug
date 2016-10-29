@@ -1,10 +1,10 @@
-ion-view.pane(view-title='SEARCH')
-  ion-content.padding
+ion-view(view-title='SEARCH')
+  ion-content.has-header.padding.scroll-tab
     form(name='searchForm', novalidate='', ng-submit='search(searchForm)')
       .list
         div(ng-repeat='element in formData')
-          label.item.search.item-input.item-floating-label
-            span.input-label {{element.label}}
+          label.item.search.item-input
+            i.icon.placeholder-icon(ng-class='{{element.class}}')
             input(type='{{element.type}}', ng-model='element.value',placeholder='{{element.label}}')
         label
           button.button.button-block.button-positive(type='submit')

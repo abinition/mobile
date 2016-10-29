@@ -1,20 +1,20 @@
-ion-view.pane
-  ion-content.view-content
+ion-view
+  ion-content.has-header.scroll-auth
     img.image-logo(src='img/logo.png')
     div
       form(name='authorizationForm', novalidate='', ng-submit='signIn(authorizationForm)')
         .list.form-signin
-          label.item.auth.item-input.padding
+          label.item.auth.item-input
             i.icon.ion-person.placeholder-icon
             input(type='text', name='username', ng-model='authorization.username', placeholder='Enter your username')
-          label.item.auth.item-input.padding
+          label.item.auth.item-input
             i.icon.ion-locked.placeholder-icon
             input(type='password', name='password', ng-model='authorization.password', placeholder='Enter your password')
-          label.item.auth.assertive.padding(ng-show='authorization.error')
+          label.item.assertive.padding(ng-show='authorization.error')
             i.icon.ion-alert-circled
-            | {{authorization.statusText}}
-          label
-            a(href="#/auth/reset") Forget Password?
-            button.button.button-positive.pull-right(type='submit')
-                | LOGIN
-                
+            span {{authorization.statusText}}
+          .item.padding 
+            a(href="#/auth/reset") 
+              | Forget Password? 
+            button.button.button-positive.pull-right(type='submit') LOGIN
+          label.item.item-inset

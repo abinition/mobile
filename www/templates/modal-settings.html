@@ -2,20 +2,9 @@
   <ion-header-bar>
     <h1 class="title">Settings</h1>
   </ion-header-bar>
-  <ion-content class="padding">
-    <!--<div>
-<span>Settings for {{username}}</span>
-</div>
-<div>
-<span>Groups and Roles:</span>
-<ion-list>
-<ion-item ng-repeat="role in authority">
-{{role}}
-</ion-item>
-</ion-list>
-</div>-->
+  <ion-content class="padding scroll-modal">
     <form name="settingsForm" novalidate="" ng-submit="saveSettings(settingsForm)">
-      <div class="list list-inset form-signin">
+      <div class="list form-signin">
         <label class="item item-input item-label"><span class="input-label">Server</span>
           <input type="text" placeholder="{{settings.server}}" ng-model="settings.server" />
         </label>

@@ -1,9 +1,9 @@
-<ion-view class="pane" view-title="SEARCH">
-  <ion-content class="padding">
+<ion-view view-title="SEARCH">
+  <ion-content class="has-header padding scroll-tab">
     <form name="searchForm" novalidate="" ng-submit="search(searchForm)">
       <div class="list">
         <div ng-repeat="element in formData">
-          <label class="item search item-input item-floating-label"><span class="input-label">{{element.label}}</span>
+          <label class="item search item-input"><i class="icon placeholder-icon" ng-class="{{element.class}}"></i>
             <input type="{{element.type}}" ng-model="element.value" placeholder="{{element.label}}" />
           </label>
         </div>
