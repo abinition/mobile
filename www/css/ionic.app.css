@@ -12793,7 +12793,8 @@ a {
   margin: 0; }
 
 .col-header {
-  font-weight: bold; }
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.2); }
 
 .column {
   text-overflow: '';
@@ -12836,7 +12837,7 @@ a {
 
 .list .item.col-header.item-icon-right {
   border-color: #ddd;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   color: #eeeaea;
   position: relative;
   z-index: 2;
@@ -12889,12 +12890,22 @@ a {
 /**********************************************
  *     Headers
  **********************************************/
-.bar.bar-balanced, .bar.bar-header {
+.bar.bar-balanced.bar-header {
   color: #e7e3e3 !important;
   background: url("../img/bg.jpg") no-repeat center center fixed; }
 
 .bar.bar-header h1.title {
   color: #e7e3e3; }
+
+.bar.bar-header.bar-popup {
+  color: #e7e3e3 !important;
+  background: black;
+  padding: 10px 0px 0px 10px; }
+
+.bar.bar-header.bar-settings {
+  color: #e7e3e3 !important;
+  background: black;
+  padding: 10px 0px 0px 10px; }
 
 /**********************************************
  *     AUTH
@@ -12903,24 +12914,28 @@ a {
   background: url("../img/bg.jpg") no-repeat center center fixed; }
 
 /* unvisited link */
-a:link {
+a.auth:link {
   color: #aaa;
-  text-decoration: none; }
+  text-decoration: none;
+  font-size: 14px; }
 
 /* visited link */
-a:visited {
+a.auth:visited {
   color: #aaa;
-  text-decoration: none; }
+  text-decoration: none;
+  font-size: 14px; }
 
 /* mouse over link */
-a:hover {
+a.auth:hover {
   color: #fff;
-  text-decoration: none; }
+  text-decoration: none;
+  font-size: 14px; }
 
 /* selected link */
-a:active {
+a.auth:active {
   color: #aaa;
-  text-decoration: none; }
+  text-decoration: none;
+  font-size: 14px; }
 
 label.item.auth {
   color: #faffbd; }
@@ -12932,7 +12947,7 @@ label.item.auth {
   margin-left: auto;
   margin-right: auto;
   height: 70px;
-  margin-top: 100px; }
+  margin-top: 60px; }
 
 .form-signin {
   max-width: 390px;
@@ -12946,11 +12961,30 @@ label.item.auth {
   display: block;
   border-width: 0px; }
 
+.button.auth.button-positive {
+  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  width: 50%; }
+
+.button.auth.button-positive:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff; }
+
 /**********************************************
  *     SEARCH
  **********************************************/
 label.item.search {
   color: #faffbd; }
+
+.button.button-positive {
+  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff; }
+
+.button.button-positive:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff; }
 
 /**********************************************
  *     MODALS
@@ -12966,7 +13000,8 @@ label.item.search {
 .scroll-content.scroll-pop {
   background-color: #1b1a1a;
   color: white;
-  border: 0; }
+  border: 0;
+  margin: 0; }
 
 /**********************************************
  *     TABS
@@ -12976,7 +13011,7 @@ label.item.search {
 
 .tab-nav.tabs {
   background: url("../img/bg.jpg") no-repeat center center fixed;
-  color: #222; }
+  color: #b7b8af; }
 
 /**********************************************
  *     INPUT
@@ -12997,7 +13032,7 @@ input[type="text"], input[type="password"] {
   border: none;
   border-radius: 32px;
   font-size: 16px;
-  font-weight: 200;
+  font-weight: 500;
   padding-left: 32px;
   width: 100%;
   height: 50px;
@@ -13023,15 +13058,6 @@ input[type="text"], input[type="password"] {
 /**********************************************
  *     BUTTONS
  **********************************************/
-.button.button-positive {
-  border-color: transparent;
-  background-color: rgba(0, 0, 0, 0.4);
-  color: #fff; }
-
-.button.button-positive:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff; }
-
 a.button.button-icon.icon.ion-ios-cloud-download {
   color: #aaa; }
 

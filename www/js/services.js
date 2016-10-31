@@ -220,9 +220,10 @@ mobileApp
                 for ( col=0; col<numCols; col++) {                  
                   var id_pre = results[1].panels[0].tabs[0].columns[col].name ;
                   var id = id_pre.split(' ').join('_') ;
-                  var label = results[1].panels[0].tabs[0].columns[col].label ;           
+                  var label = results[1].panels[0].tabs[0].columns[col].label ;      
+                  var dataType = results[1].panels[0].tabs[0].columns[col].dataType ;          
                 
-                  data.columns.push ( { "id": id, "name": label } ) ;
+                  data.columns.push ( { "id": id, "name": label, "dataType": dataType } ) ;
                 }
               }
               if ( numPanels > 1 ) {
@@ -231,8 +232,9 @@ mobileApp
                   for ( col=0; col<numCols; col++) {                  
                     var id_pre = results[1].panels[1].tabs[0].columns[col].name ;
                     var id = id_pre.split(' ').join('_') ;
-                    var label = results[1].panels[1].tabs[0].columns[col].label ;       
-                    data.side_columns.push ( { "id": id, "name": label} ) ;
+                    var label = results[1].panels[1].tabs[0].columns[col].label ;  
+                    var dataType = results[1].panels[1].tabs[0].columns[col].dataType ;       
+                    data.side_columns.push ( { "id": id, "name": label, "dataType": dataType } ) ;
                   }
                 }
               }
@@ -241,8 +243,9 @@ mobileApp
                   var numCols = results[1].panels[2].tabs[0].columns.length ;
                   for ( col=0; col<numCols; col++) {                  
                     var id = results[1].panels[2].tabs[0].columns[col].name ;
-                    var label = results[1].panels[2].tabs[0].columns[col].label ;       
-                    data.side_columns.push ( { "id": id, "name": label } ) ;
+                    var label = results[1].panels[2].tabs[0].columns[col].label ;
+                    var dataType = results[1].panels[2].tabs[0].columns[col].dataType ;          
+                    data.side_columns.push ( { "id": id, "name": label, "dataType": dataType  } ) ;
                   }
                 }
               }
@@ -720,6 +723,8 @@ mobileApp
                 
                 if ( value._id == "labels") {
                   labels = value.labels ;
+                  console.log("labels");
+                  console.log(labels);
                 }
                 else if ( value._id == "hints") {
                   hints = value.hints ;
@@ -740,27 +745,51 @@ mobileApp
             var i = 0 ;
             console.log ( data ) ;
             for (var key in data) {
+              console.log("key")
+              console.log(key);
+              
               if (data.hasOwnProperty(key)) {
+                console.log("has own prop");
+                console.log(data[key])
                 var range = "" ;
                
                 if ( data[key] instanceof Object || data[key] == "") {
                   if ( data[key] instanceof Object ) {
                     range = data[key] ;
+                    console.log("range");
+                    console.log(data[key]);
                   }
                   if ( labels[key] && labels[key] != "" ) {
                     data[key] = labels[key] ;
+                    console.log("label = "+labels[key]);
                   }
                   else {
-                    for (i=0; i<inputs.length; i++ ) {
-                      console.log(inputs[i]._bind);
-                      if ( inputs[i]._bind == key ) {
-                        data[key] = inputs[i].label.__text ;
-                        break ;
+                    console.log("inputs");
+                    console.log(inputs);
+                    if ( inputs._ref && inputs._ref == key ) {
+                        console.log("ref = "+key);
+                        data[key] = key
+                    }
+                    else {
+                      console.log("search inputs");
+                      for (i=0; i<inputs.length; i++ ) {
+                        console.log(inputs[i]._bind);
+                        if ( inputs[i]._bind &&
+                             inputs[i]._bind == key ) {
+                          data[key] = inputs[i].label.__text ;
+                          console.log("text="+inputs[i].label.__text);
+                          break ;
+                        }
+                        else if ( inputs[i]._ref == key ) {
+                          data[key] = key
+                          break ;
+                        }
                       }
                     }
                   }
-
                 }
+                console.log("ready");
+                console.log(data[key]);
                 var input = {
                   "id" : key,
                   "label" : data[key],
@@ -769,6 +798,9 @@ mobileApp
                   "prompts" : prompts[key]
                 };
                 formData.push ( input ) ;
+              }
+              else {
+                console.log("does not have own property")
               }
             }
             console.log ( formData ) ;

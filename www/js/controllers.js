@@ -37,6 +37,9 @@ mobileApp
     })
       .then(function (modal) {
         $scope.modal = modal;
+        $scope.closeModal = function ($event) { 
+          $scope.modal.hide(); 
+        }
       });
 
     $ionicPopover.fromTemplateUrl('templates/pop-about.html', {
@@ -124,7 +127,7 @@ mobileApp
             $localStorage.port = "8080";
 
           if (angular.isUndefined($localStorage.version))
-            $localStorage.version = "0.9-1";
+            $localStorage.version = "0.9-2";
         }
 
         else {
@@ -217,6 +220,9 @@ mobileApp
     })
     .then(function (popover) {
         $scope.popover2 = popover;
+        $scope.closePop = function ($event) { 
+          $scope.popover2.hide(); 
+        }
     });
 
     $ionicPopover.fromTemplateUrl('templates/pop-nosearch.html', {
@@ -327,6 +333,7 @@ mobileApp
           LoadService.getResultsId(),
           payload,
           function (tokens) {
+            console.log(tokens);
             if (tokens.rows > 0) {
               $state.go('tab.results');
             }

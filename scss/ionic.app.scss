@@ -28,217 +28,9 @@ $RobotoDraftFontVersion: "1.0.0";
 @import "www/lib/robotodraft/sass/robotodraft.scss";    // REMINDER: edit as appropriate!
 @import "www/lib/ionic-material/src/scss/index.scss";    // REMINDER: edit as appropriate!
 
-
-.pane {
-        background: url('../img/bg.jpg') no-repeat center center fixed; 
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        background-size: cover;
-}
-
-.bar.bar-header {
-  background: rgba(255,255,255,.10);
-  border-bottom-width: 0;
-}
- 
-.bar.bar-header h1 {
-  color: black !important;
-}
-
-.bar.bar-balanced .title {
-    color: #e7e3e3 !important;;
-}
-
-.scroll-content {
-  overflow: visible !important;
-}
- 
-.platform-ios.platform-cordova:not(.fullscreen) .has-header {
-  top:0px;
-}
-
-.list {
-    .item.apps {
-        border-color: #ddd;
-        background: rgba(255,255,255,.10);
-        color: #eeeaea;
-        position: relative;
-        z-index: 2;
-        display: block;
-        margin: -1px;
-        padding: 16px;
-        border-width: 1px;
-        border-style: solid;
-        font-size: 20px;
-    }
-}
-.list {
-    .item.col-header.item-icon-right {
-    border-color: #ddd;
-    background: rgba(255,255,255,.10);
-    color: #eeeaea;
-    position: relative;
-    z-index: 2;
-    display: block;
-    margin: -1px;
-    padding: 16px;
-    border-width: 1px;
-    border-style: solid;
-    font-size: 20px;
-    }
-}
-
-.list {
-    .item.low-pad-item.item-icon-right {
-    border-color: #ddd;
-    background: rgba(255,255,255,.10);
-    color: #eeeaea;
-    position: relative;
-    z-index: 2;
-    display: block;
-    margin: -1px;
-    padding: 16px;
-    border-width: 1px;
-    border-style: solid;
-    font-size: 20px;
-    }
-}
-
-.item-button-right > .button, .item-button-right .item-content > .button, .item-button-right > .buttons, .item-button-right .item-content > .buttons {
-    font-size: 30px;
-     color: #eeeaea;
-}
-
-label.item.auth {
-    border-width: 0px;
-    background-color: #faffbd;;
-    border-radius: 25px;
-    margin-bottom: 20px;
-}
-
-label.item.search {
-    border-width: 0px;
-    background-color: white;
-    border-radius: 25px;
-    margin-bottom: 20px;
-}
-
-.col.details {
-    font-size: 16px;
-     color: #eeeaea;
-
-}
-
-/*
-.tab-nav.tabs {
-
-    background: rgba(255,255,255,.10);
-
-}
-*/
-
-label input[type="text"], textarea {
-
-  background-color : white !important; 
-
-}
-
-.sidemenu .item {
-    background-color: #1b1a1a;
-    color: #e7faf6;
-    position: relative;
-    z-index: 2;
-    display: block;
-    margin: -1px;
-    padding: 16px;
-    border-width: 0px;
-    border-style: solid;
-    font-size: 16px;
-}
-
-.sidemenu.scroll-content {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: hidden;
-    margin-top: -1px;
-    padding-top: 1px;
-    margin-bottom: -1px;
-    width: auto;
-    height: auto;
-    background-color: black;
-}
-
- label button[type="submit"] {
-    padding: 0 30px;
- }
-
-.image-logo {
-    top: 0 !important;
-    left: 0 !important;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    height: 70px;
-    margin-top: 100px;
-}
-
-.form-signin {
-    max-width: 390px;
-    max-height: 324px;
-    padding-top: 10px;
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-bottom: 30px;
-    margin: 0 auto;
-    box-sizing: border-box;
-    display: block;
-    border-width: 0px;
-}
-
-.pull-right{
-  float: right;
-}
-.button-halfwidth{
-  width: 49%;
-}
-.button-fullwidth{
-  width: 100%;
-}
-
-/** For the task list header columns and tasks **/
-.flex-container {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    border: none;
-    -ms-box-orient: horizontal;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -moz-flex;
-    display: -webkit-flex;
-    display: flex;
-}
-
-.wrap    {
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-}
-
-@media (max-width: 320px) {
-
-    .flex-container.wrap > div{
-        width: 50%;
-        max-width: 50%;
-        text-overflow: '';
-        white-space:nowrap;
-        overflow: hidden;
-    }
-
-}
+/**********************************************
+ *     Table for results
+ **********************************************/
 
 @media (min-width: 321px) {
     .flex-container.wrap > div{
@@ -287,6 +79,7 @@ label input[type="text"], textarea {
 
 .col-header {
     font-weight: bold;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .column {
@@ -316,20 +109,355 @@ label input[type="text"], textarea {
 }
 
 .header .col {
-    background-color:lightgrey;
+    background-color:gray;
 }
 
 .col {
-    border: solid 1px grey;
+    border: solid 1px gray;
     border-bottom-style: none;
     border-right-style: none;
 }
+.col.details {
+    font-size: 16px;
+    color: #eeeaea;
+}
 
 .col:last-child {
-    border-right: solid 1px grey;
+    border-right: solid 1px gray;
 }
 
 .row:last-child .col {
-    border-bottom: solid 1px grey;
+    border-bottom: solid 1px gray;
+}
+
+// Header
+.list {
+    .item.col-header.item-icon-right {
+        border-color: #ddd;
+        background: rgba(0,0,0,.20);
+        color: #eeeaea;
+        position: relative;
+        z-index: 2;
+        display: block;
+        margin: -1px;
+        padding: 16px;
+        border-width: 1px;
+        border-style: solid;
+        font-size: 20px;
+    }
+}
+// Rows
+.list {
+    .item.low-pad-item.item-icon-right {
+        border-color: #ddd;
+        background: rgba(255,255,255,.10);
+        color: #eeeaea;
+        position: relative;
+        z-index: 2;
+        display: block;
+        margin: -1px;
+        padding: 16px;
+        border-width: 1px;
+        border-style: solid;
+        font-size: 20px;
+    }
+}
+
+
+
+/** For the task list header columns and tasks **/
+.flex-container {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    border: none;
+    -ms-box-orient: horizontal;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.wrap    {
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 320px) {
+
+    .flex-container.wrap > div{
+        width: 50%;
+        max-width: 50%;
+        text-overflow: '';
+        white-space:nowrap;
+        overflow: hidden;
+    }
+
+}
+/**********************************************
+ *     Headers
+ **********************************************/
+
+
+// Back group in nav bar and other headers
+.bar.bar-balanced.bar-header {
+    color: #e7e3e3 !important;
+    background: url('../img/bg.jpg') no-repeat center center fixed; 
+}
+
+
+// Header title text color
+.bar.bar-header h1.title {
+    color: #e7e3e3;
+}
+
+// Back group in nav bar and other headers
+.bar.bar-header.bar-popup {
+    color: #e7e3e3 !important;
+    background: black;
+    padding: 10px 0px 0px 10px;
+}
+
+.bar.bar-header.bar-settings {
+    color: #e7e3e3 !important;
+    background: black;
+    padding: 10px 0px 0px 10px;
+}
+
+/**********************************************
+ *     AUTH
+ **********************************************/
+// CSS for scroll content in AUTH
+.scroll-content.scroll-auth {
+  background: url('../img/bg.jpg') no-repeat center center fixed; 
+}
+
+/* unvisited link */
+a.auth:link {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* visited link */
+a.auth:visited {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* mouse over link */
+a.auth:hover {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* selected link */
+a.auth:active {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+
+label.item.auth {
+    color: #faffbd;
+}
+
+.image-logo {
+    top: 0 !important;
+    left: 0 !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 70px;
+    margin-top: 60px;
+}
+
+.form-signin {
+    max-width: 390px;
+    max-height: 324px;
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-bottom: 30px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: block;
+    border-width: 0px;
+}
+
+.button.auth.button-positive {
+    border-color: transparent;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    width: 50%;
+}
+.button.auth.button-positive:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+}
+
+/**********************************************
+ *     SEARCH
+ **********************************************/
+
+label.item.search {
+    color: #faffbd;
+}
+
+.button.button-positive {
+    border-color: transparent;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #fff;
+}
+.button.button-positive:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+}
+
+
+/**********************************************
+ *     MODALS
+ **********************************************/
+
+// CSS for scroll content in modals
+.scroll-content.scroll-modal {
+    background-color: rgba(20,20,20,.50) !important; 
+    color:white;
+    border:0;
+}
+
+/**********************************************
+ *     POPUPS
+ **********************************************/
+
+// CSS for scroll content in popups
+.scroll-content.scroll-pop {
+    background-color: #1b1a1a;
+    color:white;
+    border:0;
+    margin: 0;
+}
+
+/**********************************************
+ *     TABS
+ **********************************************/
+
+// CSS for TAB content
+.scroll-content.scroll-tab {
+  background: url('../img/bg.jpg') no-repeat center center fixed; 
+}
+.tab-nav.tabs {
+    background: url('../img/bg.jpg') no-repeat center center fixed; 
+    color: #b7b8af;
+}
+
+/**********************************************
+ *     INPUT
+ **********************************************/
+
+label.item.auth.item-input i.icon.placeholder-icon {
+    color: black;
+    margin: 0;
+    /* padding-right: 10px; */
+    margin-top: -12px;
+    font-size: 21px;
+}   
+
+input[type="text"], input[type="password"], textarea {
+    margin-bottom: 12px;
+    margin-left: -30px;
+}
+
+input[type="text"], input[type="password"] {
+    background: #fff;
+    border: none;
+    border-radius: 32px;
+    font-size: 16px;
+    font-weight: 500;
+    padding-left: 32px;
+    width: 100%;
+    height: 50px;
+    -webkit-transition: opacity .3s ease;
+    transition: opacity .3s ease;
+    opacity: 0.5;
+    outline: none;
+}
+
+/**********************************************
+ *     APPS
+ **********************************************/
+
+// App CSS styling
+.list {
+    .item.apps {
+        background: rgba(17,56,64,.60);
+        color: rgba(255,255,255,.60);
+        position: relative;
+        z-index: 2;
+        display: block;
+        margin-top: 10px;
+        padding: 16px;
+        border-width: 0px;
+        font-size: 16px;
+    }
+}
+/**********************************************
+ *     BUTTONS
+ **********************************************/
+
+a.button.button-icon.icon.ion-ios-cloud-download {
+    color: #aaa;
+}
+
+.item-button-right > .button, .item-button-right .item-content > .button, .item-button-right > .buttons, .item-button-right .item-content > .buttons {
+    font-size: 30px;
+    color:  rgba(255,255,255,.60);
+}
+
+.pull-right{
+  float: right;
+}
+.button-halfwidth{
+  width: 49%;
+}
+.button-fullwidth{
+  width: 100%;
+}
+
+/**********************************************
+ *     SIDEMENU
+ **********************************************/
+
+.sidemenu .item {
+    background-color: #1b1a1a;
+    color: #e7faf6;
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin: -1px;
+    padding: 16px;
+    border-width: 0px;
+    border-style: solid;
+    font-size: 16px;
+}
+
+.sidemenu.scroll-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    margin-top: -1px;
+    padding-top: 1px;
+    margin-bottom: -1px;
+    width: auto;
+    height: auto;
+    background-color: black;
 }
 
