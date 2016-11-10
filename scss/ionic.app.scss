@@ -204,7 +204,11 @@ $RobotoDraftFontVersion: "1.0.0";
 // Back group in nav bar and other headers
 .bar.bar-balanced.bar-header {
     color: #e7e3e3 !important;
-    background: url('../img/bg.jpg') no-repeat center center fixed; 
+    background: url('../img/bg.jpg')no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; 
 }
 
 
@@ -231,7 +235,11 @@ $RobotoDraftFontVersion: "1.0.0";
  **********************************************/
 // CSS for scroll content in AUTH
 .scroll-content.scroll-auth {
-  background: url('../img/bg.jpg') no-repeat center center fixed; 
+  background: url('../img/bg.jpg')no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 /* unvisited link */
@@ -319,7 +327,11 @@ label.item.search {
     color: #fff;
 }
 
-
+.search-label {
+    font-size: 16px;
+    color: #fff;
+    padding-left: 15px;
+}
 /**********************************************
  *     MODALS
  **********************************************/
@@ -350,10 +362,18 @@ label.item.search {
 // CSS for TAB content
 .scroll-content.scroll-tab {
   background: url('../img/bg.jpg') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; 
 }
 .tab-nav.tabs {
     background: url('../img/bg.jpg') no-repeat center center fixed; 
-    color: #b7b8af;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; 
+        color: #b7b8af;
 }
 
 /**********************************************
@@ -368,12 +388,16 @@ label.item.auth.item-input i.icon.placeholder-icon {
     font-size: 21px;
 }   
 
-input[type="text"], input[type="password"], textarea {
-    margin-bottom: 12px;
-    margin-left: -30px;
-}
+label.item.search.item-input i.icon.placeholder-icon {
+    color: black;
+    margin: 0;
+    /* padding-right: 10px; */
+    margin-top: -12px;
+    font-size: 21px;
+}   
 
-input[type="text"], input[type="password"] {
+
+input[type="text"], input[type="password"], input[type="date"], textarea {
     background: #fff;
     border: none;
     border-radius: 32px;
@@ -386,6 +410,8 @@ input[type="text"], input[type="password"] {
     transition: opacity .3s ease;
     opacity: 0.5;
     outline: none;
+    margin-bottom: 12px;
+    margin-left: -30px;
 }
 
 /**********************************************
@@ -411,12 +437,14 @@ input[type="text"], input[type="password"] {
  **********************************************/
 
 a.button.button-icon.icon.ion-ios-cloud-download {
-    color: #aaa;
+    color: #faffbd;
+    box-shadow: none;
 }
 
 .item-button-right > .button, .item-button-right .item-content > .button, .item-button-right > .buttons, .item-button-right .item-content > .buttons {
     font-size: 30px;
     color:  rgba(255,255,255,.60);
+    box-shadow: none;
 }
 
 .pull-right{

@@ -37,6 +37,43 @@ mobileApp
   })
   .factory('helper', function() {
     return {
+      iconDataType: function iconDataType(label, dataType) {
+        var icon ;
+        switch (dataType) {
+          case 'DATETIME':
+            icon = "ion-clock";
+            break;
+          case 'DATE':
+          case 'date':
+            icon = "ion-calendar";
+            break;
+          case 'email':
+            icon = "ion-email";
+            break;  
+          case 'CID':
+            icon = "ion-paperclip";
+            break;
+          case 'INTEGER':
+          case 'number':
+            icon = "ion-calculator";
+            break;
+          case 'ID':
+            icon = "ion-person";
+            break;
+          case 'STRING':
+          case 'text':
+            if (label.indexOf("Phone") != -1)
+              icon = "ion-ios-telephone";
+            else
+              icon = "ion-document-text";
+            break ;
+          default:
+            icon = "ion-document-text";
+            break;
+        }
+        return icon ;
+      },
+
       findNode: function findNode(id, currentNode) {
         var i,
             currentChild,
@@ -105,8 +142,15 @@ mobileApp
               method: 'POST',
               headers: addBasicAuth.token(username,password),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)                
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
             }
           });
@@ -136,7 +180,7 @@ mobileApp
       }
     }
   })
-  .factory('SearchService', function ($resource, $rootScope, $q, addBearerAuth2) {
+  .factory('SearchService', function ($resource, $rootScope, $q, helper, addBearerAuth2) {
     
     var data = {} ;
     
@@ -154,10 +198,17 @@ mobileApp
               method: 'POST',
               headers: addBearerAuth2.token(authToken),
               transformResponse: function (data, headers) {
-
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -171,10 +222,17 @@ mobileApp
                 method: 'GET',
                 headers: addBearerAuth2.token(authToken),
                 transformResponse: function (data, headers) {
-
-                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                  return jsonData;
+                      var jsonData = {} ;
+                      try {
+                        jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                        console.log(jsonData);
+                      }
+                      catch ( e ) {
+                        jsonData = { "error_description": data } ;
+                      }
+                      return jsonData ;
                 }
+
               }
             });
         }
@@ -187,10 +245,17 @@ mobileApp
                 method: 'GET',
                 headers: addBearerAuth2.token(authToken),
                 transformResponse: function (data, headers) {
-
-                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                  return jsonData;
+                      var jsonData = {} ;
+                      try {
+                        jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                        console.log(jsonData);
+                      }
+                      catch ( e ) {
+                        jsonData = { "error_description": data } ;
+                      }
+                      return jsonData ;
                 }
+
               }
             });
          }
@@ -201,7 +266,7 @@ mobileApp
         $q.all([promise1, promise2])
           .then(
             function (results) {
-              console.log(results);
+              //comsole.log(results);
               // Extract the column names from results[1]
               // results[1].panels[0] <-- Main Table
               //    panels[0].tabs[0].columns.name .label .datatype 
@@ -221,8 +286,8 @@ mobileApp
                   var id_pre = results[1].panels[0].tabs[0].columns[col].name ;
                   var id = id_pre.split(' ').join('_') ;
                   var label = results[1].panels[0].tabs[0].columns[col].label ;      
-                  var dataType = results[1].panels[0].tabs[0].columns[col].dataType ;          
-                
+                  var dt = results[1].panels[0].tabs[0].columns[col].dataType ; 
+                  var dataType = helper.iconDataType( label, dt ) ;         
                   data.columns.push ( { "id": id, "name": label, "dataType": dataType } ) ;
                 }
               }
@@ -233,7 +298,8 @@ mobileApp
                     var id_pre = results[1].panels[1].tabs[0].columns[col].name ;
                     var id = id_pre.split(' ').join('_') ;
                     var label = results[1].panels[1].tabs[0].columns[col].label ;  
-                    var dataType = results[1].panels[1].tabs[0].columns[col].dataType ;       
+                    var dt = results[1].panels[1].tabs[0].columns[col].dataType ;  
+                    var dataType = helper.iconDataType( label, dt ) ;       
                     data.side_columns.push ( { "id": id, "name": label, "dataType": dataType } ) ;
                   }
                 }
@@ -244,7 +310,8 @@ mobileApp
                   for ( col=0; col<numCols; col++) {                  
                     var id = results[1].panels[2].tabs[0].columns[col].name ;
                     var label = results[1].panels[2].tabs[0].columns[col].label ;
-                    var dataType = results[1].panels[2].tabs[0].columns[col].dataType ;          
+                    var dt = results[1].panels[2].tabs[0].columns[col].dataType ; 
+                    var dataType = helper.iconDataType( label, dt ) ;          
                     data.side_columns.push ( { "id": id, "name": label, "dataType": dataType  } ) ;
                   }
                 }
@@ -279,7 +346,7 @@ mobileApp
                 data.items.push ( rowData ) ;
               }
               
-              console.log ( data ) ;
+              //comsole.log ( data ) ;
               
               var tokens = { "rows": numRows } ;
               callback(tokens);
@@ -344,16 +411,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                console.log(data);
-                try {
-                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                  console.log(jsonData);
-                  return jsonData;
-                }
-                catch ( e ) {
-                  console.log(e) ;
-                }
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -365,16 +433,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                console.log(data);
-                try {
-                  var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                  console.log(jsonData);
-                  return jsonData;
-                } catch ( e ) {
-                  console.log ( e );
-                  return null ;
-                }
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -386,10 +455,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -427,10 +503,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -442,10 +525,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -456,7 +546,7 @@ mobileApp
           .then(
           function (results) {
             var apps = [];
-            console.log(results);
+            //comsole.log(results);
             
             var appCount = results[1]._embedded.applications.length;
             for (i = 0; i < appCount; i++) {
@@ -504,10 +594,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
 
@@ -519,10 +616,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
         
@@ -534,10 +638,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
           
@@ -548,7 +659,7 @@ mobileApp
         $q.all([promise1, promise2, promise3])
           .then(
           function (results) {
-            console.log ( results ) ;
+            //comsole.log ( results ) ;
 
             appParms.archiveType = results[0].archiveType ;       
             appParms.name = results[0].name ;    
@@ -610,10 +721,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
         /*  
@@ -625,10 +743,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
         */  
@@ -639,10 +764,10 @@ mobileApp
           .then(
           function (results) {
                         
-            console.log ( results ) ;
+            //comsole.log ( results ) ;
                         
             var formRef = results[0]._embedded.searchCompositions[0]._links["http://identifiers.emc.com/xform"];
-            console.log( formRef ) ;
+            //comsole.log( formRef ) ;
             if ( formRef ) {
               var href = new URL(formRef.href);
               var comps = href.pathname.split('/');
@@ -683,10 +808,17 @@ mobileApp
               method: 'GET',
               headers: addBearerAuth.token(authToken),
               transformResponse: function (data, headers) {
-                var jsonData = JSON.parse(data); //or angular.fromJson(data)
-                console.log(jsonData);
-                return jsonData;
+                    var jsonData = {} ;
+                    try {
+                      jsonData = JSON.parse(data); //or angular.fromJson(data)   
+                      console.log(jsonData);
+                    }
+                    catch ( e ) {
+                      jsonData = { "error_description": data } ;
+                    }
+                    return jsonData ;
               }
+
             }
           });
               
@@ -696,7 +828,7 @@ mobileApp
           .then(
           function (results) {
                   
-            console.log ( results ) ;
+            //comsole.log ( results ) ;
             var searchRef = results[0]._links["http://identifiers.emc.com/search-composition"];
             if ( searchRef ) {
               var href = new URL(searchRef.href);
@@ -706,13 +838,16 @@ mobileApp
             
             // Extract out the searchId and return it to the caller
             var xml = results[0].form;
+            console.log(xml);
             var js = new X2JS();
             var form = js.xml_str2json(xml);
             console.log ( form );
-            
+
             var inputs = helper.findNode( "input", form ) ;
-             
-            console.log( inputs ) ;
+            var binds = helper.findNode( "bind", form ) ;
+            var hasBinding = ( binds.constructor === Array ) ;
+
+            //comsole.log( inputs ) ;
             var instances = form.html.head.model.instance;
             var labels = {} ;
             var hints = {} ;
@@ -723,8 +858,8 @@ mobileApp
                 
                 if ( value._id == "labels") {
                   labels = value.labels ;
-                  console.log("labels");
-                  console.log(labels);
+                  //comsole.log("labels");
+                  //comsole.log(labels);
                 }
                 else if ( value._id == "hints") {
                   hints = value.hints ;
@@ -743,41 +878,86 @@ mobileApp
             
             formData = [];
             var i = 0 ;
-            console.log ( data ) ;
+            //comsole.log ( data ) ;
             for (var key in data) {
-              console.log("key")
-              console.log(key);
+              //comsole.log("key")
+              //comsole.log(key);
               
               if (data.hasOwnProperty(key)) {
-                console.log("has own prop");
-                console.log(data[key])
+                //comsole.log("has own prop");
+                //comsole.log(data[key])
                 var range = "" ;
-               
+                var dataType = "text" ;
                 if ( data[key] instanceof Object || data[key] == "") {
                   if ( data[key] instanceof Object ) {
-                    range = data[key] ;
-                    console.log("range");
-                    console.log(data[key]);
+                    //console.log("range");
+                    //console.log(range);
+                    if ( hasBinding && data[key]._operator == undefined ) {
+                      console.log("Valid range");
+                      range = data[key] ;
+                      angular.forEach(range, function (value2, key2) {
+                          //console.log("==2==");
+                          //console.log(value2);
+                          //console.log(key2);
+                          angular.forEach(binds, function (value3, key3) {
+                            //console.log("==3==");
+                            //console.log(value3);
+                            //console.log(key3);
+                            //console.log("/data/"+key+"/"+key2 );
+                            if ( value3._ref == "/data/"+key+"/"+key2 ) {
+                              //console.log(value3._type );
+                              switch ( value3._type ) {
+                                case 'xforms:string' :
+                                  dataType = 'text' ;
+                                  break;
+                               case 'xforms:email' :
+                                  dataType = 'email' ;
+                                  break;
+                               case 'xforms:tel' :
+                                  dataType = 'tel' ;
+                                  break;
+                              case 'xforms:search' :
+                                  dataType = 'search' ;
+                                  break;
+                              case 'xforms:float' :
+                              case 'xforms:decimal' :
+                              case 'xforms:double' :
+                                  dataType = 'number' ;
+                                  break;  
+                              case 'xforms:date' :
+                                  dataType = 'date' ;
+                                  break;
+                              case 'xforms:gMonth' :
+                                  dataType = 'month' ;
+                                  break;
+                              case 'xforms:password' :
+                                  dataType = 'password' ;
+                                  break; 
+                              }
+                            }
+                          });
+                      });
+                    }
                   }
                   if ( labels[key] && labels[key] != "" ) {
                     data[key] = labels[key] ;
-                    console.log("label = "+labels[key]);
+                    //comsole.log("label = "+labels[key]);
                   }
                   else {
-                    console.log("inputs");
-                    console.log(inputs);
+                    //comsole.log("inputs");
+                    //comsole.log(inputs);
                     if ( inputs._ref && inputs._ref == key ) {
-                        console.log("ref = "+key);
+                        //comsole.log("ref = "+key);
                         data[key] = key
                     }
                     else {
-                      console.log("search inputs");
+                      //comsole.log("search inputs");
                       for (i=0; i<inputs.length; i++ ) {
-                        console.log(inputs[i]._bind);
+                        //comsole.log(inputs[i]._bind);
                         if ( inputs[i]._bind &&
                              inputs[i]._bind == key ) {
                           data[key] = inputs[i].label.__text ;
-                          console.log("text="+inputs[i].label.__text);
+                          //comsole.log("text="+inputs[i].label.__text);
                           break ;
                         }
                         else if ( inputs[i]._ref == key ) {
@@ -788,22 +968,24 @@ mobileApp
                     }
                   }
                 }
-                console.log("ready");
-                console.log(data[key]);
+                //comsole.log("ready");
+                //comsole.log(data[key]);
+                var label = data[key] ;
                 var input = {
                   "id" : key,
-                  "label" : data[key],
-                  "type" : "text",
+                  "label" : label,
+                  "type" : dataType,
+                  "class" : helper.iconDataType( label, dataType ),
                   "range" : range,
                   "prompts" : prompts[key]
                 };
                 formData.push ( input ) ;
               }
               else {
-                console.log("does not have own property")
+                //comsole.log("does not have own property")
               }
             }
-            console.log ( formData ) ;
+            console.log ( "Callback to "+callback ) ;
             callback(formData);
           },
           function (errorMsg) {
@@ -833,7 +1015,7 @@ mobileApp
               
         load1.download().$promise.then(
           function (results) {
-            console.log(results);
+            //comsole.log(results);
             var arr = new Array ( results.data ) ;
                 var blob = new Blob ( arr, {'type': results.type} );
             var fileSpec = {

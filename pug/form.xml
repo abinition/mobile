@@ -1,0 +1,120 @@
+"<xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xhtml:head>
+        <xforms:model>
+            <title>Default PhoneCalls Search</title>
+            <xforms:instance xmlns="">
+                
+            <data>
+                    <CallStartDate>
+                        <from>2000-01-01</from>
+                        <to>2016-04-10</to>
+                    </CallStartDate>
+                    <CustomerID/>
+                    <CustomerLastName operator=""/>
+                    <RepresentativeID/>
+                    <CustomerFirstName operator=""/>
+                </data></xforms:instance>
+            <xforms:instance xmlns="" id="labels">
+                
+            <labels>
+                    <CallStartDate>Call Start Date:</CallStartDate>
+                    <CustomerID>Customer ID:</CustomerID>
+                    <CustomerLastName/>
+                    <RepresentativeID>Representative ID:</RepresentativeID>
+                    <CustomerFirstName/>
+                <CustomerLastNameOperator>Customer Last Name:</CustomerLastNameOperator><data0/><data1/><CustomerFirstNameOperator>Customer First Name:</CustomerFirstNameOperator></labels></xforms:instance>
+            <xforms:instance xmlns="" id="hints">
+                
+            <hints>
+                    <CallStartDate/>
+                    <CustomerID/>
+                    <CustomerLastName/>
+                    <RepresentativeID/>
+                    <CustomerFirstName/>
+                <CustomerLastNameOperator/><CustomerFirstNameOperator/></hints></xforms:instance>
+            <xforms:instance xmlns="" id="prompts">
+                
+            <prompts>
+                    <CustomerID/>
+                    <CustomerLastName/>
+                    <RepresentativeID>enter number between 001 to 035</RepresentativeID>
+                    <CustomerFirstName/>
+                </prompts></xforms:instance>
+            <xforms:instance xmlns="" id="alerts">
+                
+            <alerts>
+                    <CallStartDate/>
+                    <CustomerID/>
+                    <CustomerLastName/>
+                    <RepresentativeID/>
+                    <CustomerFirstName/>
+                <CustomerLastNameOperator/><CustomerFirstNameOperator/></alerts></xforms:instance>
+            <xforms:instance xmlns="" id="range-messages">
+                
+            <rangemessages>
+                    <CustomerID/>
+                    <CustomerLastName/>
+                    <RepresentativeID/>
+                    <CustomerFirstName/>
+                </rangemessages></xforms:instance>
+            <xforms:instance xmlns="" id="pattern-messages">
+                
+            <patternmessages>
+                    <CustomerID/>
+                    <CustomerLastName/>
+                    <RepresentativeID/>
+                    <CustomerFirstName/>
+                </patternmessages></xforms:instance>
+            <xforms:submission id="phoneSearchSubmission" method="post" serialization="application/xml"/>
+            <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" targetNamespace="http://www.w3.org/2002/xforms" elementFormDefault="qualified">
+            </xsd:schema>
+            <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CallStartDate/from" type="xforms:date" constraint="(string-length(.) = 0 or days-from-date(.) &lt;= days-from-date(/data/CallStartDate/to))" required="string-length(/data/CallStartDate/to) = 0"/>
+            <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CallStartDate/to" type="xforms:date" constraint="(string-length(.) = 0 or days-from-date(.) &gt;= days-from-date(/data/CallStartDate/from))" required="string-length(/data/CallStartDate/from) = 0"/>
+            <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CustomerID"/>
+            <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CustomerLastName"/>
+            <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/RepresentativeID"/>
+            <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CustomerFirstName"/>
+        <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CustomerLastName/@operator"/><bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CustomerFirstName/@operator"/></xforms:model>
+    </xhtml:head>
+    <xhtml:body>
+        <xhtml:h1>Default PhoneCalls Search</xhtml:h1>
+        
+        
+        
+        
+        
+        
+    <group xmlns="http://www.w3.org/2002/xforms" id="data0" style="background-color: #BFDFF5;"><label ref="instance('labels')/data0"/><select1 xmlns="http://www.w3.org/2002/xforms" ref="CustomerLastName/@operator" class="col-sm-3"><label ref="instance('labels')/CustomerLastNameOperator"/><hint ref="instance('hints')/CustomerLastNameOperator"/><alert ref="instance('alerts')/CustomerLastNameOperator"/><item><label>Exact Match</label><value>EQUAL</value></item><item><label>Does Not Match</label><value>NOT_EQUAL</value></item></select1><input xmlns="http://www.w3.org/2002/xforms" ref="CustomerLastName" class="col-sm-3">
+            <label ref="instance('labels')/CustomerLastName"/>
+            <hint ref="instance('hints')/CustomerLastName"/>
+            <hint appearance="minimal" ref="instance('prompts')/CustomerLastName"/>
+            <alert ref="instance('alerts')/CustomerLastName"/>
+            <message class="range" ref="instance('range-messages')/CustomerLastName"/>
+            <message class="pattern" ref="instance('pattern-messages')/CustomerLastName"/>
+        </input><select1 xmlns="http://www.w3.org/2002/xforms" ref="CustomerFirstName/@operator" class="col-sm-3"><label ref="instance('labels')/CustomerFirstNameOperator"/><hint ref="instance('hints')/CustomerFirstNameOperator"/><alert ref="instance('alerts')/CustomerFirstNameOperator"/><item><label>Exact Match</label><value>EQUAL</value></item><item><label>Does Not Match</label><value>NOT_EQUAL</value></item><item><label>Begins with</label><value>STARTS_WITH</value></item><item><label>Ends with</label><value>ENDS_WITH</value></item><item><label>Contains</label><value>CONTAINS</value></item></select1><input xmlns="http://www.w3.org/2002/xforms" ref="CustomerFirstName" class="col-sm-3">
+            <label ref="instance('labels')/CustomerFirstName"/>
+            <hint ref="instance('hints')/CustomerFirstName"/>
+            <hint appearance="minimal" ref="instance('prompts')/CustomerFirstName"/>
+            <alert ref="instance('alerts')/CustomerFirstName"/>
+            <message class="range" ref="instance('range-messages')/CustomerFirstName"/>
+            <message class="pattern" ref="instance('pattern-messages')/CustomerFirstName"/>
+        </input></group><group xmlns="http://www.w3.org/2002/xforms" id="data1" style="background-color: #BFDFF5;"><label ref="instance('labels')/data1"/><input xmlns="http://www.w3.org/2002/xforms" ref="CallStartDate/from" class="col-sm-4">
+            <label ref="instance('labels')/CallStartDate"/>
+            <hint ref="instance('hints')/CallStartDate"/>
+            <alert ref="instance('alerts')/CallStartDate"/>
+        </input><input xmlns="http://www.w3.org/2002/xforms" ref="CustomerID">
+            <label ref="instance('labels')/CustomerID"/>
+            <hint ref="instance('hints')/CustomerID"/>
+            <hint appearance="minimal" ref="instance('prompts')/CustomerID"/>
+            <alert ref="instance('alerts')/CustomerID"/>
+            <message class="range" ref="instance('range-messages')/CustomerID"/>
+            <message class="pattern" ref="instance('pattern-messages')/CustomerID"/>
+        </input><input xmlns="http://www.w3.org/2002/xforms" ref="RepresentativeID">
+            <label ref="instance('labels')/RepresentativeID"/>
+            <hint ref="instance('hints')/RepresentativeID"/>
+            <hint appearance="minimal" ref="instance('prompts')/RepresentativeID"/>
+            <alert ref="instance('alerts')/RepresentativeID"/>
+            <message class="range" ref="instance('range-messages')/RepresentativeID"/>
+            <message class="pattern" ref="instance('pattern-messages')/RepresentativeID"/>
+        </input><input xmlns="http://www.w3.org/2002/xforms" ref="CallStartDate/to"/></group></xhtml:body>
+</xhtml:html>"

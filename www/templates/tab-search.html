@@ -3,9 +3,19 @@
     <form name="searchForm" novalidate="" ng-submit="search(searchForm)">
       <div class="list">
         <div ng-repeat="element in formData">
-          <label class="item search item-input"><i class="icon placeholder-icon" ng-class="{{element.class}}"></i>
-            <input type="{{element.type}}" ng-model="element.value" placeholder="{{element.label}}" />
-          </label>
+          <div ng-if="element.range == &quot;&quot;">
+            <label class="item search item-input"><i class="icon placeholder-icon" ng-class="element.class"></i>
+              <input type="{{element.type}}" ng-model="element.value" placeholder="{{element.label}}" />
+            </label>
+          </div>
+          <div ng-if="element.range != &quot;&quot;">
+            <div ng-repeat="(key,value) in element.range">
+              <div class="search-label">{{element.label}} &gt; {{key}}</div>
+              <label class="item search item-input"><i class="icon placeholder-icon" ng-class="element.class"></i>
+                <input type="{{element.type}}" ng-model="today" ng-model-options="{ getterSetter: true }" placeholder="{{key}}" />
+              </label>
+            </div>
+          </div>
         </div>
         <label>
           <button class="button button-block button-positive" type="submit">Search</button>

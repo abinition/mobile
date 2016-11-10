@@ -12892,7 +12892,11 @@ a {
  **********************************************/
 .bar.bar-balanced.bar-header {
   color: #e7e3e3 !important;
-  background: url("../img/bg.jpg") no-repeat center center fixed; }
+  background: url("../img/bg.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
 
 .bar.bar-header h1.title {
   color: #e7e3e3; }
@@ -12911,7 +12915,11 @@ a {
  *     AUTH
  **********************************************/
 .scroll-content.scroll-auth {
-  background: url("../img/bg.jpg") no-repeat center center fixed; }
+  background: url("../img/bg.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
 
 /* unvisited link */
 a.auth:link {
@@ -12986,6 +12994,11 @@ label.item.search {
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff; }
 
+.search-label {
+  font-size: 16px;
+  color: #fff;
+  padding-left: 15px; }
+
 /**********************************************
  *     MODALS
  **********************************************/
@@ -13007,10 +13020,18 @@ label.item.search {
  *     TABS
  **********************************************/
 .scroll-content.scroll-tab {
-  background: url("../img/bg.jpg") no-repeat center center fixed; }
+  background: url("../img/bg.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
 
 .tab-nav.tabs {
   background: url("../img/bg.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   color: #b7b8af; }
 
 /**********************************************
@@ -13023,11 +13044,14 @@ label.item.auth.item-input i.icon.placeholder-icon {
   margin-top: -12px;
   font-size: 21px; }
 
-input[type="text"], input[type="password"], textarea {
-  margin-bottom: 12px;
-  margin-left: -30px; }
+label.item.search.item-input i.icon.placeholder-icon {
+  color: black;
+  margin: 0;
+  /* padding-right: 10px; */
+  margin-top: -12px;
+  font-size: 21px; }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="date"], textarea {
   background: #fff;
   border: none;
   border-radius: 32px;
@@ -13039,7 +13063,9 @@ input[type="text"], input[type="password"] {
   -webkit-transition: opacity .3s ease;
   transition: opacity .3s ease;
   opacity: 0.5;
-  outline: none; }
+  outline: none;
+  margin-bottom: 12px;
+  margin-left: -30px; }
 
 /**********************************************
  *     APPS
@@ -13059,11 +13085,13 @@ input[type="text"], input[type="password"] {
  *     BUTTONS
  **********************************************/
 a.button.button-icon.icon.ion-ios-cloud-download {
-  color: #aaa; }
+  color: #faffbd;
+  box-shadow: none; }
 
 .item-button-right > .button, .item-button-right .item-content > .button, .item-button-right > .buttons, .item-button-right .item-content > .buttons {
   font-size: 30px;
-  color: rgba(255, 255, 255, 0.6); }
+  color: rgba(255, 255, 255, 0.6);
+  box-shadow: none; }
 
 .pull-right {
   float: right; }

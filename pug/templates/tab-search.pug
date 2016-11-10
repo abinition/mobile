@@ -3,9 +3,17 @@ ion-view(view-title='SEARCH')
     form(name='searchForm', novalidate='', ng-submit='search(searchForm)')
       .list
         div(ng-repeat='element in formData')
-          label.item.search.item-input
-            i.icon.placeholder-icon(ng-class='{{element.class}}')
-            input(type='{{element.type}}', ng-model='element.value',placeholder='{{element.label}}')
+          div(ng-if='element.range == ""')
+            label.item.search.item-input
+              i.icon.placeholder-icon(ng-class='element.class')
+              input(type='{{element.type}}', ng-model='element.value',placeholder='{{element.label}}')
+          div(ng-if='element.range != ""')
+            div(ng-repeat='(key,value) in element.range')
+              .search-label
+                |  {{element.label}} &gt; {{key}}
+              label.item.search.item-input
+                i.icon.placeholder-icon(ng-class='element.class')
+                input(type='{{element.type}}', ng-model='today',ng-model-options="{ getterSetter: true }",placeholder='{{key}}')
         label
           button.button.button-block.button-positive(type='submit')
             | Search

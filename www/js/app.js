@@ -13,16 +13,18 @@ mobileApp
     }
     });
 
+    /*
     $provide.decorator('$rootScope', function ($delegate) {
       var _emit = $delegate.$emit;
       $delegate.$emit = function () {
-        console.log.apply(console, arguments);
+         console.log.apply(console, arguments);
         _emit.apply(this, arguments);
       };
 
       return $delegate;
     });
-
+    */
+    
     $stateProvider
 
       //setup an abstract state for the tabs directive
@@ -129,7 +131,6 @@ mobileApp
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
-
 
       if ( typeof cordova != 'undefined' ) {
 

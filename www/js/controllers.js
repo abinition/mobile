@@ -13,24 +13,36 @@ mobileApp
   })
 
 
-  .controller('SideCtlr', function ($scope, $state, $rootScope, AuthService, $ionicPopover, $ionicModal, $localStorage, $sessionStorage) {
+  .controller('SideCtlr', function ($scope, $state, $rootScope,  $ionicSideMenuDelegate, AuthService, $ionicPopover, $ionicModal, $localStorage, $sessionStorage) {
 
     /*
     $scope.toggleLeft = function () {
       $ionicSideMenuDelegate.toggleLeft();
     };
     */
-    $scope.username = AuthService.getUsername();
-    $scope.authority = AuthService.getAuthority();
-    $scope.username = AuthService.getUsername();
-    $scope.settings = {
-      "server": $localStorage.server,
-      "port": $localStorage.port
-    };
-    $rootScope.serverURL =
+    
+    $scope.$on("$ionicView.enter",function(event,data) {
+      $scope.username = AuthService.getUsername();
+      $scope.authority = AuthService.getAuthority();
+      $scope.username = AuthService.getUsername();
+    });
+
+    $scope.$on("$ionicView.loaded",function(event,data) {
+      $scope.settings = {
+        "server": $localStorage.server,
+        "port": $localStorage.port
+      };
+      $rootScope.serverURL =
           "http://" +
           $localStorage.server + ":" + $localStorage.port +
           "/";
+    });
+          
+    $scope.$on("$ionicView.afterLeave",function(event,data) {
+        $ionicSideMenuDelegate.toggleRight(0);
+    });
+
+
     $ionicModal.fromTemplateUrl('templates/modal-settings.html', {
       animation: 'slide-in-up',
       scope: $scope
@@ -46,17 +58,23 @@ mobileApp
       backdropClickToClose: true,
       scope: $scope
     })
-      .then(function (popover) {
+    .then(function (popover) {
         $scope.aboutPopover = popover;
-      });
+        $scope.closeAboutPop = function ($event) { 
+          $scope.aboutPopover.hide(); 
+        }
+    });
 
     $ionicPopover.fromTemplateUrl('templates/pop-signout.html', {
       backdropClickToClose: true,
       scope: $scope
     })
-      .then(function (popover) {
+    .then(function (popover) {
         $scope.signoutPopover = popover;
-      });
+        $scope.closeSignoutPop = function ($event) { 
+          $scope.signoutPopover.hide(); 
+        }
+    });
 
     $scope.openSettingsModal = function ($event) {
       $scope.modal.show($event);
@@ -85,24 +103,48 @@ mobileApp
     };
 
     $scope.openSignoutPopover = function ($event) {
+      $ionicSideMenuDelegate.toggleRight(0);
+      $state.go("auth.login", {}, {reload: true});
       $scope.signoutPopover.show($event);
-      $state.go("auth.login");
     };
+
+/*
+  //Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.popover.remove();
+  });
+  // Execute action on hidden popover
+  $scope.$on('signoutPoover.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove popover
+  $scope.$on('popover.removed', function() {
+    // Execute action
+  });
+  */
 
   })
 
 
-  .controller('AuthCtrl', function ($scope, $state, $localStorage, $rootScope, AuthService) {
+  .controller('AuthCtrl', function ($scope, $state, $ionicSideMenuDelegate,$localStorage, $rootScope, AuthService) {
 
-    $scope.authorization = {
-      username: '',
-      password: '',
-      language: 'en',
-      statusText: 'Unknown error',
-      access_token: '',
-      server: '',
-      port: null
-    };
+    $scope.$on("$ionicView.loaded",function(event,data) {
+      $scope.authorization = {
+        username: '',
+        password: '',
+        language: 'en',
+        statusText: 'Unknown error',
+        error: false,
+        access_token: '',
+        server: '',
+        port: null
+      };
+    });
+
+    $scope.$on("$ionicView.enter",function(event,data) {
+        $ionicSideMenuDelegate.toggleRight(0);
+        $scope.authorization.error = false ;
+    });
 
     $scope.payload = function (obj) {
       var str = [];
@@ -164,13 +206,14 @@ mobileApp
               $scope.authorization.error = false;
               $scope.authorization.access_token = tokens.access_token;
               console.log("To apps");
-              $state.go('tab.apps');
+              $state.go('tab.apps', {}, {reload: true});
             }
             else {
               if (!tokens.error) tokens.error = "Error";
               if (!tokens.error_description) tokens.error_description = "Not Connected";
               $scope.authorization.error = true;
-              $scope.authorization.statusText = tokens.error + ": " + tokens.error_description;;
+              $scope.authorization.statusText = tokens.error + ": " + tokens.error_description;
+              $scope.authorization.error = true ;
             }
           });
       }
@@ -192,7 +235,7 @@ mobileApp
         if (searches.length > 0) {
 
           //if (searches.length > 1) {
-            $state.go('tab.searches');
+            $state.go('tab.searches', {}, {reload: true});
           //}
           //else {
           //  LoadService.form(AuthService.getAccessToken(), searches[0].formId, function (tokens) {
@@ -220,7 +263,7 @@ mobileApp
     })
     .then(function (popover) {
         $scope.popover2 = popover;
-        $scope.closePop = function ($event) { 
+        $scope.closeAppPop = function ($event) { 
           $scope.popover2.hide(); 
         }
     });
@@ -230,16 +273,20 @@ mobileApp
       scope: $scope
     }).then(function (popover) {
         $scope.popover = popover;
+        $scope.closeNosearchPop = function ($event) { 
+          $scope.popover.hide(); 
+        }
     });
 
-    LoadService.load(AuthService.getAccessToken(), function (tokens) {
-      console.log("Loaded");
-      LoadService.apps(AuthService.getAccessToken(), tokens.userId, function (apps) {
-        console.log('Applications');
-        $scope.appCount = apps.length;
-        $scope.applications = apps;
-        $scope.activeCount = 0 ;
-        for ( i=0; i<$scope.appCount; i++ ) if ( apps[i].state == 'READY' || apps[i].state == 'ACTIVE' ) $scope.activeCount++ ;
+    $scope.$on("$ionicView.enter",function(event,data) {
+      LoadService.load(AuthService.getAccessToken(), function (tokens) {
+        LoadService.apps(AuthService.getAccessToken(), tokens.userId, function (apps) {
+          console.log('Applications');
+          $scope.appCount = apps.length;
+          $scope.applications = apps;
+          $scope.activeCount = 0 ;
+          for ( i=0; i<$scope.appCount; i++ ) if ( apps[i].state == 'READY' || apps[i].state == 'ACTIVE' ) $scope.activeCount++ ;
+        });
       });
     });
   })
@@ -252,12 +299,16 @@ mobileApp
       LoadService.searches(AuthService.getAccessToken(), searchesId, queryId, function (tokens) {
           console.log ( tokens ) ;
           LoadService.form(AuthService.getAccessToken(), tokens.formId, function (tokens) {
-            $state.go('tab.search');
+            $state.go('tab.search', {}, {reload: true});
           });
       });
     };
-    $scope.searches = LoadService.getSearchData();
+
     
+    $scope.$on("$ionicView.enter",function(event,data) {
+      $scope.searches = LoadService.getSearchData();
+    });
+
     $scope.info = function ($event, $index) {
       $scope.description = $scope.searches[$index].description;
       $scope.name = $scope.searches[$index].name;
@@ -270,6 +321,10 @@ mobileApp
     })
     .then(function (popover) {
         $scope.popover = popover;
+        $scope.closeSearchPop = function ($event) { 
+          $scope.popover.hide(); 
+        }
+        
     });
 
   })
@@ -285,9 +340,23 @@ mobileApp
       alertPopup.then(function (res) {
         console.log('No results');
       });
+      
     };
 
-    $scope.formData = LoadService.getFormData();
+
+    $scope.$on("$ionicView.enter",function(event,data) {
+      console.log("Fetching form data");
+      $scope.formData = LoadService.getFormData();
+      console.log($scope.formData);
+    });
+    
+    $scope.today = new Date();
+    
+    $scope.range = {
+      dt: function(dateString) {
+       return arguments.length ? (new Date(2000,1,1)) : new Date(2016,11,7); //Date.parse(dateString);
+      }
+    };
 
     $scope.search = function (form) {
 
@@ -327,7 +396,8 @@ mobileApp
 
         console.log(payload);
 
-        SearchService.search(AuthService.getAccessToken(),
+        SearchService.search(
+          AuthService.getAccessToken(),
           LoadService.getSearchId(),
           LoadService.getResultId(),
           LoadService.getResultsId(),
@@ -335,7 +405,7 @@ mobileApp
           function (tokens) {
             console.log(tokens);
             if (tokens.rows > 0) {
-              $state.go('tab.results');
+              $state.go('tab.results', {}, {reload: true});
             }
             else {
               $scope.showAlert();
@@ -347,10 +417,14 @@ mobileApp
 
   .controller('ResultsCtrl', function ($scope, $state, SearchService, ResultsService /*, $ionicModal */) {
 
-    $scope.data = SearchService.getResults();
-    $scope.data.sortOn = $scope.data.columns[0].id;
-    $scope.data.sortReverse = false;
-    $scope.side_item = {};
+
+    $scope.$on("$ionicView.enter",function(event,data) {
+      $scope.data = SearchService.getResults();
+      console.log ( $scope.data ) ;
+      $scope.data.sortOn = $scope.data.columns[0].id;
+      $scope.data.sortReverse = false;
+      $scope.side_item = {};
+    });
 
     $scope.sortBy = function (columnId) {
       console.log("sorting by column id " + columnId);
@@ -372,7 +446,7 @@ mobileApp
       $scope.side_item = item;
       //$scope.modal.show($event);
       ResultsService.setResults(item);
-      $state.go("tab.details");
+      $state.go("tab.details", {}, {reload: true});
 
     };
 
@@ -380,14 +454,21 @@ mobileApp
 
   .controller('DetailsCtrl', function ($scope, $state, AuthService, ResultsService, LoadService, $ionicPopover, $rootScope, $cordovaFileTransfer, $timeout ) {
 
-    $scope.item = ResultsService.getResults();
+    $scope.$on("$ionicView.enter",function(event,data) {
+      $scope.item = ResultsService.getResults();
     
+      console.log( $scope.item ) ;
+    });
+
     $ionicPopover.fromTemplateUrl('templates/pop-downloaded.html', {
       backdropClickToClose: true,
       scope: $scope
     })
     .then(function (popover) {
         $scope.popover = popover;
+        $scope.closeDownloadedPop = function ($event) { 
+          $scope.popover.hide(); 
+        }
     });
 
     $scope.download = function ($event, $index) {
@@ -400,7 +481,15 @@ mobileApp
             '/ci?cid=' + cid; 
        console.log ( url ) ;          
         
+
+        
         if ( typeof cordova == 'undefined' ) {
+
+/*
+      var fileURL =  "///storage/emulated/0/DCIM/myFile";
+      var path =  'cdvfile://localhost/sdcard/path/to/global/file' ;
+      window.resolveLocalFileSystemURL(path, cbSuccess, cbFail);
+*/
 
           /* Chrome API */
           cid = cid.replace ( /:/g, '%3A') ;   
@@ -433,21 +522,40 @@ mobileApp
         }
         else {
 
-          var targetPath = cordova.file.dataDirectory + fn;
+          console.log(cordova.file);
+          /*
+          cordova.file.externalRootDirectory 
+          cordova.file.externalRootDirectory
+          cordova.file.externalRootDirectory
+          externalDataDirectory
+          */
+          
+          //var targetPath = cordova.file.externalDataDirectory + fn;
+          //var targetPath = cordova.file.externalRootDirectory + "Download/" + fn;
+          var targetPath = cordova.file.externalRootDirectory + fn;
           var trustHosts = true;
           var options = {};
           var uri = encodeURI(url);
-
+/*
+                var localPath = fileEntry.fullPath;
+                if (device.platform === "Android" && localPath.indexOf("file://") === 0) {
+                    localPath = localPath.substring(7);
+                }
+                */
           mobileApp.globals.ft.download(
               uri,
               targetPath,
               function(entry) {
                   console.log("download complete: " + entry.fullPath);
+                  $scope.downloadFile = entry.fullPath ;
+                  $scope.popover.show($event);
               },
               function(error) {
                   console.log("download error source " + error.source);
                   console.log("download error target " + error.target);
                   console.log("upload error code" + error.code);
+                  $scope.downloadFile = "Failed to download " + error.target ;
+                  $scope.popover.show($event);
               },
               false,
               {
