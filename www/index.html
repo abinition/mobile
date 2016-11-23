@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' gap: https://ssl.gstatic.com http: https: file: filesystem cdvfile: 'unsafe-inline' 'unsafe-eval' * ; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
+  <!--meta(http-equiv='Content-Security-Policy', content="default-src 'self' data: gap:cdvfile:https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *")-->
   <title></title>
   <!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">-->
@@ -31,7 +32,7 @@
 </head>
 
 <body ng-app="starter">
-  <!--The nav bar that will be updated as we navigate between views.-->
+  <!-- The nav bar that will be updated as we navigate between views.-->
   <ion-nav-bar class="bar-stable">
     <ion-nav-back-button></ion-nav-back-button>
   </ion-nav-bar>

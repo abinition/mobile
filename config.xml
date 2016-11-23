@@ -17,8 +17,10 @@
   <preference name="SplashScreen" value="screen"/>
   <preference name="SplashScreenDelay" value="3000"/>
   <preference name="AndroidPersistentFileLocation" value="Compatibility"/>
+  <preference name="AndroidExtraFilesystems" value="sdcard,cache,files,files-external,sdcard-external,extSdCard"/>
   <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root"/>
-  <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root"/>
+  <!--<preference name="AndroidExtraFilesystems" value="media,files,files-external,documents,sdcard,cache,cache-external,root"/>-->
+  <access origin="cdvfile://*" />
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>

@@ -16,4 +16,4 @@ npm-debug.log
 *.jade
 *.html
 .vscode/
-www/templates/
+www/templates/*.html

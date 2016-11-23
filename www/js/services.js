@@ -145,7 +145,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -201,7 +201,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -225,7 +225,7 @@ mobileApp
                       var jsonData = {} ;
                       try {
                         jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                        console.log(jsonData);
+                        //console.log(jsonData);
                       }
                       catch ( e ) {
                         jsonData = { "error_description": data } ;
@@ -248,7 +248,7 @@ mobileApp
                       var jsonData = {} ;
                       try {
                         jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                        console.log(jsonData);
+                        //console.log(jsonData);
                       }
                       catch ( e ) {
                         jsonData = { "error_description": data } ;
@@ -414,7 +414,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -436,7 +436,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -458,7 +458,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -528,7 +528,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -568,6 +568,9 @@ mobileApp
             // the success callback will never be executed
             // the error callback will be called...
             console.log('An error occurred: ', errorMsg);
+            jsonData = { "error_description": errorMsg } ;
+            callback ( jsonData ) ;
+            
           }
           );
       },
@@ -597,7 +600,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -619,7 +622,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -641,7 +644,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -708,6 +711,9 @@ mobileApp
             // the success callback will never be executed
             // the error callback will be called...
             console.log('An error occurred: ', errorMsg);
+            jsonData = { "error_description": errorMsg } ;
+            callback ( jsonData ) ;
+            
           }
           );
       },
@@ -724,7 +730,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -795,6 +801,9 @@ mobileApp
             // the success callback will never be executed
             // the error callback will be called...
             console.log('An error occurred: ', errorMsg);
+            jsonData = { "error_description": errorMsg } ;
+            callback ( jsonData ) ;
+            
           }
           );
       },
@@ -811,7 +820,7 @@ mobileApp
                     var jsonData = {} ;
                     try {
                       jsonData = JSON.parse(data); //or angular.fromJson(data)   
-                      console.log(jsonData);
+                      //console.log(jsonData);
                     }
                     catch ( e ) {
                       jsonData = { "error_description": data } ;
@@ -838,10 +847,10 @@ mobileApp
             
             // Extract out the searchId and return it to the caller
             var xml = results[0].form;
-            console.log(xml);
+            //console.log(xml);
             var js = new X2JS();
             var form = js.xml_str2json(xml);
-            console.log ( form );
+            //console.log ( form );
 
             var inputs = helper.findNode( "input", form ) ;
             var binds = helper.findNode( "bind", form ) ;
@@ -893,7 +902,7 @@ mobileApp
                     //console.log("range");
                     //console.log(range);
                     if ( hasBinding && data[key]._operator == undefined ) {
-                      console.log("Valid range");
+                      //console.log("Valid range");
                       range = data[key] ;
                       angular.forEach(range, function (value2, key2) {
                           //console.log("==2==");
@@ -985,7 +994,7 @@ mobileApp
                 //comsole.log("does not have own property")
               }
             }
-            console.log ( "Callback to "+callback ) ;
+            //console.log ( "Callback to "+callback ) ;
             callback(formData);
           },
           function (errorMsg) {
@@ -993,6 +1002,8 @@ mobileApp
             // the success callback will never be executed
             // the error callback will be called...
             console.log('An error occurred: ', errorMsg);
+            jsonData = { "error_description": errorMsg } ;
+            callback ( jsonData ) ;
           }
           );
       },
@@ -1030,6 +1041,9 @@ mobileApp
             // the success callback will never be executed
             // the error callback will be called...
             console.log('An error occurred: ', errorMsg);
+            jsonData = { "error_description": errorMsg } ;
+            callback ( jsonData ) ;
+            
           }
           );
       }

@@ -4,15 +4,15 @@ ion-view
     div
       form(name='authorizationForm', novalidate='', ng-submit='signIn(authorizationForm)')
         .list.form-signin
+          label.item.assertive.padding(ng-show='authorization.error')
+            i.icon.ion-alert-circled
+            span {{authorization.statusText}}
           label.item.auth.item-input
             i.icon.ion-person.placeholder-icon
             input(type='text', name='username', ng-model='authorization.username', placeholder='Enter your username')
           label.item.auth.item-input
             i.icon.ion-locked.placeholder-icon
             input(type='password', name='password', ng-model='authorization.password', placeholder='Enter your password')
-          label.item.assertive.padding(ng-show='authorization.error')
-            i.icon.ion-alert-circled
-            span {{authorization.statusText}}
           .item.padding 
               a.auth(href="#/auth/reset") 
                 | Forget Password? 

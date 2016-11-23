@@ -4,7 +4,7 @@
       <div class="item col-header item-icon-right">
         <div class="flex-container wrap">
           <div ng-repeat="column in data.columns" ng-click="sortBy(column.id)">
-            <div class="column results-header" ng-class="{ 'underlined' : data.sortOn === column.id }"><i class="icon" ng-class="{{column.dataType}}"></i><span>{{column.name}} <div class="column-sort"><i ng-class="{'ion-chevron-up' : data.sortReverse === false, 'ion-chevron-down' : data.sortReverse === true} " ng-if="data.sortOn === column.id"></i></div></span>
+            <div class="column results-header" ng-class="{ 'underlined' : data.sortOn === column.id }">{{column.name}} <span class="column-sort"><i ng-class="{'ion-chevron-up' : data.sortReverse === false, 'ion-chevron-down' : data.sortReverse === true} " ng-if="data.sortOn === column.id"></i></span>
             </div>
           </div>
         </div>

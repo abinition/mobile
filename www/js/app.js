@@ -32,7 +32,7 @@ mobileApp
         url: '/auth',
         abstract: true,
         templateUrl: 'templates/auth.html',
-        controller: 'SideCtlr'
+        controller: 'ParentCtlr'
       })
       .state('auth.login', {
         url: '/login',
@@ -47,7 +47,7 @@ mobileApp
         url: '/tab',
         abstract: true,
         templateUrl: 'templates/tabs.html',
-        controller: 'SideCtlr'
+        controller: 'ParentCtlr'
       })
       .state('tab.dash', {
         url: '/dash',
@@ -136,23 +136,23 @@ mobileApp
 
         console.log ( cordova.file ) ;
         if ( File )
-          mobileApp.globals.fs = new File() ;
+          mobileApp.globals.f = new File() ;
         if ( FileTransfer )
           mobileApp.globals.ft = new FileTransfer() ;
       }
-      else {
-        /* Chrome API */ 
-        window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;   
-        navigator.webkitPersistentStorage.requestQuota( 500*1024*1024, function (grantedBytes) {  
-            window.requestFileSystem(1 /*LocalFileSystem.PERSISTENT*/, grantedBytes, onFileSystemSuccess, errorHandler);
-        }, function (e) {
-            console.log('Error', e);
-        });
-      }
+ 
+      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;   
+      navigator.webkitPersistentStorage.requestQuota( 500*1024*1024, function (grantedBytes) {  
+          window.requestFileSystem(1 /*LocalFileSystem.PERSISTENT*/, grantedBytes, onFileSystemSuccess, errorHandler);
+      }, function (e) {
+          console.log('Error', e);
+      });
+
 
     });
   })
   .globals = {
+    "f" : null,
     "fs" : null,
     "ft" : null
   };
@@ -225,7 +225,7 @@ function readFile(fileEntry) {
     fileEntry.file(function (file) {
         var reader = new FileReader();
         reader.onloadend = function() {
-            console.log("Successful file read: " + this.result);
+            //console.log("Successful file read: " + this.result);
             //displayFileData(fileEntry.fullPath + ": " + this.result);
         };
         reader.readAsText(file);

@@ -80,7 +80,44 @@
         <xhtml:h1>Default PhoneCalls Search</xhtml:h1>
         
         
-        
+        <xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xhtml:head>
+    <xforms:model>
+        <xforms:instance xmlns="">
+            
+        <data>
+            <CustomerFirstName/></data></xforms:instance>
+        <xforms:instance xmlns="" id="labels">
+            
+        <labels><CustomerFirstName>First Name:</CustomerFirstName></labels></xforms:instance>
+        <xforms:instance xmlns="" id="hints">
+            
+        <hints><CustomerFirstName>Select one more First Name</CustomerFirstName></hints></xforms:instance>
+        <xforms:instance xmlns="" id="prompts">
+            
+        <prompts/></xforms:instance>
+        <xforms:instance xmlns="" id="alerts">
+            
+        <alerts><CustomerFirstName/></alerts></xforms:instance>
+        <xforms:instance xmlns="" id="range-messages">
+            
+        <rangemessages/></xforms:instance>
+        <xforms:instance xmlns="" id="pattern-messages">
+            
+        <patternmessages/></xforms:instance>
+        <xforms:submission id="submit01" method="post" serialization="application/xml"/>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" targetNamespace="http://www.w3.org/2002/xforms" elementFormDefault="qualified">
+        </xsd:schema>
+    <bind xmlns="http://www.w3.org/2002/xforms" ref="/data/CustomerFirstName"/>
+        <instance xmlns="http://www.w3.org/2002/xforms" id="CustomerFirstName">
+            <data xmlns=""><item><label> Mia</label><value>Mia</value></item><item><label> Morgan</label><value>Morgan</value></item><item><label>Maria</label><value>Maria</value></item><item><label>Matthew</label><value>Matthew</value></item><item><label>Molly</label><value>Molly</value></item><item><label> Jack</label><value>Jack</value></item>
+            </data>
+            </instance>
+            </xforms:model>
+</xhtml:head>
+<xhtml:body>
+<select xmlns="http://www.w3.org/2002/xforms" ref="CustomerFirstName" appearance="full"><label ref="instance('labels')/CustomerFirstName"/><hint ref="instance('hints')/CustomerFirstName"/><alert ref="instance('alerts')/CustomerFirstName"/><itemset nodeset="instance('CustomerFirstName')/item"><label ref="label"/><copy ref="value"/></itemset></select></xhtml:body>
+</xhtml:html>
         
         
         

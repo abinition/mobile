@@ -1,8 +1,7 @@
 <ion-view view-title="DETAILS">
   <ion-content class="has-header scroll-tab">
     <div class="row" ng-repeat="(key,value) in item">
-      <div class="col details"><span><i class="icon placeholder-icon" ng-class="element.class"></i>{{key}}
- : </span><span class="pull-right">{{value}} </span>
+      <div class="col details"><span>{{key}}</span> : <span class="pull-right">{{value}} </span>
       </div><span><a class="button button-icon icon ion-ios-cloud-download" ng-if="key == 'FileName'" ng-click="download($event,$index)"></a></span>
     </div>
   </ion-content>
