@@ -134,6 +134,7 @@ mobileApp
 
       if ( typeof cordova != 'undefined' ) {
 
+        console.log( cordova ) ;
         console.log ( cordova.file ) ;
         if ( File )
           mobileApp.globals.f = new File() ;
