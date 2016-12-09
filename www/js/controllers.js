@@ -520,7 +520,7 @@ mobileApp
 
     $scope.download = function ($event, $index) {
 
-      var tryCordovaFTmethod = false ;
+      var doCordovaFTmethod = ( mobileApp.globals.fs == null ) ;
       var fn = $scope.item["FileName"] ; 
       var cid = $scope.item["cid"] ; 
       var access_token = AuthService.getAccessToken() ;
@@ -533,44 +533,17 @@ mobileApp
       // To support earlier versions of IA
       cid = cid.replace ( /:/g, '%3A') ;   
 
-      LoadService.download(access_token, LoadService.getAppId(), cid, fn, function (tokens) {
-
-        mobileApp.globals.fs.root.getDirectory(
-          "Download",
-          {
-            create: true,
-            exclusive: false
-          },
-          function(dirEntry) {
-            dirEntry.getFile(
-              tokens.name, 
-              { 
-                create: true, 
-                exclusive: false 
-              }, 
-              function (fileEntry) {
-                console.log(fileEntry);
-                //alert ( fileEntry.toURL() ) ;
-                $scope.downloadFile = "Saved file as " + fileEntry.fullPath ;
-                var isAppend = false ;
-                writeFile(fileEntry, tokens.data, isAppend  );
-                $scope.popover.show($event);
-              }, onErrorCreateFile);
-            }, onErrorCreateDir);
-        
-      });
-
-      if ( tryCordovaFTmethod ) {
+      if ( doCordovaFTmethod ) {
         /*
         * This cordova method ( FileTransfer download ) seems not to like any place but
         * cordova.file.externalDataDirectory + fn ;
         * also know as 'cdvfile://localhost/files-external/' + fn
         */
-      
+
         // Either of the two forms will work
         //var targetPath = cordova.file.externalDataDirectory + fn ;
-        var targetPath = 'cdvfile://localhost/sdcard/media/' + fn ;
-        //alert ( "Cordova externalDataDirectory: "+targetPath);
+        //var targetPath = 'cdvfile://localhost/sdcard/media/' + fn ;
+        //console.log ( "Cordova externalDataDirectory: "+targetPath);
         // == file:///storage/eumlated/0/Android/data/com.ionicframework.mobile178225/files/file.mp3
         // == 'cdvfile://localhost/files-external/' + fn ;
 
@@ -579,15 +552,16 @@ mobileApp
           targetPath, 
           function(entry) {
             targetPath = entry.toInternalURL() ;
-            alert("->toInternalURL "+targetPath);
+            console.log("->toInternalURL "+targetPath);
             // == cdvfile://localhost/files-external/file.mp3
           },
           function(err){
-            alert(JSON.stringify(err, null, 4));
+            console.log(JSON.stringify(err, null, 4));
           }
         );
         ******/
 
+        targetPath = cordova.file.documentsDirectory + fn ;
         var trustHosts = true;
         var options = {};
         var uri = encodeURI(url);
@@ -615,6 +589,36 @@ mobileApp
                 }
             }
         );
+      }
+      else {
+        LoadService.download(access_token, LoadService.getAppId(), cid, fn, function (tokens) {
+
+          console.log("downloaded "+url)
+          console.log(mobileApp.globals.fs.root);
+          mobileApp.globals.fs.root.getDirectory(
+            "Download",
+            {
+              create: true,
+              exclusive: false
+            },
+            function(dirEntry) {
+              dirEntry.getFile(
+                tokens.name, 
+                { 
+                  create: true, 
+                  exclusive: false 
+                }, 
+                function (fileEntry) {
+                  console.log(fileEntry);
+                  //console.log ( fileEntry.toURL() ) ;
+                  $scope.downloadFile = "Saved file as " + fileEntry.fullPath ;
+                  var isAppend = false ;
+                  writeFile(fileEntry, tokens.data, isAppend  );
+                  $scope.popover.show($event);
+                }, onErrorCreateFile);
+              }, onErrorCreateDir);
+          
+        });
       }
     }
   })

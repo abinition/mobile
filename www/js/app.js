@@ -134,22 +134,32 @@ mobileApp
 
       if ( typeof cordova != 'undefined' ) {
 
-        console.log( cordova ) ;
-        console.log ( cordova.file ) ;
-        if ( File )
+        if ( File ) {
           mobileApp.globals.f = new File() ;
-        if ( FileTransfer )
+          //console.log(JSON.stringify(mobileApp.globals.f));
+        }
+        if ( FileTransfer ) {
           mobileApp.globals.ft = new FileTransfer() ;
+          //console.log(JSON.stringify(mobileApp.globals.ft));
+        }
       }
  
       window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;   
-      navigator.webkitPersistentStorage.requestQuota( 500*1024*1024, function (grantedBytes) {  
-          window.requestFileSystem(1 /*LocalFileSystem.PERSISTENT*/, grantedBytes, onFileSystemSuccess, errorHandler);
-      }, function (e) {
-          console.log('Error', e);
-      });
-
-
+      if ( navigator.webkitPersistentStorage ) {
+        console.log ( "Requesting quota");
+        navigator.webkitPersistentStorage.requestQuota(
+          500*1024*1024, 
+          function (grantedBytes) {  
+            console.log("granted,requesting file system");
+            window.requestFileSystem( 1 /*LocalFileSystem.PERSISTENT*/, 
+                                      grantedBytes, 
+                                      onFileSystemSuccess, 
+                                      errorHandler);
+          }, 
+          function (e) {
+            console.log(e);
+          });
+      }
     });
   })
   .globals = {
