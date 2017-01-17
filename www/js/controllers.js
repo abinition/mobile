@@ -534,6 +534,8 @@ mobileApp
       cid = cid.replace ( /:/g, '%3A') ;   
 
       if ( doCordovaFTmethod ) {
+
+        console.log("Using cordova method");
         /*
         * This cordova method ( FileTransfer download ) seems not to like any place but
         * cordova.file.externalDataDirectory + fn ;
@@ -547,21 +549,26 @@ mobileApp
         // == file:///storage/eumlated/0/Android/data/com.ionicframework.mobile178225/files/file.mp3
         // == 'cdvfile://localhost/files-external/' + fn ;
 
+
+
         /****** Don't really need this, but it converts into cdvfile format ****
         window.resolveLocalFileSystemURL(
           targetPath, 
           function(entry) {
             targetPath = entry.toInternalURL() ;
-            console.log("->toInternalURL "+targetPath);
+            alert("->toInternalURL "+targetPath);
             // == cdvfile://localhost/files-external/file.mp3
           },
           function(err){
-            console.log(JSON.stringify(err, null, 4));
+            alert(JSON.stringify(err, null, 4));
           }
         );
         ******/
 
-        targetPath = cordova.file.documentsDirectory + fn ;
+        //targetPath = cordova.file.documentsDirectory + fn ;
+        //  ... same as,see config.xml
+        targetPath = 'cdvfile://localhost/documents/' + fn ; 
+        
         var trustHosts = true;
         var options = {};
         var uri = encodeURI(url);
@@ -571,7 +578,7 @@ mobileApp
             targetPath,
             function(entry) {
                 console.log("download complete: " + entry.fullPath);
-                $scope.downloadFile = "Saved file as " + entry.fullPath ;
+                $scope.downloadFile = "Saved file as " + entry.toURL() ;
                 $scope.popover.show($event);
             },
             function(error) {
@@ -593,10 +600,11 @@ mobileApp
       else {
         LoadService.download(access_token, LoadService.getAppId(), cid, fn, function (tokens) {
 
-          console.log("downloaded "+url)
-          console.log(mobileApp.globals.fs.root);
+          console.log("downloaded "+url) ;
+
+
           mobileApp.globals.fs.root.getDirectory(
-            "Download",
+            mobileApp.globals.dir,
             {
               create: true,
               exclusive: false

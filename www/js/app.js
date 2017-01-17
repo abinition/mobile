@@ -120,7 +120,7 @@ mobileApp
   })
   .run(function ($ionicPlatform,$cordovaFileTransfer,$cordovaFile) {
     $ionicPlatform.ready(function () {
-      console.log("Ready");
+      //alert("Ready");
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -131,6 +131,8 @@ mobileApp
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
+
+      mobileApp.globals.dir = $ionicPlatform.is('ios') ? 'Downloads' : 'Download' ;
 
       if ( typeof cordova != 'undefined' ) {
 
@@ -144,11 +146,14 @@ mobileApp
         }
       }
  
-      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;   
-      if ( navigator.webkitPersistentStorage ) {
+      var grantedBytes = 00*1024*1024 ;
+      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;  
+      
+      var storageRequest =  window.webkitStorageInfo || navigator.webkitPersistentStorage ;
+      if ( storageRequest ) {
         console.log ( "Requesting quota");
-        navigator.webkitPersistentStorage.requestQuota(
-          500*1024*1024, 
+        storageRequest.requestQuota(
+          grantedBytes, 
           function (grantedBytes) {  
             console.log("granted,requesting file system");
             window.requestFileSystem( 1 /*LocalFileSystem.PERSISTENT*/, 
@@ -156,13 +161,21 @@ mobileApp
                                       onFileSystemSuccess, 
                                       errorHandler);
           }, 
-          function (e) {
-            console.log(e);
+          function (err) {
+            console.log(JSON.stringify(err, null, 4));
           });
+      }
+      else {
+        console.log("requesting file system");
+        window.requestFileSystem( 1 /*LocalFileSystem.PERSISTENT*/, 
+                                  grantedBytes, 
+                                  onFileSystemSuccess, 
+                                  errorHandler);
       }
     });
   })
   .globals = {
+    "dir" : null,
     "f" : null,
     "fs" : null,
     "ft" : null
@@ -170,9 +183,8 @@ mobileApp
 
 /* CROME API */
 function onFileSystemSuccess(fileSystem) {
-  console.log(fileSystem);
   mobileApp.globals.fs = fileSystem ;  
-  console.log('Opened file system: ' + mobileApp.globals.fs.name);
+  console.log('Opened file system: ' + fileSystem.name + '(' + fileSystem.fullPath + ')' );
 
 }
 var errorHandler = function (fileName, e) {  
@@ -199,7 +211,7 @@ var errorHandler = function (fileName, e) {
             break;
     };
 
-    console.log('Error (' + fileName + '): ' + msg);
+    alert('Error (' + fileName + '): ' + msg);
 }
 
 function createFile(dirEntry, fileName, dataObj) {
